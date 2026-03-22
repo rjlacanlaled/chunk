@@ -3,7 +3,7 @@
 import { useEffect, useRef, useMemo, type MutableRefObject } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { Sparkles } from 'lucide-react';
+import { ChunkIcon } from './chunk-icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from './chat-message';
 import { ChatThinking } from './chat-thinking';
@@ -82,9 +82,7 @@ export function ChatPanel({
     return (
       <div className="flex h-full flex-col items-center justify-center px-6">
         <div className="flex w-full max-w-[600px] flex-col items-center gap-6">
-          <div className="flex items-center gap-2 text-primary/80">
-            <Sparkles className="size-5" />
-          </div>
+          <ChunkIcon variant="idle" className="size-12" />
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight">
               Your chaos, made manageable.
