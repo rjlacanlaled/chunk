@@ -4,9 +4,12 @@ import { useState } from 'react';
 import { List, LayoutGrid } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
 import { useGuestId } from '@/hooks/use-guest';
+import { useAuthWithMigration } from '@/hooks/use-auth-with-migration';
 import { useTasksQuery, useTaskMutations } from '@/hooks/use-tasks';
 import { ChatPanel } from '@/components/chat/chat-panel';
 import { TaskList } from '@/components/tasks/task-list';
+import { SignUpCta } from '@/components/auth/sign-up-cta';
+import { AuthButtons } from '@/components/auth/auth-buttons';
 import { Button } from '@/components/ui/button';
 import type { Task } from '@/types/task';
 
@@ -16,6 +19,9 @@ export default function Home() {
   const { data: session } = useSession();
   const guestId = useGuestId();
   const [view, setView] = useState<ViewMode>('list');
+
+  useAuthWithMigration();
+  const isGuest = !session?.user;
 
   const owner = session?.user
     ? { userId: session.user.id }
@@ -62,8 +68,11 @@ export default function Home() {
               </Button>
             </div>
           )}
+          <AuthButtons />
         </div>
       </header>
+
+      {isGuest && <SignUpCta />}
 
       <main className="flex flex-1 overflow-hidden">
         <div

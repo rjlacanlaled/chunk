@@ -5,10 +5,16 @@ import type { ReactNode } from 'react';
 
 vi.mock('@/lib/auth-client', () => ({
   useSession: () => ({ data: null }),
+  signIn: { social: vi.fn() },
+  signOut: vi.fn(),
 }));
 
 vi.mock('@/hooks/use-guest', () => ({
   useGuestId: () => 'test-guest-id',
+}));
+
+vi.mock('@/hooks/use-auth-with-migration', () => ({
+  useAuthWithMigration: () => null,
 }));
 
 vi.mock('@/server/actions/tasks', () => ({
