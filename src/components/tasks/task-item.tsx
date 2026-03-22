@@ -9,7 +9,7 @@ import {
   AlertTriangle,
   Clock,
 } from 'lucide-react';
-import { formatDistanceToNow, isPast, isToday, isTomorrow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { ChunkIcon } from '@/components/chat/chunk-icon';
 import { cn } from '@/lib/utils';
@@ -73,21 +73,35 @@ function DueDateLabel({ dueDate }: { dueDate: Date | null }) {
   if (!dueDate) return null;
   const date = new Date(dueDate);
   const now = new Date();
-  const overdue = date < now;
+  const overdue = date.getTime() < now.getTime();
 
+  // Use toLocaleString for user's local timezone
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const hasTime = date.getHours() !== 0 || date.getMinutes() !== 0;
-  const timeStr = hasTime ? ` ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}` : '';
+  const localDate = new Date(date.toLocaleString());
+  const todayStr = now.toLocaleDateString();
+  const tomorrowDate = new Date(now);
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  const tomorrowStr = tomorrowDate.toLocaleDateString();
+  const dueDateStr = date.toLocaleDateString();
+
+  const h = date.getHours();
+  const m = date.getMinutes();
+  const hasTime = h !== 0 || m !== 0;
+  const timeStr = hasTime
+    ? ` ${h > 12 ? h - 12 : h || 12}:${String(m).padStart(2, '0')}${h >= 12 ? 'pm' : 'am'}`
+    : '';
 
   let label: string;
-  if (isToday(date)) label = `Today${timeStr}`;
-  else if (isTomorrow(date)) label = `Tomorrow${timeStr}`;
+  if (dueDateStr === todayStr) label = `Today${timeStr}`;
+  else if (dueDateStr === tomorrowStr) label = `Tomorrow${timeStr}`;
   else label = `${months[date.getMonth()]} ${date.getDate()}${timeStr}`;
+
+  const isTodays = dueDateStr === todayStr;
 
   return (
     <span className={cn(
       'inline-flex items-center gap-1 text-[11px] font-medium',
-      overdue ? 'text-red-400' : isToday(date) ? 'text-amber-400' : 'text-muted-foreground/70',
+      overdue ? 'text-red-400' : isTodays ? 'text-amber-400' : 'text-muted-foreground/70',
     )}>
       {overdue ? <AlertTriangle className="size-3" /> : <Clock className="size-3" />}
       {overdue ? `${label} · Overdue` : label}
@@ -153,7 +167,7 @@ export function TaskItem({
   const isRoot = depth === 0;
 
   const dueDate = task.dueDate ? new Date(task.dueDate) : null;
-  const isOverdue = dueDate && isPast(dueDate) && !isToday(dueDate) && !isDone;
+  const isOverdue = dueDate && new Date(dueDate).getTime() < Date.now() && !isDone;
 
   const subtaskStats = useMemo(() => {
     if (!hasChildren) return null;
