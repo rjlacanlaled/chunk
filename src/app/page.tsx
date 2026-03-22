@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import confetti from 'canvas-confetti';
 import { List, LayoutGrid } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
 import { useGuestId } from '@/hooks/use-guest';
@@ -44,6 +45,12 @@ export default function Home() {
   const handleToggleDone = (task: Task) => {
     if (task.status !== 'done') {
       completeTask(task);
+      confetti({
+        particleCount: 80,
+        spread: 60,
+        origin: { y: 0.7 },
+        colors: ['#4945FF', '#9593FF', '#5CB176', '#F5CF0D'],
+      });
     }
     updateMutation.mutate({
       id: task.id,
