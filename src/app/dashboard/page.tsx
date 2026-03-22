@@ -40,7 +40,7 @@ export default function Home() {
   }, [session?.user, guestId]);
 
   const queryClient = useQueryClient();
-  const { data: tasks = [] } = useTasksQuery(owner ?? {});
+  const { data: tasks = [], isLoading: tasksLoading } = useTasksQuery(owner ?? {});
   const { updateMutation } = useTaskMutations(owner ?? {});
   const { xp, level, streak, lastXpGain, completeTask, uncompleteTask } = useGamification(tasks);
 
@@ -139,8 +139,8 @@ export default function Home() {
 
   const hasTasks = tasks.length > 0;
 
-  // Wait for owner to be ready (guest ID from localStorage)
-  if (!owner) {
+  // Wait for owner + initial data before rendering
+  if (!owner || tasksLoading) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
         <img src="/chunk-logos/chunky-thinking.svg" alt="Loading" className="size-24" />
