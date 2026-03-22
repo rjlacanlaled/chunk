@@ -134,8 +134,8 @@ export function ChatPanel({
   }
 
   return (
-    <div className="flex h-full flex-col">
-      <ScrollArea className="flex-1 px-4">
+    <div className="flex h-full min-h-0 flex-col">
+      <ScrollArea className="flex-1 min-h-0 px-4">
         <div
           className={`mx-auto flex flex-col gap-4 py-6 ${
             compact ? 'max-w-full' : 'max-w-[700px]'
@@ -149,7 +149,7 @@ export function ChatPanel({
         </div>
       </ScrollArea>
       <div
-        className={`border-t border-border/40 p-4 ${
+        className={`shrink-0 border-t border-border/40 p-4 ${
           compact ? '' : 'mx-auto w-full max-w-[700px]'
         }`}
       >

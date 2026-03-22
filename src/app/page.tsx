@@ -128,7 +128,7 @@ export default function Home() {
         </div>
 
         <div
-          className="transition-all duration-500 ease-in-out"
+          className="overflow-hidden transition-all duration-500 ease-in-out"
           style={{
             width: hasTasks ? '30%' : '100%',
             borderLeft: hasTasks ? '1px solid oklch(1 0 0 / 8%)' : 'none',
