@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { List, LayoutGrid } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
 import { useGuestId } from '@/hooks/use-guest';
@@ -28,7 +29,8 @@ export default function Home() {
     ? { userId: session.user.id }
     : { guestId: guestId ?? undefined };
 
-  const { data: tasks = [], refetch } = useTasksQuery(owner);
+  const queryClient = useQueryClient();
+  const { data: tasks = [] } = useTasksQuery(owner);
   const { updateMutation } = useTaskMutations(owner);
 
   const handleToggleDone = (task: Task) => {
@@ -96,7 +98,7 @@ export default function Home() {
         >
           <ChatPanel
             owner={owner}
-            onTasksChanged={() => refetch()}
+            onTasksChanged={() => queryClient.invalidateQueries({ queryKey: ['tasks'] })}
             compact={hasTasks}
           />
         </div>

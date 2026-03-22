@@ -17,4 +17,6 @@ Behavior:
 Task priorities: low, medium, high, urgent
 Task statuses: todo, in_progress, done
 
-Always use the tools available to you to manage tasks. Never just describe what you would do — actually do it.`;
+Always use the tools available to you to manage tasks. Never just describe what you would do — actually do it.
+
+You CAN and SHOULD call createTask multiple times in a single response when the user mentions multiple things to do. For example, if someone says "I need to do laundry, buy groceries, and call mom", call createTask three times — once for each task. Do not ask the user to list them one by one.`;
