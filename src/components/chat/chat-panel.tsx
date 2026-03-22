@@ -139,17 +139,14 @@ export function ChatPanel({
             compact ? 'max-w-full' : 'max-w-[700px]'
           }`}
         >
-          {messages.map((msg) => (
-            <ChatMessage key={msg.id} message={msg} />
-          ))}
-          {(status === 'submitted' || status === 'streaming') && (
-            (() => {
-              const lastMsg = messages[messages.length - 1];
-              const hasAssistantText = lastMsg?.role === 'assistant'
-                && lastMsg.parts.some((p) => p.type === 'text' && p.text.length > 0);
-              return !hasAssistantText ? <ChatThinking /> : null;
-            })()
-          )}
+          {messages.map((msg, i) => {
+            const isLastAssistant = msg.role === 'assistant' && i === messages.length - 1;
+            const msgIsStreaming = isLastAssistant && isLoading;
+            return (
+              <ChatMessage key={msg.id} message={msg} isStreaming={msgIsStreaming} />
+            );
+          })}
+          {status === 'submitted' && <ChatThinking />}
           <div ref={bottomRef} />
         </div>
       </ScrollArea>

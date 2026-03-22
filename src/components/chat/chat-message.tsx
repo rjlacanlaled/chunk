@@ -52,40 +52,52 @@ const mdComponents: Components = {
 function ToolChip({ part }: { part: Extract<UIMessage['parts'][number], { type: 'tool-invocation' }> }) {
   const { toolInvocation } = part;
   const label = TOOL_LABELS[toolInvocation.toolName] ?? toolInvocation.toolName;
-  const title = (toolInvocation.args as Record<string, unknown>)?.title as string | undefined;
   const isComplete = toolInvocation.state === 'result';
 
+  // Try to get a meaningful description from the args
+  const args = toolInvocation.args as Record<string, unknown>;
+  let detail = '';
+  if (args?.title) detail = `: ${args.title}`;
+  else if (Array.isArray(args?.tasks)) detail = ` (${args.tasks.length})`;
+  else if (Array.isArray(args?.names)) detail = ` (${args.names.length})`;
+  else if (args?.name) detail = `: ${args.name}`;
+
   return (
-    <span
+    <div
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium',
+        'flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs',
         isComplete
-          ? 'bg-primary/10 text-primary'
-          : 'bg-muted/80 text-muted-foreground',
+          ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+          : 'border-primary/30 bg-primary/10 text-primary',
       )}
     >
       {isComplete ? (
-        <CheckCircle2 className="size-3" />
+        <CheckCircle2 className="size-3.5 shrink-0" />
       ) : (
-        <span className="size-3 rounded-full bg-primary/50 animate-breathe" />
+        <ChunkIcon variant="animated" className="size-3.5 shrink-0" />
       )}
-      {label}
-      {title ? `: ${title}` : ''}
-    </span>
+      <span className="font-medium">
+        {label}{detail}
+      </span>
+    </div>
   );
 }
 
 interface ChatMessageProps {
   message: UIMessage;
+  isStreaming?: boolean;
 }
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
   const textParts = message.parts.filter((p) => p.type === 'text');
   const toolParts = message.parts.filter((p) => p.type === 'tool-invocation');
   const hasText = textParts.some((p) => p.text.length > 0);
   const hasTools = toolParts.length > 0;
+
+  // Use animated icon while this message is still streaming
+  const iconVariant = !isUser && isStreaming ? 'animated' : 'static';
 
   return (
     <div
@@ -96,13 +108,13 @@ export function ChatMessage({ message }: ChatMessageProps) {
     >
       {!isUser && (
         <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15">
-          <ChunkIcon className="size-4" />
+          <ChunkIcon className="size-4" variant={iconVariant} />
         </div>
       )}
       <div className="flex max-w-[75%] flex-col gap-2">
-        {/* Tool invocation chips */}
+        {/* Tool invocation chips — always visible */}
         {!isUser && hasTools && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-col gap-1">
             {toolParts.map((part) => (
               <ToolChip
                 key={(part as Extract<UIMessage['parts'][number], { type: 'tool-invocation' }>).toolInvocation.toolCallId}
@@ -134,7 +146,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
           </div>
         )}
 
-        {/* If assistant message has tool calls but no text yet */}
+        {/* Shimmer status when tools are running but no text yet */}
         {!isUser && !hasText && hasTools && (
           <span className="text-sm font-medium animate-shimmer-text">
             {(() => {
@@ -145,7 +157,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
                 const name = (activeTool as any).toolInvocation?.toolName;
                 return TOOL_LABELS[name] || 'Working on it...';
               }
-              return 'Working on it...';
+              return 'Finishing up...';
             })()}
           </span>
         )}
