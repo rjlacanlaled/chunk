@@ -35,24 +35,24 @@ export function ScoreSummary({ tasks }: ScoreSummaryProps) {
 
   return (
     <div className="flex items-center gap-4 rounded-lg border border-border/40 bg-card/50 px-4 py-2">
-      <Trophy className="size-4 text-primary" />
-      <div className="flex gap-4 text-xs">
+      <div className="flex items-center gap-4 text-xs">
         <div className="flex items-center gap-1.5">
           <Target className="size-3 text-emerald-400" />
-          <span className="text-muted-foreground">Today</span>
           <span className={cn('font-semibold tabular-nums', today > 0 ? 'text-emerald-400' : 'text-foreground')}>
-            {today}
+            Today: {today} pts
           </span>
         </div>
         <div className="flex items-center gap-1.5">
           <TrendingUp className="size-3 text-amber-400" />
-          <span className="text-muted-foreground">Week</span>
-          <span className="font-semibold tabular-nums text-foreground">{week}</span>
+          <span className="font-semibold tabular-nums text-foreground">
+            Week: {week} pts
+          </span>
         </div>
         <div className="flex items-center gap-1.5">
           <Trophy className="size-3 text-primary" />
-          <span className="text-muted-foreground">Total</span>
-          <span className="font-semibold tabular-nums text-foreground">{allTime}</span>
+          <span className="font-semibold tabular-nums text-foreground">
+            Total: {allTime} pts
+          </span>
         </div>
       </div>
     </div>

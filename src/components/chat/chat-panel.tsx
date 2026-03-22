@@ -144,7 +144,14 @@ export function ChatPanel({
           {messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} />
           ))}
-          {status === 'submitted' && <ChatThinking />}
+          {(status === 'submitted' || status === 'streaming') && (
+            (() => {
+              const lastMsg = messages[messages.length - 1];
+              const hasAssistantText = lastMsg?.role === 'assistant'
+                && lastMsg.parts.some((p) => p.type === 'text' && p.text.length > 0);
+              return !hasAssistantText ? <ChatThinking /> : null;
+            })()
+          )}
           <div ref={bottomRef} />
         </div>
       </ScrollArea>

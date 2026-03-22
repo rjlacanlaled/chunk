@@ -10,33 +10,65 @@ import {
   Clock,
 } from 'lucide-react';
 import { formatDistanceToNow, isPast, isToday, isTomorrow } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Task } from '@/types/task';
 
-/* ── Score badge ─────────────────────────────────────────── */
+/* ── Score color helpers ─────────────────────────────────── */
 
-function getScoreLabel(score: number | null) {
+const getScoreColor = (score: number): string => {
+  if (score <= 5) return 'text-emerald-400';
+  if (score <= 15) return 'text-amber-400';
+  if (score <= 30) return 'text-orange-400';
+  if (score <= 100) return 'text-red-400';
+  return 'text-purple-400';
+};
+
+const getScoreBarColor = (score: number): string => {
+  if (score <= 5) return 'bg-emerald-400';
+  if (score <= 15) return 'bg-amber-400';
+  if (score <= 30) return 'bg-orange-400';
+  if (score <= 100) return 'bg-red-400';
+  return 'bg-purple-400';
+};
+
+const getScoreTrackColor = (score: number): string => {
+  if (score <= 5) return 'bg-emerald-400/20';
+  if (score <= 15) return 'bg-amber-400/20';
+  if (score <= 30) return 'bg-orange-400/20';
+  if (score <= 100) return 'bg-red-400/20';
+  return 'bg-purple-400/20';
+};
+
+/* ── Score meter ─────────────────────────────────────────── */
+
+function ScoreMeter({ score }: { score: number | null }) {
   if (!score) return null;
-  if (score <= 5) return { text: 'Easy', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' };
-  if (score <= 15) return { text: 'Medium', color: 'bg-amber-500/15 text-amber-400 border-amber-500/25' };
-  if (score <= 30) return { text: 'Hard', color: 'bg-red-500/15 text-red-400 border-red-500/25' };
-  if (score <= 100) return { text: 'Epic', color: 'bg-purple-500/15 text-purple-400 border-purple-500/25' };
-  return { text: 'Legendary', color: 'bg-pink-500/15 text-pink-400 border-pink-500/25' };
+  const maxScore = 100;
+  const pct = Math.min((score / maxScore) * 100, 100);
+
+  return (
+    <div className="flex items-center gap-1.5 shrink-0">
+      <div className={cn('h-1.5 w-8 overflow-hidden rounded-full', getScoreTrackColor(score))}>
+        <div
+          className={cn('h-full rounded-full transition-all', getScoreBarColor(score))}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <span className={cn('text-[10px] font-bold tabular-nums', getScoreColor(score))}>
+        {score}
+      </span>
+    </div>
+  );
 }
 
-function ScoreBadge({ score }: { score: number | null }) {
-  const label = getScoreLabel(score);
-  if (!label) return null;
+/* ── Time ago label ──────────────────────────────────────── */
+
+function TimeAgo({ date }: { date: Date }) {
+  const label = formatDistanceToNow(new Date(date), { addSuffix: false });
   return (
-    <span
-      className={cn(
-        'inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold leading-none',
-        label.color,
-      )}
-    >
-      {label.text}
+    <span className="text-[10px] text-muted-foreground/60 whitespace-nowrap">
+      {label} ago
     </span>
   );
 }
@@ -68,10 +100,10 @@ function DueDateLabel({ dueDate }: { dueDate: Date | null }) {
   );
 }
 
-/* ── Subtask progress bar ────────────────────────────────── */
+/* ── Subtask progress bar (score-based) ──────────────────── */
 
-function SubtaskProgress({ done, total }: { done: number; total: number }) {
-  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+function SubtaskProgress({ doneScore, totalScore }: { doneScore: number; totalScore: number }) {
+  const pct = totalScore > 0 ? Math.round((doneScore / totalScore) * 100) : 0;
   return (
     <div className="flex items-center gap-2">
       <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
@@ -84,26 +116,9 @@ function SubtaskProgress({ done, total }: { done: number; total: number }) {
         />
       </div>
       <span className="text-[11px] tabular-nums text-muted-foreground">
-        {done}/{total}
+        {doneScore}/{totalScore} pts
       </span>
     </div>
-  );
-}
-
-/* ── Priority badge (only for high/urgent) ───────────────── */
-
-const PRIORITY_STYLES: Record<string, string> = {
-  urgent: 'bg-red-500/15 text-red-400 border-red-500/30',
-  high: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
-};
-
-function PriorityBadge({ priority }: { priority: string }) {
-  const style = PRIORITY_STYLES[priority];
-  if (!style) return null; // hide medium/low — it's noise
-  return (
-    <Badge className={cn('shrink-0 border text-[10px] uppercase', style)}>
-      {priority}
-    </Badge>
   );
 }
 
@@ -117,8 +132,6 @@ interface SubtaskRowProps {
 
 function SubtaskRow({ task, onToggleDone, isLast }: SubtaskRowProps) {
   const isDone = task.status === 'done';
-  const dueDate = task.dueDate ? new Date(task.dueDate) : null;
-  const isOverdue = dueDate && isPast(dueDate) && !isToday(dueDate) && !isDone;
 
   return (
     <div className="relative flex items-center gap-2.5 py-1.5 pl-4">
@@ -153,15 +166,9 @@ function SubtaskRow({ task, onToggleDone, isLast }: SubtaskRowProps) {
         {task.title}
       </span>
 
-      <ScoreBadge score={task.score} />
+      <ScoreMeter score={task.score} />
 
       {!isDone && <DueDateLabel dueDate={task.dueDate} />}
-
-      {isDone && (
-        <span className="text-[11px] text-muted-foreground/60">
-          {new Date(task.updatedAt).toLocaleDateString()}
-        </span>
-      )}
     </div>
   );
 }
@@ -190,16 +197,19 @@ export function TaskItem({
   const [expanded, setExpanded] = useState(true);
   const isDone = task.status === 'done';
   const hasChildren = subtasks.length > 0;
-  const showBreakDown = !isDone && (task.score ?? 0) > 10 && !hasChildren;
+  const showBreakDown = !isDone && (task.score ?? 0) > 20 && !hasChildren;
 
   const dueDate = task.dueDate ? new Date(task.dueDate) : null;
   const isOverdue = dueDate && isPast(dueDate) && !isToday(dueDate) && !isDone;
 
-  // Subtask progress
+  // Score-based subtask progress
   const subtaskStats = useMemo(() => {
     if (!hasChildren) return null;
-    const doneCount = subtasks.filter((s) => s.status === 'done').length;
-    return { done: doneCount, total: subtasks.length };
+    const doneScore = subtasks
+      .filter((s) => s.status === 'done')
+      .reduce((sum, s) => sum + (s.score ?? 0), 0);
+    const totalScore = subtasks.reduce((sum, s) => sum + (s.score ?? 0), 0);
+    return { doneScore, totalScore };
   }, [hasChildren, subtasks]);
 
   return (
@@ -254,8 +264,6 @@ export function TaskItem({
             >
               {task.title}
             </p>
-            <ScoreBadge score={task.score} />
-            <PriorityBadge priority={task.priority} />
             {isOverdue && (
               <span className="inline-flex items-center gap-1 rounded-md bg-red-500/15 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-red-400">
                 <AlertTriangle className="size-2.5" />
@@ -266,31 +274,29 @@ export function TaskItem({
 
           <div className="flex items-center gap-3">
             {!isDone && <DueDateLabel dueDate={task.dueDate} />}
-            {isDone && (
-              <span className="text-[11px] text-muted-foreground/60">
-                Completed {new Date(task.updatedAt).toLocaleDateString()}
-              </span>
-            )}
             {subtaskStats && (
-              <SubtaskProgress done={subtaskStats.done} total={subtaskStats.total} />
+              <SubtaskProgress
+                doneScore={subtaskStats.doneScore}
+                totalScore={subtaskStats.totalScore}
+              />
             )}
           </div>
         </div>
 
+        <div className="flex items-center gap-2 shrink-0">
+          <ScoreMeter score={task.score} />
+          <TimeAgo date={task.createdAt} />
+        </div>
+
         {showBreakDown && onBreakDown && (
           <Button
-            variant={(task.score ?? 0) >= 6 ? 'default' : 'ghost'}
+            variant="default"
             size="sm"
             onClick={() => onBreakDown(task.title)}
-            className={cn(
-              'shrink-0 text-xs',
-              (task.score ?? 0) >= 6
-                ? 'bg-primary/20 text-primary hover:bg-primary/30'
-                : 'text-muted-foreground',
-            )}
+            className="shrink-0 text-xs bg-primary/20 text-primary hover:bg-primary/30"
           >
             <Zap className="mr-1 size-3" />
-            {(task.score ?? 0) >= 20 ? 'Chunk it!' : 'Break it down'}
+            Chunk it!
           </Button>
         )}
 

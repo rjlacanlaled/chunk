@@ -1,6 +1,8 @@
 'use client';
 
 import type { UIMessage } from 'ai';
+import type { Components } from 'react-markdown';
+import ReactMarkdown from 'react-markdown';
 import { User, CheckCircle2 } from 'lucide-react';
 import { ChunkIcon } from './chunk-icon';
 import { cn } from '@/lib/utils';
@@ -12,6 +14,39 @@ const TOOL_LABELS: Record<string, string> = {
   updateTaskByName: 'Updating task',
   deleteTaskByName: 'Deleting task',
   listTasks: 'Checking your tasks',
+};
+
+const mdComponents: Components = {
+  p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+  strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
+  em: ({ children }) => <em className="italic text-foreground/90">{children}</em>,
+  ul: ({ children }) => <ul className="mb-2 ml-4 list-disc space-y-0.5 last:mb-0">{children}</ul>,
+  ol: ({ children }) => <ol className="mb-2 ml-4 list-decimal space-y-0.5 last:mb-0">{children}</ol>,
+  li: ({ children }) => <li className="text-sm leading-relaxed">{children}</li>,
+  code: ({ children, className }) => {
+    const isBlock = className?.includes('language-');
+    if (isBlock) {
+      return (
+        <code className="block overflow-x-auto rounded-md bg-muted/60 p-3 text-xs font-mono">
+          {children}
+        </code>
+      );
+    }
+    return (
+      <code className="rounded-sm bg-muted/60 px-1 py-0.5 text-xs font-mono">
+        {children}
+      </code>
+    );
+  },
+  pre: ({ children }) => <pre className="mb-2 last:mb-0">{children}</pre>,
+  h1: ({ children }) => <p className="mb-1 text-base font-bold">{children}</p>,
+  h2: ({ children }) => <p className="mb-1 text-sm font-bold">{children}</p>,
+  h3: ({ children }) => <p className="mb-1 text-sm font-semibold">{children}</p>,
+  blockquote: ({ children }) => (
+    <blockquote className="border-l-2 border-primary/40 pl-3 italic text-muted-foreground">
+      {children}
+    </blockquote>
+  ),
 };
 
 function ToolChip({ part }: { part: Extract<UIMessage['parts'][number], { type: 'tool-invocation' }> }) {
@@ -87,9 +122,15 @@ export function ChatMessage({ message }: ChatMessageProps) {
                 : 'bg-card ring-1 ring-border/50 text-card-foreground rounded-bl-md',
             )}
           >
-            <p className="whitespace-pre-wrap">
-              {textParts.map((p) => p.text).join('')}
-            </p>
+            {isUser ? (
+              <p className="whitespace-pre-wrap">
+                {textParts.map((p) => p.text).join('')}
+              </p>
+            ) : (
+              <ReactMarkdown components={mdComponents}>
+                {textParts.map((p) => p.text).join('')}
+              </ReactMarkdown>
+            )}
           </div>
         )}
 
