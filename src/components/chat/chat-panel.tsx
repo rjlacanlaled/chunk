@@ -42,6 +42,14 @@ export function ChatPanel({
   });
 
   const isLoading = status === 'submitted' || status === 'streaming';
+  const prevStatusRef = useRef(status);
+
+  useEffect(() => {
+    if (prevStatusRef.current !== 'ready' && status === 'ready') {
+      onTasksChanged?.();
+    }
+    prevStatusRef.current = status;
+  }, [status, onTasksChanged]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
