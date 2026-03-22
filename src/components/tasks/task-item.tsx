@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Circle,
   CheckCircle2,
@@ -61,7 +61,9 @@ function ScoreMeter({ score }: { score: number | null }) {
 function TimeAgo({ date }: { date: Date }) {
   return (
     <span className="text-[10px] text-muted-foreground/50 whitespace-nowrap">
-      {formatDistanceToNow(new Date(date), { addSuffix: false })} ago
+      {formatDistanceToNow(new Date(date), { addSuffix: false })}
+      {' '}
+      ago
     </span>
   );
 }
@@ -93,7 +95,13 @@ function SubtaskProgress({ doneScore, totalScore }: { doneScore: number; totalSc
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-[11px] tabular-nums text-muted-foreground">{doneScore}/{totalScore} pts</span>
+      <span className="text-[11px] tabular-nums text-muted-foreground">
+        {doneScore}
+        /
+        {totalScore}
+        {' '}
+        pts
+      </span>
     </div>
   );
 }
@@ -126,7 +134,9 @@ export function TaskItem({
   const hasChildren = children.length > 0;
 
   // Stop chunking animation when children arrive
-  if (chunking && hasChildren) setChunking(false);
+  useEffect(() => {
+    if (chunking && hasChildren) setChunking(false);
+  }, [chunking, hasChildren]);
   const showBreakDown = !isDone && (task.score ?? 0) >= 15 && !hasChildren;
   const isRoot = depth === 0;
 
@@ -149,6 +159,7 @@ export function TaskItem({
       : 'text-[13px] font-normal text-muted-foreground';
 
   const row = (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- role/tabIndex set when interactive
     <div
       className={cn(
         'flex items-center gap-3 py-2 px-3 rounded-md transition-colors',
@@ -157,7 +168,15 @@ export function TaskItem({
         recentlyCompleted && 'animate-success-flash',
         chunking && 'animate-chunking',
       )}
+      role={hasChildren ? 'button' : undefined}
+      tabIndex={hasChildren ? 0 : undefined}
       onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
+      onKeyDown={hasChildren ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setExpanded(!expanded);
+        }
+      } : undefined}
     >
       <Button
         variant="ghost"
@@ -215,7 +234,10 @@ export function TaskItem({
 
       {recentlyCompleted && xpGain && (
         <span className="absolute -top-2 right-3 animate-float-up text-xs font-bold text-primary">
-          +{xpGain} XP
+          +
+          {xpGain}
+          {' '}
+          XP
         </span>
       )}
     </div>

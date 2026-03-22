@@ -28,6 +28,8 @@ export const getRecentMessages = async (
   owner: { userId?: string; guestId?: string },
   limit = 20,
 ) => {
+  if (!owner.userId && !owner.guestId) return [];
+
   const conditions = [];
 
   if (owner.userId) {

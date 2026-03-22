@@ -36,4 +36,5 @@ export interface UpdateTaskInput {
   status?: Status;
   position?: number;
   dueDate?: Date | null;
+  score?: number | null;
 }

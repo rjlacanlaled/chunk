@@ -16,7 +16,7 @@ export const POST = async (req: Request) => {
   const tools = makeTaskTools(resolvedOwner);
 
   // Normalize messages to UIMessage format for convertToModelMessages
-  const uiMessages: UIMessage[] = messages.map((msg: any) => {
+  const uiMessages: UIMessage[] = messages.map((msg: Record<string, unknown>) => {
     if (msg.parts) return msg; // already UIMessage format
     // Convert legacy { role, content } to UIMessage with parts
     return {

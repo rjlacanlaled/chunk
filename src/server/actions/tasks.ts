@@ -80,6 +80,8 @@ export const searchTasks = async (
 export const listTasks = async (
   owner: { userId?: string; guestId?: string },
 ) => {
+  if (!owner.userId && !owner.guestId) return [];
+
   const conditions = [];
 
   if (owner.userId) {

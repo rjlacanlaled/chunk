@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useMemo, type MutableRefObject } from 'react';
+import { useEffect, useRef, useMemo, useCallback, type MutableRefObject } from 'react';
 import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport, isToolUIPart } from 'ai';
 import { ChunkIcon } from './chunk-icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from './chat-message';
@@ -35,6 +35,7 @@ export function ChatPanel({
       api: '/api/chat',
       body: { owner },
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stable on userId/guestId, not object ref
     [owner.userId, owner.guestId],
   );
 
@@ -63,14 +64,14 @@ export function ChatPanel({
     const lastMsg = messages[messages.length - 1];
     if (lastMsg.role !== 'assistant') return;
     const hasToolResult = lastMsg.parts.some(
-      (p) => p.type === 'tool-invocation' && 'result' in (p as any).toolInvocation,
+      (p) => isToolUIPart(p) && 'output' in p && p.state === 'output-available',
     );
     if (hasToolResult) onTasksChanged?.();
   }, [messages, status, onTasksChanged]);
 
-  const handleSend = (text: string) => {
+  const handleSend = useCallback((text: string) => {
     sendMessage({ text });
-  };
+  }, [sendMessage]);
 
   useEffect(() => {
     if (sendRef) {

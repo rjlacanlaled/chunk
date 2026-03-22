@@ -176,5 +176,3 @@ export const makeTaskTools = (owner: Owner) => ({
     },
   }),
 });
-
-export const taskTools = makeTaskTools({ guestId: 'test' });
