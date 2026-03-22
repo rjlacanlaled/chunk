@@ -258,7 +258,7 @@ export default function Home() {
         >
           <ChatPanel
             owner={owner}
-            onTasksChanged={() => queryClient.invalidateQueries({ queryKey: ['tasks'] })}
+            onTasksChanged={() => queryClient.refetchQueries({ queryKey: ['tasks'] })}
             compact={hasTasks}
             sendRef={sendChatRef}
           />
