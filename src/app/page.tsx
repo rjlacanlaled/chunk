@@ -66,18 +66,20 @@ export default function Home() {
     const marking = newStatus === 'done';
     const hasChildren = getChildren(task.id).length > 0;
 
+    // Confetti for any high-score task completion
+    if (marking && (task.score ?? 0) >= 20) {
+      confetti({
+        particleCount: Math.min(200, 80 + (task.score ?? 0)),
+        spread: 70,
+        origin: { y: 0.7 },
+        colors: ['#4945FF', '#9593FF', '#5CB176', '#F5CF0D'],
+      });
+    }
+
     // Only award XP for leaf tasks (no children)
     if (!hasChildren) {
       if (marking) {
         completeTask(task);
-        if ((task.score ?? 0) >= 20) {
-          confetti({
-            particleCount: 80 + (task.score ?? 0),
-            spread: 70,
-            origin: { y: 0.7 },
-            colors: ['#4945FF', '#9593FF', '#5CB176', '#F5CF0D'],
-          });
-        }
       } else {
         uncompleteTask(task);
       }
