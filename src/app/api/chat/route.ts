@@ -22,7 +22,13 @@ function extractText(msg: Record<string, unknown>): string {
 
 export const POST = async (req: Request) => {
   const body = await req.json();
-  const { messages, owner, clientTime, clientTimezone } = body;
+  const { messages, owner, clientTimezone } = body;
+
+  // Compute client's current time from their timezone — always fresh, never stale
+  const clientTime = new Date().toLocaleString('en-CA', {
+    hour12: false,
+    timeZone: clientTimezone || 'UTC',
+  }).replace(',', '');
 
   const resolvedOwner = owner ?? { guestId: 'anonymous' };
   const tools = makeTaskTools(resolvedOwner);
