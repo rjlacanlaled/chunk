@@ -42,18 +42,32 @@ describe('TaskList', () => {
     ).toBeInTheDocument();
   });
 
-  it('sorts tasks by priority then due date', () => {
+  it('groups tasks by status section', () => {
     const tasks = [
-      mockTask({ id: '1', title: 'Low task', priority: 'low' }),
-      mockTask({ id: '2', title: 'Urgent task', priority: 'urgent' }),
-      mockTask({ id: '3', title: 'High task', priority: 'high' }),
+      mockTask({ id: '1', title: 'Todo task', status: 'todo' }),
+      mockTask({ id: '2', title: 'Done task', status: 'done' }),
+      mockTask({ id: '3', title: 'In progress task', status: 'in_progress' }),
+    ];
+
+    render(<TaskList tasks={tasks} onToggleDone={vi.fn()} />);
+
+    expect(screen.getByText('To Do')).toBeInTheDocument();
+    expect(screen.getByText('In Progress')).toBeInTheDocument();
+    expect(screen.getByText('Done')).toBeInTheDocument();
+  });
+
+  it('sorts tasks by score (hardest first) within sections', () => {
+    const tasks = [
+      mockTask({ id: '1', title: 'Easy task', score: 2 }),
+      mockTask({ id: '2', title: 'Hard task', score: 8 }),
+      mockTask({ id: '3', title: 'Medium task', score: 5 }),
     ];
 
     render(<TaskList tasks={tasks} onToggleDone={vi.fn()} />);
 
     const items = screen.getAllByText(/task$/i);
-    expect(items[0]).toHaveTextContent('Urgent task');
-    expect(items[1]).toHaveTextContent('High task');
-    expect(items[2]).toHaveTextContent('Low task');
+    expect(items[0]).toHaveTextContent('Hard task');
+    expect(items[1]).toHaveTextContent('Medium task');
+    expect(items[2]).toHaveTextContent('Easy task');
   });
 });
