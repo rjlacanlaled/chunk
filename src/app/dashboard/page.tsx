@@ -32,12 +32,19 @@ export default function Home() {
 
   useAuthWithMigration();
 
-  // Wait for session check + guest ID before deciding owner
+  // Determine owner — keep previous owner while session re-validates on tab switch
+  const prevOwner = useRef<{ userId?: string; guestId?: string } | null>(null);
   const owner = useMemo(() => {
-    if (sessionPending) return null;
-    if (session?.user) return { userId: session.user.id };
-    if (!guestId) return null; // still loading from localStorage
-    return { guestId };
+    if (session?.user) {
+      prevOwner.current = { userId: session.user.id };
+      return prevOwner.current;
+    }
+    if (!sessionPending && guestId) {
+      prevOwner.current = { guestId };
+      return prevOwner.current;
+    }
+    // While session is re-checking (tab switch), keep previous owner
+    return prevOwner.current;
   }, [sessionPending, session?.user, guestId]);
 
   const isGuest = !session?.user;
