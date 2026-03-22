@@ -136,32 +136,49 @@ export const makeTaskTools = (owner: Owner) => ({
   }),
 
   deleteTasks: tool({
-    description: 'Delete one or more tasks by name. Also deletes all subtasks recursively.',
+    description: 'Delete tasks. Pass names to delete specific tasks, OR pass a filter to bulk-delete (e.g., filter:"overdue" deletes all overdue tasks). Always prefer filter for bulk operations — ONE call, not multiple.',
     inputSchema: z.object({
-      names: z.array(z.string()).describe('Task names to delete (partial match)'),
+      names: z.array(z.string()).optional().describe('Task names to delete (partial match)'),
+      filter: z.enum(['overdue', 'done', 'all']).optional().describe('Bulk delete by filter instead of names'),
     }),
-    execute: async ({ names }) => {
+    execute: async ({ names, filter }) => {
       const allTasks = await listTasks(owner);
       const getDescendants = (parentId: string): typeof allTasks => {
         const children = allTasks.filter((t) => t.parentTaskId === parentId);
         return children.flatMap((c) => [c, ...getDescendants(c.id)]);
       };
 
-      const results = [];
-      for (const name of names) {
-        const task = await findTaskByName(name, owner);
-        if (!task) { results.push({ error: `No task matching "${name}"` }); continue; }
+      // Determine which tasks to delete
+      let toDelete: typeof allTasks = [];
+      const now = new Date();
 
-        // Delete all descendants first (bottom-up)
+      if (filter === 'overdue') {
+        toDelete = allTasks.filter((t) => t.dueDate && new Date(t.dueDate) < now && t.status !== 'done');
+      } else if (filter === 'done') {
+        toDelete = allTasks.filter((t) => t.status === 'done');
+      } else if (filter === 'all') {
+        toDelete = allTasks;
+      } else if (names) {
+        for (const name of names) {
+          const task = await findTaskByName(name, owner);
+          if (task) toDelete.push(task);
+        }
+      }
+
+      // Delete each task and its descendants
+      const deleted: string[] = [];
+      for (const task of toDelete) {
+        if (deleted.includes(task.id)) continue; // skip if already deleted as descendant
         const descendants = getDescendants(task.id);
         for (const d of descendants) {
           await deleteTask(d.id);
+          deleted.push(d.id);
         }
-
         await deleteTask(task.id);
-        results.push({ deleted: true, title: task.title, childrenDeleted: descendants.length });
+        deleted.push(task.id);
       }
-      return results;
+
+      return { deletedCount: deleted.length, tasks: toDelete.map((t) => t.title) };
     },
   }),
 
