@@ -120,14 +120,14 @@
   display: flex;
   align-items: center;
   padding: 20px 56px 48px;
-  gap: 0;
+  gap: 40px;
   z-index: 5;
   min-height: calc(100vh - 80px);
 }
 
 .hl {
   flex: 1;
-  max-width: 500px;
+  max-width: 540px;
   display: flex;
   flex-direction: column;
   gap: 22px;
