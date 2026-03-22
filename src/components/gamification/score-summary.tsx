@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Trophy } from 'lucide-react';
+import { Trophy, TrendingUp, Target } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { Task } from '@/types/task';
 
 interface ScoreSummaryProps {
@@ -25,8 +26,7 @@ export function ScoreSummary({ tasks }: ScoreSummaryProps) {
       .filter((t) => new Date(t.updatedAt) >= startOfWeek)
       .reduce((sum, t) => sum + (t.score ?? 0), 0);
 
-    const allTimeScore = doneTasks
-      .reduce((sum, t) => sum + (t.score ?? 0), 0);
+    const allTimeScore = doneTasks.reduce((sum, t) => sum + (t.score ?? 0), 0);
 
     return { today: todayScore, week: weekScore, allTime: allTimeScore };
   }, [tasks]);
@@ -37,17 +37,22 @@ export function ScoreSummary({ tasks }: ScoreSummaryProps) {
     <div className="flex items-center gap-4 rounded-lg border border-border/40 bg-card/50 px-4 py-2">
       <Trophy className="size-4 text-primary" />
       <div className="flex gap-4 text-xs">
-        <div className="flex flex-col items-center">
-          <span className="font-semibold tabular-nums text-foreground">{today}</span>
+        <div className="flex items-center gap-1.5">
+          <Target className="size-3 text-emerald-400" />
           <span className="text-muted-foreground">Today</span>
+          <span className={cn('font-semibold tabular-nums', today > 0 ? 'text-emerald-400' : 'text-foreground')}>
+            {today}
+          </span>
         </div>
-        <div className="flex flex-col items-center">
-          <span className="font-semibold tabular-nums text-foreground">{week}</span>
+        <div className="flex items-center gap-1.5">
+          <TrendingUp className="size-3 text-amber-400" />
           <span className="text-muted-foreground">Week</span>
+          <span className="font-semibold tabular-nums text-foreground">{week}</span>
         </div>
-        <div className="flex flex-col items-center">
-          <span className="font-semibold tabular-nums text-foreground">{allTime}</span>
+        <div className="flex items-center gap-1.5">
+          <Trophy className="size-3 text-primary" />
           <span className="text-muted-foreground">Total</span>
+          <span className="font-semibold tabular-nums text-foreground">{allTime}</span>
         </div>
       </div>
     </div>

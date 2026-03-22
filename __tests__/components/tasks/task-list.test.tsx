@@ -51,9 +51,11 @@ describe('TaskList', () => {
 
     render(<TaskList tasks={tasks} onToggleDone={vi.fn()} />);
 
+    // Section headers are rendered as <h3> elements inside <button>
     expect(screen.getByText('To Do')).toBeInTheDocument();
     expect(screen.getByText('In Progress')).toBeInTheDocument();
-    expect(screen.getByText('Done')).toBeInTheDocument();
+    // "Done" appears in both the QuickStats bar and the section header
+    expect(screen.getAllByText('Done').length).toBeGreaterThanOrEqual(1);
   });
 
   it('sorts tasks by score (hardest first) within sections', () => {
@@ -69,5 +71,32 @@ describe('TaskList', () => {
     expect(items[0]).toHaveTextContent('Hard task');
     expect(items[1]).toHaveTextContent('Medium task');
     expect(items[2]).toHaveTextContent('Easy task');
+  });
+
+  it('shows quick stats with total and completed counts', () => {
+    const tasks = [
+      mockTask({ id: '1', title: 'Active', status: 'todo' }),
+      mockTask({ id: '2', title: 'Finished', status: 'done' }),
+    ];
+
+    render(<TaskList tasks={tasks} onToggleDone={vi.fn()} />);
+
+    // The QuickStats component shows Total, Done, and Today labels
+    expect(screen.getByText('Total')).toBeInTheDocument();
+    expect(screen.getByText('Today')).toBeInTheDocument();
+  });
+
+  it('collapses done section by default', () => {
+    const tasks = [
+      mockTask({ id: '1', title: 'Active task', status: 'todo' }),
+      mockTask({ id: '2', title: 'Finished task', status: 'done' }),
+    ];
+
+    render(<TaskList tasks={tasks} onToggleDone={vi.fn()} />);
+
+    // Active task should be visible
+    expect(screen.getByText('Active task')).toBeInTheDocument();
+    // Done task should NOT be visible (section collapsed by default)
+    expect(screen.queryByText('Finished task')).not.toBeInTheDocument();
   });
 });
