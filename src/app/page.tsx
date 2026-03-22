@@ -101,32 +101,25 @@ export default function Home() {
       }
     }
 
-    // Auto-complete parent if all siblings are now done
-    if (marking && task.parentTaskId) {
-      const siblings = getChildren(task.parentTaskId);
-      const allSiblingsDone = siblings.every(
-        (s) => s.id === task.id ? true : s.status === 'done',
-      );
-      if (allSiblingsDone) {
-        const parent = tasks.find((t) => t.id === task.parentTaskId);
-        if (parent && parent.status !== 'done') {
-          updateMutation.mutate({ id: parent.id, status: 'done' });
-          // Recurse up — check if parent's siblings are all done too
-          const grandparentId = parent.parentTaskId;
-          if (grandparentId) {
-            const parentSiblings = getChildren(grandparentId);
-            const allParentSiblingsDone = parentSiblings.every(
-              (s) => s.id === parent.id ? true : s.status === 'done',
-            );
-            if (allParentSiblingsDone) {
-              const grandparent = tasks.find((t) => t.id === grandparentId);
-              if (grandparent && grandparent.status !== 'done') {
-                updateMutation.mutate({ id: grandparent.id, status: 'done' });
-              }
-            }
+    // Auto-complete ancestors: recursively check up the tree
+    if (marking) {
+      const autoCompleteUp = (childId: string, justCompletedId: string) => {
+        const child = tasks.find((t) => t.id === childId);
+        if (!child?.parentTaskId) return;
+        const siblings = getChildren(child.parentTaskId);
+        const allDone = siblings.every(
+          (s) => s.id === justCompletedId || s.status === 'done',
+        );
+        if (allDone) {
+          const parent = tasks.find((t) => t.id === child.parentTaskId);
+          if (parent && parent.status !== 'done') {
+            updateMutation.mutate({ id: parent.id, status: 'done' });
+            // Keep going up
+            autoCompleteUp(parent.id, parent.id);
           }
         }
-      }
+      };
+      autoCompleteUp(task.id, task.id);
     }
 
     // Auto-uncomplete ancestors when unchecking a subtask
