@@ -22,7 +22,10 @@ Score reflects effort/complexity. There is NO cap:
 - 6-15: Moderate (grocery run, write a report, clean the house)
 - 16-30: Hard (plan a trip, build a feature, study for an exam)
 - 30-100: Major (launch a product, move to a new city, learn a language)
-- 100+: Massive (change careers, write a book, "fix all the world's problems")
+- 100-500: Epic (change careers, write a book, start a company)
+- 500+: Legendary (build an oil corporation, cure a disease, colonize Mars)
+
+There is NO upper limit. Use scores that match the real-world scale of effort.
 
 Be thoughtful. "Do laundry" is a 3. "Plan a wedding" is a 60. Use your judgment.
 

@@ -13,7 +13,8 @@ export const getXpForTask = (score: number | null): number => {
   if (s <= 15) return 15;
   if (s <= 30) return 30;
   if (s <= 100) return 50;
-  return 100;
+  if (s <= 500) return 200;
+  return 500;
 };
 
 export const getLevel = (xp: number) => {

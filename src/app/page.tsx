@@ -43,7 +43,7 @@ export default function Home() {
   const queryClient = useQueryClient();
   const { data: tasks = [] } = useTasksQuery(owner ?? {});
   const { updateMutation } = useTaskMutations(owner ?? {});
-  const { xp, level, streak, lastXpGain, completeTask } = useGamification(tasks);
+  const { xp, level, streak, lastXpGain, completeTask, uncompleteTask } = useGamification(tasks);
 
   const getDescendants = useCallback((parentId: string): Task[] => {
     const children = tasks.filter((t) => t.parentTaskId === parentId);
@@ -64,6 +64,8 @@ export default function Home() {
           colors: ['#4945FF', '#9593FF', '#5CB176', '#F5CF0D'],
         });
       }
+    } else {
+      uncompleteTask(task);
     }
 
     // Update this task
@@ -74,6 +76,7 @@ export default function Home() {
     for (const child of descendants) {
       if (child.status !== newStatus) {
         if (marking) completeTask(child);
+        else uncompleteTask(child);
         updateMutation.mutate({ id: child.id, status: newStatus });
       }
     }
@@ -139,9 +142,8 @@ export default function Home() {
             <div className="flex h-full flex-col">
               <div className="shrink-0 space-y-3 px-4 pt-3">
                 <DailyMission tasks={tasks} />
-                <div className="flex items-center justify-between gap-4 rounded-lg border border-border/40 bg-card/50 px-4 py-2">
+                <div className="rounded-lg border border-border/40 bg-card/50 px-4 py-2">
                   <StreakStrip tasks={tasks} streak={streak} />
-                  <XpBar xp={xp} level={level} />
                 </div>
                 <ScoreSummary tasks={tasks} />
               </div>

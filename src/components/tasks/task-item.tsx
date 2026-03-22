@@ -21,7 +21,8 @@ const getScoreColor = (score: number): string => {
   if (score <= 15) return 'text-amber-400';
   if (score <= 30) return 'text-orange-400';
   if (score <= 100) return 'text-red-400';
-  return 'text-purple-400';
+  if (score <= 500) return 'text-purple-400';
+  return 'text-pink-400';
 };
 
 const getScoreDotColor = (score: number): string => {
@@ -29,7 +30,8 @@ const getScoreDotColor = (score: number): string => {
   if (score <= 15) return 'bg-amber-400';
   if (score <= 30) return 'bg-orange-400';
   if (score <= 100) return 'bg-red-400';
-  return 'bg-purple-400';
+  if (score <= 500) return 'bg-purple-400';
+  return 'bg-pink-400';
 };
 
 /* ── Score indicator ─────────────────────────────────────── */
@@ -111,63 +113,101 @@ function SubtaskProgress({ doneScore, totalScore }: { doneScore: number; totalSc
 
 interface SubtaskRowProps {
   task: Task;
+  allTasks: Task[];
   onToggleDone: (task: Task) => void;
   onBreakDown?: (taskTitle: string) => void;
   isLast: boolean;
 }
 
-function SubtaskRow({ task, onToggleDone, onBreakDown, isLast }: SubtaskRowProps) {
+function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, isLast }: SubtaskRowProps) {
+  const [expanded, setExpanded] = useState(true);
   const isDone = task.status === 'done';
   const showChunkIt = !isDone && (task.score ?? 0) > 7;
+  const children = allTasks.filter((t) => t.parentTaskId === task.id);
+  const hasChildren = children.length > 0;
 
   return (
-    <div className="relative flex items-center gap-2.5 py-1.5 pl-4">
-      {/* tree connector */}
-      <div
-        className={cn(
-          'absolute left-0 top-0 w-3 border-l-2 border-b-2 border-border/50 rounded-bl-md',
-          isLast ? 'h-[50%]' : 'h-full',
+    <div>
+      <div className="relative flex items-center gap-2.5 py-1.5 pl-4">
+        {/* tree connector */}
+        <div
+          className={cn(
+            'absolute left-0 top-0 w-3 border-l-2 border-b-2 border-border/50 rounded-bl-md',
+            isLast ? 'h-[50%]' : 'h-full',
+          )}
+        />
+        {!isLast && (
+          <div className="absolute left-0 top-0 h-full w-0 border-l-2 border-border/50" />
         )}
-      />
-      {!isLast && (
-        <div className="absolute left-0 top-0 h-full w-0 border-l-2 border-border/50" />
-      )}
 
-      <Button
-        variant="ghost"
-        size="icon-xs"
-        onClick={() => onToggleDone(task)}
-        aria-label={isDone ? 'Mark as not done' : 'Mark as done'}
-      >
-        {isDone
-          ? <CheckCircle2 className="size-4 text-primary" />
-          : <Circle className="size-4 text-muted-foreground/60" />}
-      </Button>
-
-      <span
-        className={cn(
-          'flex-1 truncate text-[13px]',
-          isDone && 'text-muted-foreground line-through',
+        {hasChildren && (
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            onClick={() => setExpanded(!expanded)}
+            className="shrink-0"
+          >
+            <ChevronRight
+              className={cn(
+                'size-3 text-muted-foreground transition-transform',
+                expanded && 'rotate-90',
+              )}
+            />
+          </Button>
         )}
-      >
-        {task.title}
-      </span>
 
-      {showChunkIt && onBreakDown && (
         <Button
           variant="ghost"
-          size="sm"
-          onClick={() => onBreakDown(task.title)}
-          className="shrink-0 text-[11px] text-muted-foreground hover:text-primary h-6 px-2"
+          size="icon-xs"
+          onClick={() => onToggleDone(task)}
+          aria-label={isDone ? 'Mark as not done' : 'Mark as done'}
         >
-          <Zap className="mr-0.5 size-2.5" />
-          {(task.score ?? 0) >= 20 ? 'Chunk it!' : 'Break down'}
+          {isDone
+            ? <CheckCircle2 className="size-4 text-primary" />
+            : <Circle className="size-4 text-muted-foreground/60" />}
         </Button>
+
+        <span
+          className={cn(
+            'flex-1 truncate text-[13px]',
+            isDone && 'text-muted-foreground line-through',
+          )}
+        >
+          {task.title}
+        </span>
+
+        {showChunkIt && !hasChildren && onBreakDown && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onBreakDown(task.title)}
+            className="shrink-0 text-[11px] text-muted-foreground hover:text-primary h-6 px-2"
+          >
+            <Zap className="mr-0.5 size-2.5" />
+            {(task.score ?? 0) >= 20 ? 'Chunk it!' : 'Break down'}
+          </Button>
+        )}
+
+        <ScoreMeter score={task.score} />
+
+        {!isDone && <DueDateLabel dueDate={task.dueDate} />}
+      </div>
+
+      {/* Recursive children */}
+      {hasChildren && expanded && (
+        <div className="ml-6">
+          {children.map((child, i) => (
+            <SubtaskRow
+              key={child.id}
+              task={child}
+              allTasks={allTasks}
+              onToggleDone={onToggleDone}
+              onBreakDown={onBreakDown}
+              isLast={i === children.length - 1}
+            />
+          ))}
+        </div>
       )}
-
-      <ScoreMeter score={task.score} />
-
-      {!isDone && <DueDateLabel dueDate={task.dueDate} />}
     </div>
   );
 }
@@ -313,6 +353,7 @@ export function TaskItem({
             <SubtaskRow
               key={sub.id}
               task={sub}
+              allTasks={allTasks}
               onToggleDone={onToggleDone}
               onBreakDown={onBreakDown}
               isLast={i === subtasks.length - 1}

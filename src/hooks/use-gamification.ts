@@ -46,11 +46,24 @@ export const useGamification = (tasks: Task[]) => {
 
   const streak = useMemo(() => getStreak(completedDates), [completedDates]);
 
+  const removeXp = useCallback((amount: number) => {
+    setXp((prev) => {
+      const next = Math.max(0, prev - amount);
+      saveXp(next);
+      return next;
+    });
+  }, []);
+
   const completeTask = useCallback((task: Task) => {
     const earned = getXpForTask(task.score);
     addXp(earned);
     return earned;
   }, [addXp]);
+
+  const uncompleteTask = useCallback((task: Task) => {
+    const lost = getXpForTask(task.score);
+    removeXp(lost);
+  }, [removeXp]);
 
   return {
     xp,
@@ -59,6 +72,7 @@ export const useGamification = (tasks: Task[]) => {
     lastXpGain,
     addXp,
     completeTask,
+    uncompleteTask,
     getXpForTask,
   };
 };
