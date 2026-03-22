@@ -1,22 +1,19 @@
 'use client';
 
-import { Bot } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { ChunkIcon } from './chunk-icon';
 
-export function ChatThinking() {
+export function ChatThinking({ label }: { label?: string }) {
   return (
     <div className="flex w-full gap-3 justify-start">
-      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-        <Bot className="size-4" />
+      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15">
+        <ChunkIcon className="size-4" />
       </div>
-      <div className="max-w-[75%] rounded-2xl rounded-bl-md bg-card ring-1 ring-border/50 px-4 py-3">
-        <p className="mb-2.5 text-xs font-medium text-muted-foreground">
-          Thinking...
-        </p>
-        <div className="flex flex-col gap-2">
-          <div className="h-3 w-52 rounded-md bg-muted/60 animate-shimmer" />
-          <div className="h-3 w-40 rounded-md bg-muted/60 animate-shimmer" />
-          <div className="h-3 w-28 rounded-md bg-muted/60 animate-shimmer" />
-        </div>
+      <div className="flex items-center gap-2 py-2">
+        <Loader2 className="size-4 animate-spin text-primary" />
+        <span className="text-sm text-muted-foreground animate-pulse">
+          {label || 'Thinking...'}
+        </span>
       </div>
     </div>
   );

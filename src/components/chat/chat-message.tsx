@@ -1,7 +1,8 @@
 'use client';
 
 import type { UIMessage } from 'ai';
-import { Bot, User, Loader2, CheckCircle2, Wrench } from 'lucide-react';
+import { User, Loader2, CheckCircle2, Wrench } from 'lucide-react';
+import { ChunkIcon } from './chunk-icon';
 import { cn } from '@/lib/utils';
 
 const TOOL_LABELS: Record<string, string> = {
@@ -57,8 +58,8 @@ export function ChatMessage({ message }: ChatMessageProps) {
       )}
     >
       {!isUser && (
-        <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-          <Bot className="size-4" />
+        <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15">
+          <ChunkIcon className="size-4" />
         </div>
       )}
       <div className="flex max-w-[75%] flex-col gap-2">
