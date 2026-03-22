@@ -37,7 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`dark ${poppins.variable} ${syne.variable} ${dmSans.variable} h-full scroll-smooth antialiased`}>
-      <body className="font-sans min-h-full flex flex-col">
+      <body className="font-sans min-h-full flex flex-col" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>
