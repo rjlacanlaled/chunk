@@ -42,15 +42,16 @@ export default function Home() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex h-14 items-center justify-between border-b px-4">
+      <header className="flex h-12 shrink-0 items-center justify-between border-b border-border/40 px-4">
         <img
           src="/chunk-logos/chunk-logo-horizontal-dark.svg"
           alt="Chunk"
-          className="h-7"
+          className="h-6"
         />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {isGuest && <SignUpCta />}
           {hasTasks && (
-            <div className="flex items-center rounded-lg border">
+            <div className="flex items-center rounded-lg border border-border/40">
               <Button
                 variant={view === 'list' ? 'default' : 'ghost'}
                 size="icon-xs"
@@ -73,11 +74,9 @@ export default function Home() {
         </div>
       </header>
 
-      {isGuest && <SignUpCta />}
-
       <main className="flex flex-1 overflow-hidden">
         <div
-          className="transition-all duration-300 overflow-hidden"
+          className="overflow-hidden transition-all duration-500 ease-in-out"
           style={{ width: hasTasks ? '70%' : '0%' }}
         >
           {hasTasks && view === 'list' && (
@@ -89,10 +88,17 @@ export default function Home() {
         </div>
 
         <div
-          className="transition-all duration-300 border-l"
-          style={{ width: hasTasks ? '30%' : '100%' }}
+          className="transition-all duration-500 ease-in-out"
+          style={{
+            width: hasTasks ? '30%' : '100%',
+            borderLeft: hasTasks ? '1px solid oklch(1 0 0 / 8%)' : 'none',
+          }}
         >
-          <ChatPanel owner={owner} onTasksChanged={() => refetch()} />
+          <ChatPanel
+            owner={owner}
+            onTasksChanged={() => refetch()}
+            compact={hasTasks}
+          />
         </div>
       </main>
     </div>

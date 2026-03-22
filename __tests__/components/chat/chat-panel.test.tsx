@@ -23,7 +23,7 @@ describe('ChatPanel', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Tell me what you need to get done. I will turn it into tasks.',
+        /Tell me what.s on your mind/,
       ),
     ).toBeInTheDocument();
   });
@@ -34,6 +34,21 @@ describe('ChatPanel', () => {
 
     expect(
       screen.getByPlaceholderText('Type your chaos here...'),
+    ).toBeInTheDocument();
+  });
+
+  it('renders suggestion chips in empty state', async () => {
+    const { ChatPanel } = await import('@/components/chat/chat-panel');
+    render(<ChatPanel owner={{ guestId: 'test-guest' }} />);
+
+    expect(
+      screen.getByText('I have 5 things due this week'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Help me plan my day'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('I\'m procrastinating...'),
     ).toBeInTheDocument();
   });
 });
