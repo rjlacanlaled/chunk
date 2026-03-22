@@ -169,6 +169,49 @@ export const completeWithDescendants = async (id: string): Promise<number> => {
 };
 
 // ---------------------------------------------------------------------------
+// completeByQuery — find all tasks matching a keyword, complete them + descendants
+// ---------------------------------------------------------------------------
+export const completeByQuery = async (
+  query: string,
+  owner: Owner,
+): Promise<{ completed: number; titles: string[] }> => {
+  const ownerCond = ownerWhereSql(owner);
+  const pattern = `%${query.trim()}%`;
+
+  // Get titles of matching tasks
+  const matching = await db.execute(sql`
+    SELECT title FROM tasks
+    WHERE ${ownerCond} AND deleted_at IS NULL AND status != 'done'
+      AND title ILIKE ${pattern}
+  `);
+  const titles = ([...matching] as { title: string }[]).map((r) => r.title);
+
+  // Complete all matching tasks + their descendants via recursive CTE
+  const result = await db.execute(sql`
+    WITH RECURSIVE
+      roots AS (
+        SELECT id FROM tasks
+        WHERE ${ownerCond} AND deleted_at IS NULL AND status != 'done'
+          AND title ILIKE ${pattern}
+      ),
+      descendants AS (
+        SELECT id FROM roots
+        UNION ALL
+        SELECT t.id FROM tasks t
+          INNER JOIN descendants d ON t.parent_task_id = d.id
+        WHERE t.deleted_at IS NULL
+      )
+    UPDATE tasks
+    SET status = 'done', updated_at = NOW()
+    WHERE id IN (SELECT id FROM descendants)
+      AND status != 'done'
+      AND deleted_at IS NULL
+  `);
+
+  return { completed: Number(result.count ?? 0), titles };
+};
+
+// ---------------------------------------------------------------------------
 // uncompleteWithDescendants — recursive CTE to reopen task + all children
 // ---------------------------------------------------------------------------
 export const uncompleteWithDescendants = async (id: string): Promise<number> => {

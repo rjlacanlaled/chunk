@@ -5,6 +5,7 @@ import {
   resolveTask,
   updateTasksByIds,
   completeWithDescendants,
+  completeByQuery,
   deleteByIds,
   deleteByFilter,
   listTasks,
@@ -126,16 +127,30 @@ export const makeTaskTools = (owner: Owner) => ({
 
   completeTasks: tool({
     description:
-      'Mark one or more tasks as done by name or number. Automatically completes all subtasks too.',
+      'Mark tasks as done. Pass names/numbers for specific tasks, OR pass query to bulk-complete all matching tasks (e.g. query "renew" completes every task with "renew" in the title). Automatically completes all subtasks too.',
     inputSchema: z.object({
       names: z
         .array(z.string())
+        .optional()
         .describe(
-          'Task names or numbers. When user says "task 85", pass "85". Partial name match also works.',
+          'Task names or numbers. When user says "task 85", pass "85".',
         ),
+      query: z
+        .string()
+        .optional()
+        .describe('Bulk complete: keyword to match. "mark all renew tasks done" → query "renew"'),
     }),
-    execute: async ({ names }) => {
+    execute: async ({ names, query }) => {
       try {
+        // Bulk mode — complete all tasks matching keyword
+        if (query) {
+          return completeByQuery(query, owner);
+        }
+
+        if (!names || names.length === 0) {
+          return { error: 'Provide names or query' };
+        }
+
         const result: CompletionResult = {
           completed: [],
           ambiguous: [],

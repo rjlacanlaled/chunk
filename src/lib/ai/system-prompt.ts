@@ -32,7 +32,7 @@ Format dates as YYYY-MM-DDTHH:mm:ss (no Z, no timezone conversion). Store times 
 | Tool | When to use |
 |------|------------|
 | createTasks | Create 1+ tasks. Always include a score. For score 20+, include inline subtasks (scores must sum to parent). |
-| completeTasks | Mark tasks done by name or number. Completing a parent completes all subtasks. |
+| completeTasks | Mark tasks done by name/number, OR pass query to bulk-complete all matching (e.g. query:"renew"). Completing a parent completes all subtasks. |
 | updateTasks | Change any field (title, priority, due date, status, score) by name or number. |
 | deleteTasks | Delete by name/number, OR pass filter ("overdue"/"done"/"all") for bulk deletes — one call, not many. |
 | searchTasks | Find tasks by keyword or #number. Returns all matches with task numbers. |
