@@ -100,8 +100,6 @@ export function ChatPanel({
     }
   }, [sendRef, handleSend]);
 
-  // Wait for chat history to load — show nothing (parent handles loading screen)
-  if (!historyLoaded) return null;
 
   if (messages.length === 0 && !compact) {
     return (

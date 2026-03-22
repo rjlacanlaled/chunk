@@ -35,13 +35,12 @@ export default function Home() {
 
   const owner = useMemo(() => {
     if (session?.user) return { userId: session.user.id };
-    if (guestId) return { guestId };
-    return null;
+    return { guestId };
   }, [session?.user, guestId]);
 
   const queryClient = useQueryClient();
-  const { data: tasks = [], isLoading: tasksLoading } = useTasksQuery(owner ?? {});
-  const { updateMutation } = useTaskMutations(owner ?? {});
+  const { data: tasks = [] } = useTasksQuery(owner);
+  const { updateMutation } = useTaskMutations(owner);
   const { xp, level, streak, lastXpGain, completeTask, uncompleteTask } = useGamification(tasks);
 
   const getDescendants = useCallback((parentId: string): Task[] => {
@@ -139,15 +138,6 @@ export default function Home() {
 
   const hasTasks = tasks.length > 0;
 
-  // Wait for owner + initial data before rendering
-  if (!owner || tasksLoading) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
-        <img src="/chunk-logos/chunky-thinking.svg" alt="Loading" className="size-24" />
-        <p className="animate-shimmer-text text-sm font-medium">Getting things ready...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex h-screen flex-col">
