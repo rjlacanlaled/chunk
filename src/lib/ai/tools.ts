@@ -11,6 +11,12 @@ import {
 
 type Owner = { userId?: string; guestId?: string };
 
+const subtaskSchema = z.object({
+  title: z.string(),
+  score: z.number().min(1),
+  description: z.string().optional(),
+});
+
 const taskSchema = z.object({
   title: z.string().describe('Task title'),
   description: z.string().optional(),
@@ -18,23 +24,57 @@ const taskSchema = z.object({
   dueDate: z.string().optional().describe('Due date in ISO format'),
   score: z.number().min(1).describe('Difficulty score — YOU decide. 1-5 trivial, 6-15 moderate, 16-30 hard, 30+ massive'),
   parentTaskId: z.string().optional().describe('Parent task ID if this is a subtask'),
+  subtasks: z.array(subtaskSchema).optional().describe('Optional subtasks to create immediately. Scores MUST sum to parent score. Use this instead of calling breakDownTask separately.'),
 });
 
 export const makeTaskTools = (owner: Owner) => ({
   createTasks: tool({
-    description: 'Create one or more tasks. Always use this — works for single tasks too. Always assign a difficulty score.',
+    description: 'Create one or more tasks with optional inline subtasks. If a task has score 20+, include subtasks directly — no need to call breakDownTask separately. Subtask scores MUST sum to parent score.',
     inputSchema: z.object({
       tasks: z.array(taskSchema).describe('Tasks to create (1 or more)'),
     }),
     execute: async ({ tasks: inputs }) => {
-      const result = await createTasks(
-        inputs.map((t) => ({
-          ...t,
-          dueDate: t.dueDate ? new Date(t.dueDate) : undefined,
-        })),
-        owner,
-      );
-      return result;
+      const results = [];
+
+      for (const input of inputs) {
+        const { subtasks: subs, ...taskInput } = input;
+
+        // Create the parent task
+        const [parent] = await createTasks(
+          [{ ...taskInput, dueDate: taskInput.dueDate ? new Date(taskInput.dueDate) : undefined }],
+          owner,
+        );
+        results.push(parent);
+
+        // Create inline subtasks if provided
+        if (subs && subs.length > 0) {
+          const parentScore = parent.score ?? 0;
+          const subTotal = subs.reduce((sum, s) => sum + s.score, 0);
+
+          // Proportionally adjust subtask scores to match parent
+          let adjusted = subs;
+          if (parentScore > 0 && subTotal !== parentScore) {
+            adjusted = subs.map((s) => ({
+              ...s,
+              score: Math.max(1, Math.round((s.score / subTotal) * parentScore)),
+            }));
+            const adjTotal = adjusted.reduce((sum, s) => sum + s.score, 0);
+            const diff = parentScore - adjTotal;
+            if (diff !== 0) {
+              const largest = adjusted.reduce((max, s, i) => s.score > adjusted[max].score ? i : max, 0);
+              adjusted[largest].score += diff;
+            }
+          }
+
+          const children = await createTasks(
+            adjusted.map((s) => ({ ...s, parentTaskId: parent.id })),
+            owner,
+          );
+          results.push(...children);
+        }
+      }
+
+      return results;
     },
   }),
 
