@@ -73,15 +73,21 @@ function DueDateLabel({ dueDate }: { dueDate: Date | null }) {
   if (!dueDate) return null;
   const date = new Date(dueDate);
   const overdue = isPast(date) && !isToday(date);
+
+  // Format: "Mar 31" or "Today" or "Tomorrow"
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   let label: string;
-  if (isToday(date)) label = 'Due today';
-  else if (isTomorrow(date)) label = 'Due tomorrow';
-  else if (overdue) label = 'Overdue';
-  else label = `Due ${formatDistanceToNow(date, { addSuffix: true })}`;
+  if (isToday(date)) label = 'Today';
+  else if (isTomorrow(date)) label = 'Tomorrow';
+  else label = `${months[date.getMonth()]} ${date.getDate()}`;
+
   return (
-    <span className={cn('inline-flex items-center gap-1 text-[11px]', overdue ? 'font-semibold text-red-400' : 'text-amber-400/80')}>
+    <span className={cn(
+      'inline-flex items-center gap-1 text-[11px] font-medium',
+      overdue ? 'text-red-400' : isToday(date) ? 'text-amber-400' : 'text-muted-foreground/70',
+    )}>
       {overdue ? <AlertTriangle className="size-3" /> : <Clock className="size-3" />}
-      {label}
+      {overdue ? `${label} · Overdue` : label}
     </span>
   );
 }

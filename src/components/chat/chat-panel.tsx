@@ -31,10 +31,12 @@ export function ChatPanel({
 }: ChatPanelProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [loadedMessages, setLoadedMessages] = useState<UIMessage[] | null>(null);
+  const ownerKey = owner.userId || owner.guestId || '';
 
-  // Load chat history from DB on mount — must complete before useChat mounts
+  // Load chat history from DB — re-fetch when owner changes
   useEffect(() => {
-    if (loadedMessages !== null) return;
+    if (!ownerKey) return;
+    setLoadedMessages(null); // reset on owner change
     fetch('/api/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -44,7 +46,7 @@ export function ChatPanel({
       .then((msgs: UIMessage[]) => setLoadedMessages(msgs.length > 0 ? msgs : []))
       .catch(() => setLoadedMessages([]));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [owner.userId, owner.guestId]);
+  }, [ownerKey]);
 
   // Don't mount useChat until history is loaded
   if (loadedMessages === null) {

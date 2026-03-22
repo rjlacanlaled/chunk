@@ -1,7 +1,7 @@
 import { streamText, convertToModelMessages, stepCountIs } from 'ai';
 import type { UIMessage } from 'ai';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
-import { SYSTEM_PROMPT } from '@/lib/ai/system-prompt';
+import { getSystemPrompt } from '@/lib/ai/system-prompt';
 import { makeTaskTools } from '@/lib/ai/tools';
 import { saveMessage } from '@/server/actions/messages';
 
@@ -55,7 +55,7 @@ export const POST = async (req: Request) => {
 
   const result = streamText({
     model: openrouter('google/gemini-2.0-flash-001'),
-    system: SYSTEM_PROMPT,
+    system: getSystemPrompt(),
     messages: modelMessages,
     tools,
     stopWhen: stepCountIs(20),

@@ -18,16 +18,23 @@ import { TaskItem } from './task-item';
 
 /* -- Sorting ---------------------------------------------------- */
 
-const sortByScoreAndDate = (tasks: Task[]): Task[] =>
+const sortByUrgency = (tasks: Task[]): Task[] =>
   [...tasks].sort((a, b) => {
-    const scoreDiff = (b.score ?? 0) - (a.score ?? 0);
-    if (scoreDiff !== 0) return scoreDiff;
+    // Due date first: overdue → due today → due soon → no date
+    const now = Date.now();
+    const aDate = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+    const bDate = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+
+    // Both have dates: sort by date (earliest first)
     if (a.dueDate && b.dueDate) {
-      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+      if (aDate !== bDate) return aDate - bDate;
     }
-    if (a.dueDate) return -1;
-    if (b.dueDate) return 1;
-    return 0;
+    // One has date, one doesn't: dated first
+    if (a.dueDate && !b.dueDate) return -1;
+    if (!a.dueDate && b.dueDate) return 1;
+
+    // Same date priority: sort by score (highest first)
+    return (b.score ?? 0) - (a.score ?? 0);
   });
 
 /* -- Time ago helper -------------------------------------------- */
@@ -305,9 +312,9 @@ export function TaskList({
       const doneRoots = roots.filter((t) => t.status === 'done');
 
       return {
-        todo: sortByScoreAndDate(roots.filter((t) => t.status === 'todo')),
-        inProgress: sortByScoreAndDate(roots.filter((t) => t.status === 'in_progress')),
-        done: sortByScoreAndDate(doneRoots),
+        todo: sortByUrgency(roots.filter((t) => t.status === 'todo')),
+        inProgress: sortByUrgency(roots.filter((t) => t.status === 'in_progress')),
+        done: sortByUrgency(doneRoots),
         totalRoots: roots.length,
         completedRoots: doneRoots.length,
         completedToday: doneRoots.filter(
