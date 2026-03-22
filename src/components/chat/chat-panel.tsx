@@ -213,7 +213,7 @@ function ChatPanelInner({
         <div
           className={`mx-auto flex flex-col gap-4 py-6 ${
             compact ? 'max-w-full' : 'max-w-[700px]'
-          }`}
+          } ${status === 'submitted' ? 'chat-thinking' : ''}`}
         >
           {messages.map((msg, i) => {
             const isLastAssistant = msg.role === 'assistant' && i === messages.length - 1;
