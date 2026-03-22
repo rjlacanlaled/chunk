@@ -30,7 +30,7 @@ export function ChatPanel({
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/chat',
-      body: owner,
+      body: { owner },
     }),
     onFinish: () => onTasksChanged?.(),
   });
