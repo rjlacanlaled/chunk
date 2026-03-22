@@ -32,10 +32,11 @@ export default function Home() {
 
   useAuthWithMigration();
 
-  // Wait for session check before deciding owner
+  // Wait for session check + guest ID before deciding owner
   const owner = useMemo(() => {
-    if (sessionPending) return null; // still checking auth
+    if (sessionPending) return null;
     if (session?.user) return { userId: session.user.id };
+    if (!guestId) return null; // still loading from localStorage
     return { guestId };
   }, [sessionPending, session?.user, guestId]);
 
