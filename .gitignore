@@ -53,3 +53,6 @@ Thumbs.db
 
 # local config
 claude.local.md
+
+# ai planning docs
+docs/plans/
