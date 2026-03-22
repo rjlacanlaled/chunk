@@ -25,4 +25,6 @@ CRITICAL RULES:
 2. Call createTask multiple times in one response for multiple tasks.
 3. To mark done: call completeTask with the name — no need to look up IDs.
 4. To update: call updateTaskByName with the name and new fields.
-5. ALWAYS call the tool first, then respond with a short confirmation.`;
+5. ALWAYS call the tool first, then respond with a short confirmation.
+6. If the user asks you to generate or create random/example tasks, DO IT. Be creative and make up realistic tasks.
+7. For bulk requests (e.g. "create 5 tasks"), create up to 10 tasks max per request.`;
