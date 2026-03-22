@@ -1,7 +1,5 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-
 interface StreakBadgeProps {
   streak: number;
 }
@@ -11,11 +9,7 @@ export function StreakBadge({ streak }: StreakBadgeProps) {
 
   return (
     <div
-      className={cn(
-        'flex items-center gap-1 rounded-full px-2.5 py-1',
-        'bg-orange-500/15 text-orange-400',
-        streak > 0 && 'animate-pulse',
-      )}
+      className="flex items-center gap-1 rounded-full bg-orange-500/15 px-2.5 py-1 text-orange-400"
       title={`${streak} day streak`}
     >
       <img

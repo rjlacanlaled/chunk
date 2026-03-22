@@ -1,7 +1,6 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { LEVELS } from '@/lib/gamification';
 
 interface XpBarProps {
   xp: number;
@@ -13,9 +12,6 @@ interface XpBarProps {
 
 export function XpBar({ xp, level }: XpBarProps) {
   const { current, next } = level;
-
-  const levelIndex = LEVELS.findIndex((l) => l.name === current.name);
-  const levelNum = levelIndex + 1;
 
   const progress = next
     ? ((xp - current.xp) / (next.xp - current.xp)) * 100
