@@ -46,7 +46,7 @@ You'll need these installed:
 1. Clone the repo and install dependencies:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/rjlacanlaled/chunk.git
 cd chunk
 bun install
 ```
@@ -117,7 +117,6 @@ chunk/
 │   │   ├── actions/        # Server actions (tasks, messages, migration)
 │   │   └── db/             # Drizzle schema + connection
 │   └── types/              # Shared TypeScript types
-├── CLAUDE.md               # Coding conventions guide
 ├── vitest.config.ts        # Test configuration
 └── package.json
 ```
