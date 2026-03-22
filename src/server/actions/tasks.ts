@@ -102,12 +102,19 @@ export const findTaskByName = async (
     if (byNumber) return byNumber;
   }
 
-  // Fuzzy match by title
+  // Fuzzy match by title — prefer parent tasks over subtasks
   const words = lower.split(/\s+/);
-  return allTasks.find((t) => {
+  const matches = allTasks.filter((t) => {
     const title = t.title.toLowerCase();
     return words.every((word) => title.includes(word));
-  }) ?? null;
+  });
+
+  if (matches.length === 0) return null;
+  if (matches.length === 1) return matches[0];
+
+  // Prefer root tasks (no parent) over subtasks
+  const root = matches.find((t) => !t.parentTaskId);
+  return root ?? matches[0];
 };
 
 export const searchTasks = async (
