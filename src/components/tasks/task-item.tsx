@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow, isPast, isToday, isTomorrow } from 'date-fns';
 import { Button } from '@/components/ui/button';
+import { ChunkIcon } from '@/components/chat/chunk-icon';
 import { cn } from '@/lib/utils';
 import type { Task } from '@/types/task';
 
@@ -191,7 +192,7 @@ export function TaskItem({
       </div>
 
       <div className="flex items-center gap-2 shrink-0 pr-1">
-        {showBreakDown && onBreakDown && (
+        {showBreakDown && onBreakDown && !chunking && (
           <Button
             variant="ghost"
             size="sm"
@@ -201,6 +202,12 @@ export function TaskItem({
             <Zap className="mr-0.5 size-2.5" />
             Chunk it!
           </Button>
+        )}
+        {chunking && (
+          <span className="flex items-center gap-1.5 text-[11px] text-primary">
+            <ChunkIcon variant="animated" className="size-3.5" />
+            <span className="animate-shimmer-text font-medium">Chunking...</span>
+          </span>
         )}
         <ScoreMeter score={task.score} />
         {isRoot && <TimeAgo date={task.createdAt} />}
