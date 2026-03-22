@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { Sparkles } from 'lucide-react';
@@ -28,11 +28,16 @@ export function ChatPanel({
 }: ChatPanelProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({
+  const transport = useMemo(
+    () => new DefaultChatTransport({
       api: '/api/chat',
       body: { owner },
     }),
+    [owner.userId, owner.guestId],
+  );
+
+  const { messages, sendMessage, status } = useChat({
+    transport,
     onFinish: () => onTasksChanged?.(),
   });
 
