@@ -55,6 +55,17 @@ export function ChatPanel({
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Refresh tasks whenever tool results come in during streaming
+  useEffect(() => {
+    if (status !== 'streaming' || messages.length === 0) return;
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.role !== 'assistant') return;
+    const hasToolResult = lastMsg.parts.some(
+      (p) => p.type === 'tool-invocation' && 'result' in (p as any).toolInvocation,
+    );
+    if (hasToolResult) onTasksChanged?.();
+  }, [messages, status, onTasksChanged]);
+
   const handleSend = (text: string) => {
     sendMessage({ text });
   };
@@ -125,7 +136,14 @@ export function ChatPanel({
           {messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} />
           ))}
-          {status === 'submitted' && <ChatThinking />}
+          {(status === 'submitted' || (
+            status === 'streaming'
+            && messages.length > 0
+            && messages[messages.length - 1].role === 'assistant'
+            && !messages[messages.length - 1].parts.some(
+              (p) => p.type === 'text' && p.text.length > 0,
+            )
+          )) && <ChatThinking />}
           <div ref={bottomRef} />
         </div>
       </ScrollArea>
