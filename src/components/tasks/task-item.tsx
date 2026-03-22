@@ -69,15 +69,20 @@ function TimeAgo({ date }: { date: Date }) {
   );
 }
 
+// Force-interpret a DB date as local time (strip Z suffix so JS doesn't convert)
+function asLocalDate(d: Date | string): Date {
+  const iso = typeof d === 'string' ? d : d.toISOString();
+  // Remove Z or timezone offset so Date parses as local
+  return new Date(iso.replace(/Z$/, '').replace(/[+-]\d{2}:\d{2}$/, ''));
+}
+
 function DueDateLabel({ dueDate }: { dueDate: Date | null }) {
   if (!dueDate) return null;
-  const date = new Date(dueDate);
+  const date = asLocalDate(dueDate);
   const now = new Date();
   const overdue = date.getTime() < now.getTime();
 
-  // Use toLocaleString for user's local timezone
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const localDate = new Date(date.toLocaleString());
   const todayStr = now.toLocaleDateString();
   const tomorrowDate = new Date(now);
   tomorrowDate.setDate(tomorrowDate.getDate() + 1);
@@ -166,8 +171,8 @@ export function TaskItem({
   const showBreakDown = !isDone && (task.score ?? 0) >= 15 && !hasChildren;
   const isRoot = depth === 0;
 
-  const dueDate = task.dueDate ? new Date(task.dueDate) : null;
-  const isOverdue = dueDate && new Date(dueDate).getTime() < Date.now() && !isDone;
+  const dueDate = task.dueDate ? asLocalDate(task.dueDate) : null;
+  const isOverdue = dueDate && dueDate.getTime() < Date.now() && !isDone;
 
   const subtaskStats = useMemo(() => {
     if (!hasChildren) return null;
