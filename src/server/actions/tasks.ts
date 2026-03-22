@@ -1,15 +1,26 @@
 'use server';
 
-import { eq, or } from 'drizzle-orm';
+import { eq, or, and, isNull } from 'drizzle-orm';
 import { db } from '@/server/db';
 import { tasks } from '@/server/db/schema';
 import type { CreateTaskInput, UpdateTaskInput } from '@/types/task';
 
 type Owner = { userId?: string; guestId?: string };
 
+// Get max task number across ALL tasks (including deleted) so numbers never reuse
 const getNextTaskNumber = async (owner: Owner): Promise<number> => {
-  const existing = await listTasks(owner);
-  const maxNum = existing.reduce((max, t) => Math.max(max, t.taskNumber ?? 0), 0);
+  const conditions = [];
+  if (owner.userId) conditions.push(eq(tasks.userId, owner.userId));
+  if (owner.guestId) conditions.push(eq(tasks.guestId, owner.guestId));
+
+  if (conditions.length === 0) return 1;
+
+  // Query ALL tasks including soft-deleted ones
+  const all = await db.select({ taskNumber: tasks.taskNumber }).from(tasks).where(
+    conditions.length > 1 ? or(...conditions) : conditions[0],
+  );
+
+  const maxNum = all.reduce((max, t) => Math.max(max, t.taskNumber ?? 0), 0);
   return maxNum + 1;
 };
 
@@ -69,8 +80,11 @@ export const updateTask = async (input: UpdateTaskInput) => {
   return task;
 };
 
+// Soft delete — sets deletedAt timestamp instead of removing from DB
 export const deleteTask = async (id: string) => {
-  await db.delete(tasks).where(eq(tasks.id, id));
+  await db.update(tasks)
+    .set({ deletedAt: new Date() })
+    .where(eq(tasks.id, id));
 };
 
 export const findTaskByName = async (
@@ -80,7 +94,7 @@ export const findTaskByName = async (
   const allTasks = await listTasks(owner);
   const lower = name.toLowerCase().trim();
 
-  // Match by task number (e.g., "#5" or "5")
+  // Match by task number
   const numMatch = lower.replace('#', '');
   if (/^\d+$/.test(numMatch)) {
     const num = parseInt(numMatch, 10);
@@ -88,7 +102,7 @@ export const findTaskByName = async (
     if (byNumber) return byNumber;
   }
 
-  // Fuzzy match — all words in query must appear in title
+  // Fuzzy match by title
   const words = lower.split(/\s+/);
   return allTasks.find((t) => {
     const title = t.title.toLowerCase();
@@ -103,25 +117,23 @@ export const searchTasks = async (
   const allTasks = await listTasks(owner);
   const lower = query.toLowerCase().trim();
 
-  // Match by task number (e.g., "#5" or "5")
+  // Match by task number
   const numMatch = lower.replace('#', '');
   if (/^\d+$/.test(numMatch)) {
     const num = parseInt(numMatch, 10);
-    const byNumber = allTasks.filter((t) => t.taskNumber === num);
-    if (byNumber.length > 0) return byNumber;
+    return allTasks.filter((t) => t.taskNumber === num);
   }
 
-  // Fuzzy match — all words in query must appear in title
+  // Fuzzy match
+  const words = lower.split(/\s+/);
   return allTasks.filter((t) => {
     const title = t.title.toLowerCase();
-    const words = lower.split(/\s+/);
     return words.every((word) => title.includes(word));
   });
 };
 
-export const listTasks = async (
-  owner: Owner,
-) => {
+// Only returns non-deleted tasks
+export const listTasks = async (owner: Owner) => {
   if (!owner.userId && !owner.guestId) return [];
 
   const conditions = [];
@@ -134,8 +146,10 @@ export const listTasks = async (
     conditions.push(eq(tasks.guestId, owner.guestId));
   }
 
+  const ownerCondition = conditions.length > 1 ? or(...conditions) : conditions[0]!;
+
   const result = await db.select().from(tasks).where(
-    conditions.length > 1 ? or(...conditions) : conditions[0],
+    and(ownerCondition, isNull(tasks.deletedAt)),
   );
 
   return result;

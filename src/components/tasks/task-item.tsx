@@ -72,14 +72,17 @@ function TimeAgo({ date }: { date: Date }) {
 function DueDateLabel({ dueDate }: { dueDate: Date | null }) {
   if (!dueDate) return null;
   const date = new Date(dueDate);
-  const overdue = isPast(date) && !isToday(date);
+  const now = new Date();
+  const overdue = date < now;
 
-  // Format: "Mar 31" or "Today" or "Tomorrow"
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const hasTime = date.getHours() !== 0 || date.getMinutes() !== 0;
+  const timeStr = hasTime ? ` ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}` : '';
+
   let label: string;
-  if (isToday(date)) label = 'Today';
-  else if (isTomorrow(date)) label = 'Tomorrow';
-  else label = `${months[date.getMonth()]} ${date.getDate()}`;
+  if (isToday(date)) label = `Today${timeStr}`;
+  else if (isTomorrow(date)) label = `Tomorrow${timeStr}`;
+  else label = `${months[date.getMonth()]} ${date.getDate()}${timeStr}`;
 
   return (
     <span className={cn(

@@ -14,6 +14,7 @@ export interface Task {
   parentTaskId: string | null;
   score: number | null;
   taskNumber: number | null;
+  deletedAt: Date | null;
   metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;

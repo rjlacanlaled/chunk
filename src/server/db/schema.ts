@@ -69,9 +69,10 @@ export const tasks = pgTable('tasks', {
   parentTaskId: uuid('parent_task_id'),
   score: real('score'),
   taskNumber: real('task_number'),
+  deletedAt: timestamp('deleted_at'),
   metadata: jsonb('metadata').default({}),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdate(() => new Date()),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
 export const chatMessages = pgTable('chat_messages', {
@@ -82,5 +83,5 @@ export const chatMessages = pgTable('chat_messages', {
   role: text('role').notNull(),
   content: text('content').notNull(),
   toolInvocations: jsonb('tool_invocations'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
