@@ -1,7 +1,7 @@
 'use client';
 
 import type { UIMessage } from 'ai';
-import { User, Loader2, CheckCircle2, Wrench } from 'lucide-react';
+import { User, CheckCircle2 } from 'lucide-react';
 import { ChunkIcon } from './chunk-icon';
 import { cn } from '@/lib/utils';
 
@@ -30,7 +30,7 @@ function ToolChip({ part }: { part: Extract<UIMessage['parts'][number], { type: 
       {isComplete ? (
         <CheckCircle2 className="size-3" />
       ) : (
-        <Loader2 className="size-3 animate-spin" />
+        <span className="size-3 rounded-full bg-primary/50 animate-breathe" />
       )}
       {label}
       {title ? `: ${title}` : ''}
@@ -93,10 +93,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
         {/* If assistant message has tool calls but no text yet */}
         {!isUser && !hasText && hasTools && (
-          <div className="flex items-center gap-1.5 px-1 text-xs text-muted-foreground">
-            <Wrench className="size-3" />
+          <span className="text-sm font-medium animate-shimmer-text">
             Working on it...
-          </div>
+          </span>
         )}
       </div>
       {isUser && (
