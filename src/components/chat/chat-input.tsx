@@ -11,6 +11,14 @@ import {
 import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+const PLACEHOLDERS = [
+  'I need to...',
+  'I have this big thing...',
+  'Help me plan...',
+  'I keep putting off...',
+  'My week looks like...',
+];
+
 interface ChatInputProps {
   onSend: (text: string) => void;
   isLoading?: boolean;
@@ -25,6 +33,7 @@ export function ChatInput({
   variant = 'inline',
 }: ChatInputProps) {
   const [input, setInput] = useState('');
+  const [placeholderIdx, setPlaceholderIdx] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -44,6 +53,14 @@ export function ChatInput({
   useEffect(() => {
     adjustHeight();
   }, [input, adjustHeight]);
+
+  // Rotate placeholder text
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderIdx((prev) => (prev + 1) % PLACEHOLDERS.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Refocus textarea after AI finishes responding
   useEffect(() => {
@@ -85,7 +102,7 @@ export function ChatInput({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type your chaos here..."
+          placeholder={PLACEHOLDERS[placeholderIdx]}
           disabled={isLoading}
           autoFocus
           rows={1}

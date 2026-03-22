@@ -85,10 +85,10 @@ export function ChatPanel({
           <ChunkIcon variant="idle" className="size-12" />
           <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight">
-              Your chaos, made manageable.
+              What&apos;s slowing you down?
             </h1>
             <p className="mt-3 text-lg text-muted-foreground">
-              Tell me what&apos;s on your mind. I&apos;ll turn it into tasks.
+              Drop it here. Chunky will sort it out.
             </p>
           </div>
           <div className="mt-2 w-full">
@@ -122,7 +122,7 @@ export function ChatPanel({
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 px-4">
         <p className="text-sm text-muted-foreground">
-          Type your chaos here...
+          What&apos;s on your plate?
         </p>
         <div className="w-full">
           <ChatInput onSend={handleSend} isLoading={isLoading} />
