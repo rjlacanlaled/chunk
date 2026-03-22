@@ -12,7 +12,7 @@ type Owner = { userId?: string; guestId?: string };
 export const makeTaskTools = (owner: Owner) => ({
   createTask: tool({
     description: 'Create a new task for the user',
-    inputSchema: z.object({
+    parameters: z.object({
       title: z.string().describe('The title of the task'),
       description: z.string().optional().describe('A description of the task'),
       priority: z.enum(['low', 'medium', 'high', 'urgent']).optional()
@@ -39,7 +39,7 @@ export const makeTaskTools = (owner: Owner) => ({
 
   updateTask: tool({
     description: 'Update an existing task',
-    inputSchema: z.object({
+    parameters: z.object({
       id: z.string().describe('The id of the task to update'),
       title: z.string().optional().describe('The new title'),
       description: z.string().optional().describe('The new description'),
@@ -65,7 +65,7 @@ export const makeTaskTools = (owner: Owner) => ({
 
   deleteTask: tool({
     description: 'Delete a task by its id',
-    inputSchema: z.object({
+    parameters: z.object({
       id: z.string().describe('The id of the task to delete'),
     }),
     execute: async ({ id }) => {
@@ -76,7 +76,7 @@ export const makeTaskTools = (owner: Owner) => ({
 
   listTasks: tool({
     description: 'List all tasks for the current user, optionally filtered by status or priority',
-    inputSchema: z.object({
+    parameters: z.object({
       status: z.enum(['todo', 'in_progress', 'done']).optional()
         .describe('Filter by status'),
       priority: z.enum(['low', 'medium', 'high', 'urgent']).optional()
