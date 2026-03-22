@@ -192,13 +192,15 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, depth }: Subtas
   const styles = getDepthStyles(depth);
 
   return (
-    <div>
+    <div className={cn(
+      hasChildren && 'border-l-2 rounded-sm pl-2 my-1',
+      hasChildren && (getScoreBorderColor(task.score) || 'border-border/20'),
+    )}>
       <div
         className={cn(
           'flex items-center gap-2.5 py-2 rounded-md',
           'transition-colors hover:bg-muted/20',
           hasChildren && 'cursor-pointer',
-          styles.padding,
         )}
         onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
       >
@@ -242,7 +244,7 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, depth }: Subtas
 
       {/* Recursive children */}
       {hasChildren && expanded && (
-        <div className={cn('ml-6 border-l-2 pl-3', getScoreBorderColor(task.score) || 'border-border/20')}>
+        <div className="pl-4">
           {children.map((child) => (
             <SubtaskRow
               key={child.id}
