@@ -45,6 +45,13 @@ export function ChatInput({
     adjustHeight();
   }, [input, adjustHeight]);
 
+  // Refocus textarea after AI finishes responding
+  useEffect(() => {
+    if (!isLoading) {
+      textareaRef.current?.focus();
+    }
+  }, [isLoading]);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const trimmed = input.trim();
@@ -80,6 +87,7 @@ export function ChatInput({
           onKeyDown={handleKeyDown}
           placeholder="Type your chaos here..."
           disabled={isLoading}
+          autoFocus
           rows={1}
           className={`
             flex-1 resize-none bg-transparent outline-none
