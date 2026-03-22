@@ -116,8 +116,21 @@ export const makeTaskTools = (owner: Owner) => ({
     execute: async ({ name, subtasks }) => {
       const parent = await findTaskByName(name, owner);
       if (!parent) return { error: `No task matching "${name}"` };
+
+      const parentScore = parent.score ?? 0;
+      const subtaskTotal = subtasks.reduce((sum, s) => sum + s.score, 0);
+
+      // Enforce: subtask scores must sum to parent score
+      // If they don't, proportionally adjust them
+      const adjusted = parentScore > 0 && subtaskTotal !== parentScore
+        ? subtasks.map((s) => ({
+          ...s,
+          score: Math.max(1, Math.round((s.score / subtaskTotal) * parentScore)),
+        }))
+        : subtasks;
+
       const created = await createTasks(
-        subtasks.map((s) => ({ ...s, parentTaskId: parent.id })),
+        adjusted.map((s) => ({ ...s, parentTaskId: parent.id })),
         owner,
       );
       return { parent: parent.title, subtasks: created };

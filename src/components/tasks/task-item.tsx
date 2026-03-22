@@ -119,10 +119,14 @@ export function TaskItem({
   xpGain,
 }: TaskItemProps) {
   const [expanded, setExpanded] = useState(true);
+  const [chunking, setChunking] = useState(false);
   const isDone = task.status === 'done';
   const children = allTasks.filter((t) => t.parentTaskId === task.id);
   const hasChildren = children.length > 0;
-  const showBreakDown = !isDone && (task.score ?? 0) > 7 && !hasChildren;
+
+  // Stop chunking animation when children arrive
+  if (chunking && hasChildren) setChunking(false);
+  const showBreakDown = !isDone && (task.score ?? 0) >= 15 && !hasChildren;
   const isRoot = depth === 0;
 
   const dueDate = task.dueDate ? new Date(task.dueDate) : null;
@@ -150,6 +154,7 @@ export function TaskItem({
         hasChildren && 'cursor-pointer hover:bg-muted/10',
         !hasChildren && 'hover:bg-muted/10',
         recentlyCompleted && 'animate-success-flash',
+        chunking && 'animate-chunking',
       )}
       onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
     >
@@ -190,11 +195,11 @@ export function TaskItem({
           <Button
             variant="ghost"
             size="sm"
-            onClick={(e) => { e.stopPropagation(); onBreakDown(task.title); }}
-            className="text-[11px] bg-primary/10 text-primary hover:bg-primary/20 h-6 px-2"
+            onClick={(e) => { e.stopPropagation(); setChunking(true); onBreakDown(task.title); }}
+            className="text-[11px] bg-primary/10 text-primary hover:bg-primary/20 h-6 px-2 cursor-pointer"
           >
             <Zap className="mr-0.5 size-2.5" />
-            {(task.score ?? 0) >= 20 ? 'Chunk it!' : 'Break down'}
+            Chunk it!
           </Button>
         )}
         <ScoreMeter score={task.score} />
