@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, type MutableRefObject } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { Sparkles } from 'lucide-react';
@@ -19,12 +19,14 @@ interface ChatPanelProps {
   owner: { userId?: string; guestId?: string };
   onTasksChanged?: () => void;
   compact?: boolean;
+  sendRef?: MutableRefObject<((text: string) => void) | null>;
 }
 
 export function ChatPanel({
   owner,
   onTasksChanged,
   compact,
+  sendRef,
 }: ChatPanelProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -69,6 +71,12 @@ export function ChatPanel({
   const handleSend = (text: string) => {
     sendMessage({ text });
   };
+
+  useEffect(() => {
+    if (sendRef) {
+      sendRef.current = handleSend;
+    }
+  }, [sendRef, handleSend]);
 
   if (messages.length === 0 && !compact) {
     return (

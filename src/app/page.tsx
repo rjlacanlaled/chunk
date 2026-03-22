@@ -1,15 +1,18 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { List, LayoutGrid } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
 import { useGuestId } from '@/hooks/use-guest';
 import { useAuthWithMigration } from '@/hooks/use-auth-with-migration';
 import { useTasksQuery, useTaskMutations } from '@/hooks/use-tasks';
+import { useGamification } from '@/hooks/use-gamification';
 import { ChatPanel } from '@/components/chat/chat-panel';
 import { TaskList } from '@/components/tasks/task-list';
 import { BoardPlaceholder } from '@/components/tasks/board-placeholder';
+import { StreakBadge } from '@/components/gamification/streak-badge';
+import { XpBar } from '@/components/gamification/xp-bar';
 import { SignUpCta } from '@/components/auth/sign-up-cta';
 import { AuthButtons } from '@/components/auth/auth-buttons';
 import { Button } from '@/components/ui/button';
@@ -21,6 +24,7 @@ export default function Home() {
   const { data: session } = useSession();
   const guestId = useGuestId();
   const [view, setView] = useState<ViewMode>('list');
+  const sendChatRef = useRef<(text: string) => void>(null);
 
   useAuthWithMigration();
   const isGuest = !session?.user;
@@ -34,13 +38,21 @@ export default function Home() {
   const queryClient = useQueryClient();
   const { data: tasks = [] } = useTasksQuery(owner ?? {});
   const { updateMutation } = useTaskMutations(owner ?? {});
+  const { xp, level, streak, lastXpGain, completeTask } = useGamification(tasks);
 
   const handleToggleDone = (task: Task) => {
+    if (task.status !== 'done') {
+      completeTask(task);
+    }
     updateMutation.mutate({
       id: task.id,
       status: task.status === 'done' ? 'todo' : 'done',
     });
   };
+
+  const handleBreakDown = useCallback((taskTitle: string) => {
+    sendChatRef.current?.(`break down "${taskTitle}" into subtasks`);
+  }, []);
 
   const hasTasks = tasks.length > 0;
 
@@ -62,6 +74,8 @@ export default function Home() {
           className="h-6"
         />
         <div className="flex items-center gap-3">
+          {hasTasks && <XpBar xp={xp} level={level} />}
+          {hasTasks && <StreakBadge streak={streak} />}
           {isGuest && <SignUpCta />}
           {hasTasks && (
             <div className="flex items-center rounded-lg border border-border/40">
@@ -93,7 +107,12 @@ export default function Home() {
           style={{ width: hasTasks ? '70%' : '0%' }}
         >
           {hasTasks && view === 'list' && (
-            <TaskList tasks={tasks} onToggleDone={handleToggleDone} />
+            <TaskList
+              tasks={tasks}
+              onToggleDone={handleToggleDone}
+              onBreakDown={handleBreakDown}
+              lastXpGain={lastXpGain}
+            />
           )}
           {hasTasks && view === 'board' && (
             <BoardPlaceholder />
@@ -111,6 +130,7 @@ export default function Home() {
             owner={owner}
             onTasksChanged={() => queryClient.invalidateQueries({ queryKey: ['tasks'] })}
             compact={hasTasks}
+            sendRef={sendChatRef}
           />
         </div>
       </main>
