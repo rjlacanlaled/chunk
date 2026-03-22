@@ -205,24 +205,59 @@ function InlineActivityFeed({ tasks }: { tasks: Task[] }) {
 
   if (recentDone.length === 0) return null;
 
+  const getColor = (score: number | null) => {
+    const s = score ?? 5;
+    if (s <= 5) return 'text-emerald-400';
+    if (s <= 15) return 'text-amber-400';
+    if (s <= 30) return 'text-orange-400';
+    if (s <= 100) return 'text-red-400';
+    if (s <= 500) return 'text-purple-400';
+    return 'text-pink-400';
+  };
+
+  const getDotBg = (score: number | null) => {
+    const s = score ?? 5;
+    if (s <= 5) return 'bg-emerald-400';
+    if (s <= 15) return 'bg-amber-400';
+    if (s <= 30) return 'bg-orange-400';
+    if (s <= 100) return 'bg-red-400';
+    if (s <= 500) return 'bg-purple-400';
+    return 'bg-pink-400';
+  };
+
   return (
-    <div className="flex flex-col gap-0.5">
+    <div className="flex flex-col gap-1">
       {recentDone.map((task) => {
         const earnedXp = getXpForTask(task.score);
+        const isEpic = (task.score ?? 0) >= 30;
         return (
           <div
             key={task.id}
-            className="flex items-center gap-2 rounded-md px-2 py-1 text-xs transition-colors hover:bg-muted/20"
+            className={cn(
+              'flex items-center gap-2.5 rounded-md px-3 py-1.5 text-xs transition-colors hover:bg-muted/20',
+              isEpic && 'bg-muted/10 border border-border/30',
+            )}
           >
-            <CheckCircle2 className="size-3 shrink-0 text-emerald-400" />
-            <span className="truncate text-foreground/80">{task.title}</span>
-            <span className="ml-auto shrink-0 font-semibold tabular-nums text-primary text-[11px]">
-              +
-              {earnedXp}
-              {' '}
-              XP
+            <span className={cn('size-2 shrink-0 rounded-full', getDotBg(task.score))} />
+            <CheckCircle2 className={cn('size-3.5 shrink-0', getColor(task.score))} />
+            <span className={cn(
+              'truncate',
+              isEpic ? 'font-semibold text-foreground' : 'text-foreground/80',
+            )}>
+              {task.title}
             </span>
-            <span className="shrink-0 text-[10px] text-muted-foreground tabular-nums w-12 text-right">
+            {task.score && (
+              <span className={cn('shrink-0 text-[10px] font-bold tabular-nums', getColor(task.score))}>
+                {task.score}
+              </span>
+            )}
+            <span className={cn(
+              'ml-auto shrink-0 font-bold tabular-nums text-[11px]',
+              isEpic ? 'text-primary' : 'text-primary/70',
+            )}>
+              +{earnedXp} XP
+            </span>
+            <span className="shrink-0 text-[10px] text-muted-foreground/50 tabular-nums w-12 text-right">
               {timeAgo(task.updatedAt)}
             </span>
           </div>

@@ -178,17 +178,23 @@ export function TaskItem({
         }
       } : undefined}
     >
-      <Button
-        variant="ghost"
-        size="icon-xs"
+      <button
+        type="button"
         onClick={(e) => { e.stopPropagation(); onToggleDone(task); }}
         aria-label={isDone ? 'Mark as not done' : 'Mark as done'}
-        className={cn(recentlyCompleted && 'animate-bounce')}
+        className={cn(
+          'flex shrink-0 items-center justify-center rounded-md transition-all',
+          checkSize === 'size-5' ? 'size-6' : checkSize === 'size-4' ? 'size-5' : 'size-4',
+          isDone
+            ? cn('bg-primary/20', getScoreColor(task.score ?? 5).replace('text-', 'text-'))
+            : 'bg-muted/30 text-muted-foreground/40 hover:bg-muted/50',
+          recentlyCompleted && 'animate-bounce',
+        )}
       >
         {isDone
-          ? <CheckCircle2 className={cn(checkSize, 'text-primary')} />
-          : <Circle className={cn(checkSize, 'text-muted-foreground/60')} />}
-      </Button>
+          ? <CheckCircle2 className={cn(checkSize, getScoreColor(task.score ?? 5))} />
+          : <Circle className={cn(checkSize)} />}
+      </button>
 
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
