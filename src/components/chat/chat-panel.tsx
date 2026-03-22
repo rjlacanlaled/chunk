@@ -32,11 +32,12 @@ export function ChatPanel({
   const bottomRef = useRef<HTMLDivElement>(null);
   const [loadedMessages, setLoadedMessages] = useState<UIMessage[] | null>(null);
   const ownerKey = owner.userId || owner.guestId || '';
+  const loadedForOwner = useRef('');
 
-  // Load chat history from DB — re-fetch when owner changes
+  // Load chat history from DB — only once per owner
   useEffect(() => {
-    if (!ownerKey) return;
-    setLoadedMessages(null); // reset on owner change
+    if (!ownerKey || loadedForOwner.current === ownerKey) return;
+    loadedForOwner.current = ownerKey;
     fetch('/api/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -48,7 +49,7 @@ export function ChatPanel({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ownerKey]);
 
-  // Don't mount useChat until history is loaded
+  // Don't mount useChat until history is loaded for the first time
   if (loadedMessages === null) {
     return (
       <div className="flex h-full items-center justify-center">
