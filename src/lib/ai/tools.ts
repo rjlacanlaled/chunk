@@ -6,6 +6,7 @@ import {
   deleteTask,
   listTasks,
   findTaskByName,
+  searchTasks,
 } from '@/server/actions/tasks';
 
 type Owner = { userId?: string; guestId?: string };
@@ -111,6 +112,17 @@ export const makeTaskTools = (owner: Owner) => ({
     },
   }),
 
+  searchTasks: tool({
+    description: 'Search tasks by keyword. Returns ALL matches. Use this when unsure which task the user means — if multiple results, ask the user to clarify.',
+    inputSchema: z.object({
+      query: z.string().describe('Search keyword (partial match on title)'),
+    }),
+    execute: async ({ query }) => {
+      const matches = await searchTasks(query, owner);
+      return matches.map((t) => ({ id: t.id, title: t.title, score: t.score, status: t.status, parentTaskId: t.parentTaskId }));
+    },
+  }),
+
   listTasks: tool({
     description: 'List all current tasks for the user.',
     inputSchema: z.object({}),
@@ -134,20 +146,33 @@ export const makeTaskTools = (owner: Owner) => ({
       const parentScore = parent.score ?? 0;
       const subtaskTotal = subtasks.reduce((sum, s) => sum + s.score, 0);
 
-      // Enforce: subtask scores must sum to parent score
-      // If they don't, proportionally adjust them
-      const adjusted = parentScore > 0 && subtaskTotal !== parentScore
-        ? subtasks.map((s) => ({
+      // Enforce: subtask scores must sum to exactly the parent score
+      let adjusted = subtasks;
+      if (parentScore > 0 && subtaskTotal !== parentScore) {
+        adjusted = subtasks.map((s) => ({
           ...s,
           score: Math.max(1, Math.round((s.score / subtaskTotal) * parentScore)),
-        }))
-        : subtasks;
+        }));
+        // Fix rounding error — add/subtract difference to the largest subtask
+        const adjustedTotal = adjusted.reduce((sum, s) => sum + s.score, 0);
+        const diff = parentScore - adjustedTotal;
+        if (diff !== 0) {
+          const largest = adjusted.reduce((max, s, i) => s.score > adjusted[max].score ? i : max, 0);
+          adjusted[largest].score += diff;
+        }
+      }
 
       const created = await createTasks(
         adjusted.map((s) => ({ ...s, parentTaskId: parent.id })),
         owner,
       );
-      return { parent: parent.title, subtasks: created };
+      const finalTotal = created.reduce((sum, s) => sum + (s.score ?? 0), 0);
+      return {
+        parent: parent.title,
+        parentScore,
+        subtaskScoreTotal: finalTotal,
+        subtasks: created,
+      };
     },
   }),
 });

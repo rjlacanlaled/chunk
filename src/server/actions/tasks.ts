@@ -68,6 +68,15 @@ export const findTaskByName = async (
   return allTasks.find((t) => t.title.toLowerCase().includes(lower)) ?? null;
 };
 
+export const searchTasks = async (
+  query: string,
+  owner: { userId?: string; guestId?: string },
+) => {
+  const allTasks = await listTasks(owner);
+  const lower = query.toLowerCase();
+  return allTasks.filter((t) => t.title.toLowerCase().includes(lower));
+};
+
 export const listTasks = async (
   owner: { userId?: string; guestId?: string },
 ) => {
