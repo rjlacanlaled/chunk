@@ -135,34 +135,39 @@ export const makeTaskTools = (owner: Owner) => ({
         ),
     }),
     execute: async ({ names }) => {
-      const result: CompletionResult = {
-        completed: [],
-        ambiguous: [],
-        notFound: [],
-      };
+      try {
+        const result: CompletionResult = {
+          completed: [],
+          ambiguous: [],
+          notFound: [],
+        };
 
-      for (const name of names) {
-        const resolved = await resolveTask(name, owner);
+        for (const name of names) {
+          const resolved = await resolveTask(name, owner);
 
-        if ('error' in resolved) {
-          result.notFound.push(name);
-        } else if ('matches' in resolved) {
-          result.ambiguous.push({
-            name,
-            matches: resolved.matches.map((m) => ({
-              taskNumber: m.taskNumber,
-              title: m.title,
-            })),
-          });
-        } else {
-          const count = await completeWithDescendants(resolved.match.id);
-          result.completed.push(
-            `${resolved.match.title} (${count} task${count !== 1 ? 's' : ''} completed)`,
-          );
+          if ('error' in resolved) {
+            result.notFound.push(name);
+          } else if ('matches' in resolved) {
+            result.ambiguous.push({
+              name,
+              matches: resolved.matches.map((m) => ({
+                taskNumber: m.taskNumber,
+                title: m.title,
+              })),
+            });
+          } else {
+            const count = await completeWithDescendants(resolved.match.id);
+            result.completed.push(
+              `${resolved.match.title} (${count} task${count !== 1 ? 's' : ''} completed)`,
+            );
+          }
         }
-      }
 
-      return result;
+        return result;
+      } catch (err) {
+        console.error('[completeTasks error]', err);
+        return { error: `Complete failed: ${err instanceof Error ? err.message : String(err)}` };
+      }
     },
   }),
 
@@ -253,35 +258,40 @@ export const makeTaskTools = (owner: Owner) => ({
         .describe('Bulk delete by filter instead of names'),
     }),
     execute: async ({ names, filter }) => {
-      // Filter mode — single server action call
-      if (filter) {
-        return deleteByFilter(filter, owner);
-      }
-
-      // Names mode — resolve each, then batch delete
-      if (!names || names.length === 0) {
-        return { deleted: 0, titles: [] };
-      }
-
-      const ids: string[] = [];
-      const errors: string[] = [];
-
-      for (const name of names) {
-        const resolved = await resolveTask(name, owner);
-
-        if ('error' in resolved) {
-          errors.push(resolved.error);
-        } else if ('matches' in resolved) {
-          errors.push(
-            `"${name}" is ambiguous — matches: ${resolved.matches.map((m) => `#${m.taskNumber} ${m.title}`).join(', ')}`,
-          );
-        } else {
-          ids.push(resolved.match.id);
+      try {
+        // Filter mode — single server action call
+        if (filter) {
+          return deleteByFilter(filter, owner);
         }
-      }
 
-      const result = await deleteByIds(ids);
-      return { ...result, errors: errors.length > 0 ? errors : undefined };
+        // Names mode — resolve each, then batch delete
+        if (!names || names.length === 0) {
+          return { deleted: 0, titles: [] };
+        }
+
+        const ids: string[] = [];
+        const errors: string[] = [];
+
+        for (const name of names) {
+          const resolved = await resolveTask(name, owner);
+
+          if ('error' in resolved) {
+            errors.push(resolved.error);
+          } else if ('matches' in resolved) {
+            errors.push(
+              `"${name}" is ambiguous — matches: ${resolved.matches.map((m) => `#${m.taskNumber} ${m.title}`).join(', ')}`,
+            );
+          } else {
+            ids.push(resolved.match.id);
+          }
+        }
+
+        const result = await deleteByIds(ids);
+        return { ...result, errors: errors.length > 0 ? errors : undefined };
+      } catch (err) {
+        console.error('[deleteTasks error]', err);
+        return { error: `Delete failed: ${err instanceof Error ? err.message : String(err)}` };
+      }
     },
   }),
 

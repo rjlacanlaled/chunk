@@ -152,7 +152,7 @@ export const updateTasksByIds = async (
 export const completeWithDescendants = async (id: string): Promise<number> => {
   const result = await db.execute(sql`
     WITH RECURSIVE descendants AS (
-      SELECT id FROM tasks WHERE id = ${id}
+      SELECT id FROM tasks WHERE id = ${id}::uuid
       UNION ALL
       SELECT t.id FROM tasks t
         INNER JOIN descendants d ON t.parent_task_id = d.id
@@ -174,7 +174,7 @@ export const completeWithDescendants = async (id: string): Promise<number> => {
 export const uncompleteWithDescendants = async (id: string): Promise<number> => {
   const result = await db.execute(sql`
     WITH RECURSIVE descendants AS (
-      SELECT id FROM tasks WHERE id = ${id}
+      SELECT id FROM tasks WHERE id = ${id}::uuid
       UNION ALL
       SELECT t.id FROM tasks t
         INNER JOIN descendants d ON t.parent_task_id = d.id
@@ -205,9 +205,10 @@ export const deleteByIds = async (ids: string[]): Promise<DeletionResult> => {
   const titles = roots.map((r) => r.title);
 
   // Recursive CTE soft-delete: root IDs + all their descendants
+  const idList = sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `);
   const result = await db.execute(sql`
     WITH RECURSIVE descendants AS (
-      SELECT id FROM tasks WHERE id = ANY(${ids})
+      SELECT id FROM tasks WHERE id IN (${idList})
       UNION ALL
       SELECT t.id FROM tasks t
         INNER JOIN descendants d ON t.parent_task_id = d.id
