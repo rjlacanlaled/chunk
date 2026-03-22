@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState, useMemo, type MutableRefObject } from 'react';
+import { useEffect, useRef, useCallback, useState, type MutableRefObject } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, isToolUIPart } from 'ai';
 import type { UIMessage } from 'ai';
@@ -70,21 +70,16 @@ function ChatPanelInner({
 }: ChatPanelProps & { initialMessages?: UIMessage[] }) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const timezone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone, []);
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const transport = useMemo(
-    () => new DefaultChatTransport({
-      api: '/api/chat',
-      body: {
-        owner,
-        // Client time is computed fresh each request by the transport
-        clientTime: new Date().toLocaleString('en-CA', { hour12: false }).replace(',', ''),
-        clientTimezone: timezone,
-      },
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [owner.userId, owner.guestId, timezone],
-  );
+  const transport = new DefaultChatTransport({
+    api: '/api/chat',
+    body: {
+      owner,
+      clientTime: new Date().toLocaleString('en-CA', { hour12: false }).replace(',', ''),
+      clientTimezone: timezone,
+    },
+  });
 
   const { messages, sendMessage, setMessages, status } = useChat({
     transport,
