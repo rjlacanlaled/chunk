@@ -1,84 +1,31 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
 
-vi.mock('@/lib/auth-client', () => ({
-  useSession: () => ({ data: null }),
-  signIn: { social: vi.fn() },
-  signOut: vi.fn(),
-}));
-
-vi.mock('@/hooks/use-guest', () => ({
-  useGuestId: () => 'test-guest-id',
-}));
-
-vi.mock('@/hooks/use-auth-with-migration', () => ({
-  useAuthWithMigration: () => null,
-}));
-
-vi.mock('@/server/actions/tasks', () => ({
-  listTasks: vi.fn().mockResolvedValue([]),
-  createTask: vi.fn(),
-  updateTask: vi.fn(),
-  deleteTask: vi.fn(),
-}));
-
-vi.mock('@ai-sdk/react', () => ({
-  useChat: () => ({
-    messages: [],
-    sendMessage: vi.fn(),
-    status: 'ready',
-  }),
-}));
-
-vi.mock('ai', () => ({
-  DefaultChatTransport: vi.fn(),
-}));
-
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-    },
-  });
-
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
-    );
-  };
-};
-
-describe('Home page', () => {
-  it('shows hero text when no tasks', async () => {
-    const { default: Home } = await import('@/app/page');
-    const Wrapper = createWrapper();
-    render(<Wrapper><Home /></Wrapper>);
+describe('Landing page', () => {
+  it('shows the hero headline', async () => {
+    const { default: LandingPage } = await import('@/app/page');
+    render(<LandingPage />);
 
     expect(
-      screen.getByText('Your chaos, made manageable.'),
+      screen.getByText('Your to-do app is broken.'),
     ).toBeInTheDocument();
   });
 
-  it('shows chat input', async () => {
-    const { default: Home } = await import('@/app/page');
-    const Wrapper = createWrapper();
-    render(<Wrapper><Home /></Wrapper>);
+  it('shows the CTA button linking to dashboard', async () => {
+    const { default: LandingPage } = await import('@/app/page');
+    render(<LandingPage />);
 
-    expect(
-      screen.getByPlaceholderText('Type your chaos here...'),
-    ).toBeInTheDocument();
+    const cta = screen.getByText('Start chunking — it\'s free');
+    expect(cta).toBeInTheDocument();
+    expect(cta.closest('a')).toHaveAttribute('href', '/dashboard');
   });
 
-  it('renders the Chunk logo', async () => {
-    const { default: Home } = await import('@/app/page');
-    const Wrapper = createWrapper();
-    render(<Wrapper><Home /></Wrapper>);
+  it('renders the Chunk logo in nav and footer', async () => {
+    const { default: LandingPage } = await import('@/app/page');
+    render(<LandingPage />);
 
     const logos = screen.getAllByAltText('Chunk');
+    expect(logos.length).toBeGreaterThanOrEqual(2);
     const headerLogo = logos.find(
       (el) => el.getAttribute('src') === '/chunk-logos/chunk-logo-horizontal-dark.svg',
     );
