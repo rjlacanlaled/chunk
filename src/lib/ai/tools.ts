@@ -38,15 +38,29 @@ export const makeTaskTools = (owner: Owner) => ({
   }),
 
   completeTasks: tool({
-    description: 'Mark one or more tasks as done by name.',
+    description: 'Mark one or more tasks as done by name. If a task has subtasks, all subtasks are completed too.',
     inputSchema: z.object({
       names: z.array(z.string()).describe('Task names to complete (partial match works)'),
     }),
     execute: async ({ names }) => {
+      const allTasks = await listTasks(owner);
+      const getDescendants = (parentId: string): typeof allTasks => {
+        const children = allTasks.filter((t) => t.parentTaskId === parentId);
+        return children.flatMap((c) => [c, ...getDescendants(c.id)]);
+      };
+
       const results = [];
       for (const name of names) {
         const task = await findTaskByName(name, owner);
         if (!task) { results.push({ error: `No task matching "${name}"` }); continue; }
+
+        // Complete all descendants first
+        const descendants = getDescendants(task.id);
+        for (const d of descendants) {
+          if (d.status !== 'done') await updateTask({ id: d.id, status: 'done' });
+        }
+
+        // Complete the task itself
         results.push(await updateTask({ id: task.id, status: 'done' }));
       }
       return results;
