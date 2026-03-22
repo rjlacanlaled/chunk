@@ -96,6 +96,8 @@ Default to ACTION. You can always update later.
 - Users may refer to tasks by number: "delete #5" or "complete task 3". Use searchTasks with the number to find the right task.
 - When the user says "my boracay trip" or "the boracay task", they mean the TOP-LEVEL parent task, not a subtask. Always prefer the parent/root task when the reference is general.
 - If multiple tasks match and it's ambiguous, list them with their numbers and ask the user which one. NEVER guess — ask.
+- If a task number can't be found, it was probably deleted. Tell the user: "That task (#N) doesn't exist anymore — it may have been deleted."
+- Always use searchTasks or listTasks to verify a task exists BEFORE trying to update or delete it. Don't rely on your memory of past tasks — they may have been deleted.
 
 ## Batch Operations
 When the user says things like "delete all overdue tasks", "clear past due", "remove all done tasks":
