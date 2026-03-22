@@ -1,13 +1,13 @@
 'use server';
 
-import { eq, or, and, isNull } from 'drizzle-orm';
+import { eq, or, and, isNull, sql } from 'drizzle-orm';
 import { db } from '@/server/db';
 import { tasks } from '@/server/db/schema';
 import type { CreateTaskInput, UpdateTaskInput } from '@/types/task';
 
 type Owner = { userId?: string; guestId?: string };
 
-// Get max task number across ALL tasks (including deleted) so numbers never reuse
+// Get max task number using SQL MAX() — much faster than pulling all rows
 const getNextTaskNumber = async (owner: Owner): Promise<number> => {
   const conditions = [];
   if (owner.userId) conditions.push(eq(tasks.userId, owner.userId));
@@ -15,13 +15,12 @@ const getNextTaskNumber = async (owner: Owner): Promise<number> => {
 
   if (conditions.length === 0) return 1;
 
-  // Query ALL tasks including soft-deleted ones
-  const all = await db.select({ taskNumber: tasks.taskNumber }).from(tasks).where(
-    conditions.length > 1 ? or(...conditions) : conditions[0],
-  );
+  const [result] = await db
+    .select({ max: sql<number>`COALESCE(MAX(${tasks.taskNumber}), 0)` })
+    .from(tasks)
+    .where(conditions.length > 1 ? or(...conditions) : conditions[0]!);
 
-  const maxNum = all.reduce((max, t) => Math.max(max, t.taskNumber ?? 0), 0);
-  return maxNum + 1;
+  return (result?.max ?? 0) + 1;
 };
 
 export const createTask = async (
