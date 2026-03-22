@@ -136,17 +136,30 @@ export const makeTaskTools = (owner: Owner) => ({
   }),
 
   deleteTasks: tool({
-    description: 'Delete one or more tasks by name.',
+    description: 'Delete one or more tasks by name. Also deletes all subtasks recursively.',
     inputSchema: z.object({
       names: z.array(z.string()).describe('Task names to delete (partial match)'),
     }),
     execute: async ({ names }) => {
+      const allTasks = await listTasks(owner);
+      const getDescendants = (parentId: string): typeof allTasks => {
+        const children = allTasks.filter((t) => t.parentTaskId === parentId);
+        return children.flatMap((c) => [c, ...getDescendants(c.id)]);
+      };
+
       const results = [];
       for (const name of names) {
         const task = await findTaskByName(name, owner);
         if (!task) { results.push({ error: `No task matching "${name}"` }); continue; }
+
+        // Delete all descendants first (bottom-up)
+        const descendants = getDescendants(task.id);
+        for (const d of descendants) {
+          await deleteTask(d.id);
+        }
+
         await deleteTask(task.id);
-        results.push({ deleted: true, title: task.title });
+        results.push({ deleted: true, title: task.title, childrenDeleted: descendants.length });
       }
       return results;
     },

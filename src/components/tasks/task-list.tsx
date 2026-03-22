@@ -273,6 +273,7 @@ interface TaskListProps {
   tasks: Task[];
   onToggleDone: (task: Task) => void;
   onBreakDown?: (taskTitle: string) => void;
+  onDelete?: (task: Task) => void;
   lastXpGain?: number | null;
 }
 
@@ -280,6 +281,7 @@ export function TaskList({
   tasks,
   onToggleDone,
   onBreakDown,
+  onDelete,
   lastXpGain,
 }: TaskListProps) {
   const [doneCollapsed, setDoneCollapsed] = useState(true);
@@ -332,6 +334,7 @@ export function TaskList({
         allTasks={tasks}
         onToggleDone={onToggleDone}
         onBreakDown={onBreakDown}
+        onDelete={onDelete}
       />
     ));
 

@@ -5,6 +5,7 @@ import {
   Circle,
   CheckCircle2,
   Zap,
+  Trash2,
   AlertTriangle,
   Clock,
 } from 'lucide-react';
@@ -113,6 +114,7 @@ export interface TaskItemProps {
   allTasks: Task[];
   onToggleDone: (task: Task) => void;
   onBreakDown?: (taskTitle: string) => void;
+  onDelete?: (task: Task) => void;
   depth?: number;
   recentlyCompleted?: boolean;
   xpGain?: number | null;
@@ -123,6 +125,7 @@ export function TaskItem({
   allTasks,
   onToggleDone,
   onBreakDown,
+  onDelete,
   depth = 0,
   recentlyCompleted,
   xpGain,
@@ -162,7 +165,7 @@ export function TaskItem({
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- role/tabIndex set when interactive
     <div
       className={cn(
-        'flex items-center gap-3 py-2 px-3 rounded-md transition-colors',
+        'group flex items-center gap-3 py-2 px-3 rounded-md transition-colors',
         hasChildren && 'cursor-pointer hover:bg-muted/10',
         !hasChildren && 'hover:bg-muted/10',
         recentlyCompleted && 'animate-success-flash',
@@ -236,6 +239,16 @@ export function TaskItem({
         )}
         <ScoreMeter score={task.score} />
         {isRoot && <TimeAgo date={task.createdAt} />}
+        {onDelete && (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onDelete(task); }}
+            aria-label="Delete task"
+            className="shrink-0 rounded-md p-1 text-muted-foreground/30 opacity-0 transition-all hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
+          >
+            <Trash2 className="size-3" />
+          </button>
+        )}
       </div>
 
       {recentlyCompleted && xpGain && (
@@ -259,6 +272,7 @@ export function TaskItem({
           allTasks={allTasks}
           onToggleDone={onToggleDone}
           onBreakDown={onBreakDown}
+          onDelete={onDelete}
           depth={depth + 1}
         />
       ))}

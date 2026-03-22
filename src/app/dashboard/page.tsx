@@ -43,7 +43,7 @@ export default function Home() {
   const isGuest = !session?.user;
   const queryClient = useQueryClient();
   const { data: tasks = [], isFetched: tasksFetched } = useTasksQuery(owner ?? { guestId: '' });
-  const { updateMutation } = useTaskMutations(owner ?? { guestId: '' });
+  const { updateMutation, deleteMutation } = useTaskMutations(owner ?? { guestId: '' });
   const { xp, level, streak, lastXpGain, completeTask, uncompleteTask } = useGamification(tasks);
 
   const getDescendants = useCallback((parentId: string): Task[] => {
@@ -139,6 +139,17 @@ export default function Home() {
     sendChatRef.current?.(`break down "${taskTitle}" into subtasks`);
   }, []);
 
+  const handleDelete = useCallback((task: Task) => {
+    // Delete the task and all descendants
+    const descendants = getDescendants(task.id);
+    for (const d of descendants) {
+      if (d.status === 'done') uncompleteTask(d);
+      deleteMutation.mutate(d.id);
+    }
+    if (task.status === 'done') uncompleteTask(task);
+    deleteMutation.mutate(task.id);
+  }, [getDescendants, uncompleteTask, deleteMutation]);
+
   const hasTasks = tasks.length > 0;
 
   // Single loading gate — wait for auth + tasks before showing anything
@@ -208,6 +219,7 @@ export default function Home() {
                   tasks={tasks}
                   onToggleDone={handleToggleDone}
                   onBreakDown={handleBreakDown}
+                  onDelete={handleDelete}
                   lastXpGain={lastXpGain}
                 />
               </div>
