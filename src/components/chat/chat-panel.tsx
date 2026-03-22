@@ -122,22 +122,25 @@ function ChatPanelInner({
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Refresh tasks whenever tool calls appear during streaming
-  const lastToolCount = useRef(0);
+  // Refresh tasks whenever tool outputs appear during streaming
+  const lastToolOutputCount = useRef(0);
   useEffect(() => {
     if (status !== 'streaming' || messages.length === 0) return;
     const lastMsg = messages[messages.length - 1];
     if (lastMsg.role !== 'assistant') return;
-    const toolParts = lastMsg.parts.filter((p) => p.type === 'tool-invocation');
-    if (toolParts.length > lastToolCount.current) {
-      lastToolCount.current = toolParts.length;
+    // Count tool parts with output-available state (tool finished executing)
+    const completedTools = lastMsg.parts.filter(
+      (p) => isToolUIPart(p) && (p as any).state === 'output-available',
+    ).length;
+    if (completedTools > lastToolOutputCount.current) {
+      lastToolOutputCount.current = completedTools;
       onTasksChanged?.();
     }
   }, [messages, status, onTasksChanged]);
 
-  // Reset tool count when not streaming
+  // Reset count when not streaming
   useEffect(() => {
-    if (status === 'ready') lastToolCount.current = 0;
+    if (status === 'ready') lastToolOutputCount.current = 0;
   }, [status]);
 
   const handleSend = useCallback((text: string) => {
