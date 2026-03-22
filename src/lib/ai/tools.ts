@@ -96,7 +96,7 @@ export const makeTaskTools = (owner: Owner) => ({
             [{
               ...taskInput,
               dueDate: taskInput.dueDate
-                ? new Date(taskInput.dueDate)
+                ? new Date(taskInput.dueDate + 'Z')
                 : undefined,
             }],
             owner,
@@ -223,7 +223,7 @@ export const makeTaskTools = (owner: Owner) => ({
         }
 
         const parsedDueDate = dueDate !== undefined
-          ? (dueDate === null ? null : new Date(dueDate))
+          ? (dueDate === null ? null : new Date(dueDate + 'Z'))
           : undefined;
 
         const updateFields = {

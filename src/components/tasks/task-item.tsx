@@ -161,7 +161,9 @@ export function TaskItem({
   const [expanded, setExpanded] = useState(true);
   const [chunking, setChunking] = useState(false);
   const isDone = task.status === 'done';
-  const children = allTasks.filter((t) => t.parentTaskId === task.id);
+  const children = allTasks
+    .filter((t) => t.parentTaskId === task.id)
+    .sort((a, b) => (a.taskNumber ?? 0) - (b.taskNumber ?? 0));
   const hasChildren = children.length > 0;
 
   // Stop chunking animation when children arrive
