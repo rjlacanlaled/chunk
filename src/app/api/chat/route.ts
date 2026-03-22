@@ -33,8 +33,8 @@ export const POST = async (req: Request) => {
     system: SYSTEM_PROMPT,
     messages: modelMessages,
     tools,
-    stopWhen: stepCountIs(10),
-    maxOutputTokens: 4096,
+    stopWhen: stepCountIs(20),
+    maxOutputTokens: 16384,
   });
 
   return result.toUIMessageStreamResponse();

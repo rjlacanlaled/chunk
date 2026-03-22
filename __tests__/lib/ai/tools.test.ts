@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('@/server/actions/tasks', () => ({
   createTask: vi.fn(),
+  createTasks: vi.fn(),
   updateTask: vi.fn(),
   deleteTask: vi.fn(),
   listTasks: vi.fn(),
@@ -14,11 +15,12 @@ describe('taskTools', () => {
     const toolNames = Object.keys(taskTools);
 
     expect(toolNames).toContain('createTask');
+    expect(toolNames).toContain('createTasks');
     expect(toolNames).toContain('completeTask');
     expect(toolNames).toContain('updateTaskByName');
     expect(toolNames).toContain('deleteTaskByName');
     expect(toolNames).toContain('listTasks');
-    expect(toolNames).toHaveLength(5);
+    expect(toolNames).toHaveLength(6);
   });
 
   it('each tool should have a description defined', async () => {

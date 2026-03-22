@@ -2,6 +2,7 @@ import { tool } from 'ai';
 import { z } from 'zod';
 import {
   createTask,
+  createTasks,
   updateTask,
   deleteTask,
   listTasks,
@@ -36,16 +37,36 @@ export const makeTaskTools = (owner: Owner) => ({
     },
   }),
 
-  completeTask: tool({
-    description: 'Mark a task as done by its name. Use this when the user says they finished something.',
+  createTasks: tool({
+    description: 'Create multiple tasks at once. Use this when the user mentions several things to do, or asks for bulk/random task creation.',
     inputSchema: z.object({
-      name: z.string().describe('The name/title of the task to mark as done (partial match works)'),
+      tasks: z.array(z.object({
+        title: z.string().describe('Task title'),
+        description: z.string().optional(),
+        priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
+        dueDate: z.string().optional().describe('Due date in ISO format'),
+      })).describe('Array of tasks to create'),
     }),
-    execute: async ({ name }) => {
-      const task = await findTaskByName(name, owner);
-      if (!task) return { error: `No task found matching "${name}"` };
-      const updated = await updateTask({ id: task.id, status: 'done' });
-      return updated;
+    execute: async ({ tasks: taskInputs }) => {
+      const result = await createTasks(taskInputs, owner);
+      return result;
+    },
+  }),
+
+  completeTask: tool({
+    description: 'Mark one or more tasks as done by name. Use when the user says they finished something.',
+    inputSchema: z.object({
+      names: z.array(z.string()).describe('Names of tasks to mark as done (partial match works)'),
+    }),
+    execute: async ({ names }) => {
+      const results = [];
+      for (const name of names) {
+        const task = await findTaskByName(name, owner);
+        if (!task) { results.push({ error: `No task matching "${name}"` }); continue; }
+        const updated = await updateTask({ id: task.id, status: 'done' });
+        results.push(updated);
+      }
+      return results;
     },
   }),
 

@@ -22,6 +22,24 @@ export const createTask = async (
   return task;
 };
 
+export const createTasks = async (
+  inputs: CreateTaskInput[],
+  owner: { userId?: string; guestId?: string },
+) => {
+  const values = inputs.map((input) => ({
+    title: input.title,
+    description: input.description ?? null,
+    priority: input.priority ?? 'medium',
+    status: input.status ?? 'todo',
+    dueDate: input.dueDate ?? null,
+    userId: owner.userId ?? null,
+    guestId: owner.guestId ?? null,
+  }));
+
+  const result = await db.insert(tasks).values(values).returning();
+  return result;
+};
+
 export const updateTask = async (input: UpdateTaskInput) => {
   const { id, ...fields } = input;
 
