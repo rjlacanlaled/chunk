@@ -122,16 +122,23 @@ function ChatPanelInner({
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Refresh tasks whenever tool results come in during streaming
+  // Refresh tasks whenever tool calls appear during streaming
+  const lastToolCount = useRef(0);
   useEffect(() => {
     if (status !== 'streaming' || messages.length === 0) return;
     const lastMsg = messages[messages.length - 1];
     if (lastMsg.role !== 'assistant') return;
-    const hasToolResult = lastMsg.parts.some(
-      (p) => isToolUIPart(p) && 'output' in p && p.state === 'output-available',
-    );
-    if (hasToolResult) onTasksChanged?.();
+    const toolParts = lastMsg.parts.filter((p) => p.type === 'tool-invocation');
+    if (toolParts.length > lastToolCount.current) {
+      lastToolCount.current = toolParts.length;
+      onTasksChanged?.();
+    }
   }, [messages, status, onTasksChanged]);
+
+  // Reset tool count when not streaming
+  useEffect(() => {
+    if (status === 'ready') lastToolCount.current = 0;
+  }, [status]);
 
   const handleSend = useCallback((text: string) => {
     sendMessage({ text });
