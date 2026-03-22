@@ -193,7 +193,7 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, depth }: Subtas
 
   return (
     <div className={cn(
-      hasChildren && 'border-l-2 rounded-sm pl-2 my-1',
+      hasChildren && 'border-l-2 rounded-sm my-1',
       hasChildren && (getScoreBorderColor(task.score) || 'border-border/20'),
     )}>
       <div
@@ -244,7 +244,7 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, depth }: Subtas
 
       {/* Recursive children */}
       {hasChildren && expanded && (
-        <div className="pl-4">
+        <div className="pl-4 pr-2">
           {children.map((child) => (
             <SubtaskRow
               key={child.id}
@@ -391,7 +391,7 @@ export function TaskItem({
 
       {/* -- Subtask list (no tree lines) ------------------------ */}
       {hasChildren && expanded && (
-        <div className="ml-10 pl-4 pb-2 pt-1">
+        <div className="ml-10 pl-4 pr-3 pb-2 pt-1">
           {subtasks.map((sub) => (
             <SubtaskRow
               key={sub.id}
