@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { List, LayoutGrid } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
@@ -25,13 +25,15 @@ export default function Home() {
   useAuthWithMigration();
   const isGuest = !session?.user;
 
-  const owner = session?.user
-    ? { userId: session.user.id }
-    : { guestId: guestId ?? undefined };
+  const owner = useMemo(() => {
+    if (session?.user) return { userId: session.user.id };
+    if (guestId) return { guestId };
+    return null;
+  }, [session?.user, guestId]);
 
   const queryClient = useQueryClient();
-  const { data: tasks = [] } = useTasksQuery(owner);
-  const { updateMutation } = useTaskMutations(owner);
+  const { data: tasks = [] } = useTasksQuery(owner ?? {});
+  const { updateMutation } = useTaskMutations(owner ?? {});
 
   const handleToggleDone = (task: Task) => {
     updateMutation.mutate({
@@ -41,6 +43,15 @@ export default function Home() {
   };
 
   const hasTasks = tasks.length > 0;
+
+  // Wait for owner to be ready (guest ID from localStorage)
+  if (!owner) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <img src="/chunk-logos/chunk-mascot.svg" alt="Chunk" className="size-8 animate-breathe" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen flex-col">
