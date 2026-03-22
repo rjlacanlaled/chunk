@@ -82,7 +82,7 @@ export const makeTaskTools = (owner: Owner) => ({
   completeTasks: tool({
     description: 'Mark one or more tasks as done by name. If a task has subtasks, all subtasks are completed too.',
     inputSchema: z.object({
-      names: z.array(z.string()).describe('Task names to complete (partial match works)'),
+      names: z.array(z.string()).describe('Task names or numbers. When user says "task 85", pass "85". Partial name match also works.'),
     }),
     execute: async ({ names }) => {
       const allTasks = await listTasks(owner);
@@ -110,10 +110,10 @@ export const makeTaskTools = (owner: Owner) => ({
   }),
 
   updateTasks: tool({
-    description: 'Update one or more tasks by name. Use for changing priority, due date, title, status, or score.',
+    description: 'Update one or more tasks. Use for changing priority, due date, title, status, or score.',
     inputSchema: z.object({
       updates: z.array(z.object({
-        name: z.string().describe('Current task name (partial match)'),
+        name: z.string().describe('Task name OR task number (e.g. "#196" or "196"). When user says "task 196", pass "196" here.'),
         title: z.string().optional(),
         priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
         status: z.enum(['todo', 'in_progress', 'done']).optional(),
@@ -139,7 +139,7 @@ export const makeTaskTools = (owner: Owner) => ({
   deleteTasks: tool({
     description: 'Delete tasks. Pass names to delete specific tasks, OR pass a filter to bulk-delete (e.g., filter:"overdue" deletes all overdue tasks). Always prefer filter for bulk operations — ONE call, not multiple.',
     inputSchema: z.object({
-      names: z.array(z.string()).optional().describe('Task names to delete (partial match)'),
+      names: z.array(z.string()).optional().describe('Task names or numbers. When user says "task 190", pass "190".'),
       filter: z.enum(['overdue', 'done', 'all']).optional().describe('Bulk delete by filter instead of names'),
     }),
     execute: async ({ names, filter }) => {
