@@ -24,7 +24,7 @@ const getScoreColor = (score: number): string => {
   return 'text-purple-400';
 };
 
-const getScoreBarColor = (score: number): string => {
+const getScoreDotColor = (score: number): string => {
   if (score <= 5) return 'bg-emerald-400';
   if (score <= 15) return 'bg-amber-400';
   if (score <= 30) return 'bg-orange-400';
@@ -32,29 +32,14 @@ const getScoreBarColor = (score: number): string => {
   return 'bg-purple-400';
 };
 
-const getScoreTrackColor = (score: number): string => {
-  if (score <= 5) return 'bg-emerald-400/20';
-  if (score <= 15) return 'bg-amber-400/20';
-  if (score <= 30) return 'bg-orange-400/20';
-  if (score <= 100) return 'bg-red-400/20';
-  return 'bg-purple-400/20';
-};
-
-/* ── Score meter ─────────────────────────────────────────── */
+/* ── Score indicator ─────────────────────────────────────── */
 
 function ScoreMeter({ score }: { score: number | null }) {
   if (!score) return null;
-  const maxScore = 100;
-  const pct = Math.min((score / maxScore) * 100, 100);
 
   return (
-    <div className="flex items-center gap-1.5 shrink-0">
-      <div className={cn('h-1.5 w-8 overflow-hidden rounded-full', getScoreTrackColor(score))}>
-        <div
-          className={cn('h-full rounded-full transition-all', getScoreBarColor(score))}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
+    <div className="flex items-center gap-1 shrink-0">
+      <span className={cn('size-2 rounded-full', getScoreDotColor(score))} />
       <span className={cn('text-[10px] font-bold tabular-nums', getScoreColor(score))}>
         {score}
       </span>
