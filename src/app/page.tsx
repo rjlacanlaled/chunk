@@ -42,8 +42,16 @@ export default function Home() {
   const { updateMutation } = useTaskMutations(owner ?? {});
   const { xp, level, streak, lastXpGain, completeTask } = useGamification(tasks);
 
+  const getDescendants = useCallback((parentId: string): Task[] => {
+    const children = tasks.filter((t) => t.parentTaskId === parentId);
+    return children.flatMap((c) => [c, ...getDescendants(c.id)]);
+  }, [tasks]);
+
   const handleToggleDone = (task: Task) => {
-    if (task.status !== 'done') {
+    const newStatus = task.status === 'done' ? 'todo' : 'done';
+    const marking = newStatus === 'done';
+
+    if (marking) {
       completeTask(task);
       if ((task.score ?? 0) >= 20) {
         confetti({
@@ -54,10 +62,18 @@ export default function Home() {
         });
       }
     }
-    updateMutation.mutate({
-      id: task.id,
-      status: task.status === 'done' ? 'todo' : 'done',
-    });
+
+    // Update this task
+    updateMutation.mutate({ id: task.id, status: newStatus });
+
+    // Also update all descendants
+    const descendants = getDescendants(task.id);
+    for (const child of descendants) {
+      if (child.status !== newStatus) {
+        if (marking) completeTask(child);
+        updateMutation.mutate({ id: child.id, status: newStatus });
+      }
+    }
   };
 
   const handleBreakDown = useCallback((taskTitle: string) => {
