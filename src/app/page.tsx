@@ -45,12 +45,14 @@ export default function Home() {
   const handleToggleDone = (task: Task) => {
     if (task.status !== 'done') {
       completeTask(task);
-      confetti({
-        particleCount: 80,
-        spread: 60,
-        origin: { y: 0.7 },
-        colors: ['#4945FF', '#9593FF', '#5CB176', '#F5CF0D'],
-      });
+      if ((task.score ?? 0) >= 20) {
+        confetti({
+          particleCount: 80 + (task.score ?? 0),
+          spread: 70,
+          origin: { y: 0.7 },
+          colors: ['#4945FF', '#9593FF', '#5CB176', '#F5CF0D'],
+        });
+      }
     }
     updateMutation.mutate({
       id: task.id,
