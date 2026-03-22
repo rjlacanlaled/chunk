@@ -19,9 +19,11 @@ import type { Task } from '@/types/task';
 
 function getScoreLabel(score: number | null) {
   if (!score) return null;
-  if (score <= 3) return { text: 'Easy', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' };
-  if (score <= 6) return { text: 'Medium', color: 'bg-amber-500/15 text-amber-400 border-amber-500/25' };
-  return { text: 'Hard', color: 'bg-red-500/15 text-red-400 border-red-500/25' };
+  if (score <= 5) return { text: 'Easy', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' };
+  if (score <= 15) return { text: 'Medium', color: 'bg-amber-500/15 text-amber-400 border-amber-500/25' };
+  if (score <= 30) return { text: 'Hard', color: 'bg-red-500/15 text-red-400 border-red-500/25' };
+  if (score <= 100) return { text: 'Epic', color: 'bg-purple-500/15 text-purple-400 border-purple-500/25' };
+  return { text: 'Legendary', color: 'bg-pink-500/15 text-pink-400 border-pink-500/25' };
 }
 
 function ScoreBadge({ score }: { score: number | null }) {
@@ -188,7 +190,7 @@ export function TaskItem({
   const [expanded, setExpanded] = useState(true);
   const isDone = task.status === 'done';
   const hasChildren = subtasks.length > 0;
-  const showBreakDown = !isDone && (task.score ?? 0) > 3 && !hasChildren;
+  const showBreakDown = !isDone && (task.score ?? 0) > 10 && !hasChildren;
 
   const dueDate = task.dueDate ? new Date(task.dueDate) : null;
   const isOverdue = dueDate && isPast(dueDate) && !isToday(dueDate) && !isDone;
@@ -288,7 +290,7 @@ export function TaskItem({
             )}
           >
             <Zap className="mr-1 size-3" />
-            {(task.score ?? 0) >= 6 ? 'Chunk it!' : 'Break it down'}
+            {(task.score ?? 0) >= 20 ? 'Chunk it!' : 'Break it down'}
           </Button>
         )}
 

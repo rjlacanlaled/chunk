@@ -10,9 +10,11 @@ export const LEVELS = [
 
 export const getXpForTask = (score: number | null): number => {
   const s = score ?? 5;
-  if (s <= 3) return 5;
-  if (s <= 6) return 15;
-  return 30;
+  if (s <= 5) return 5;
+  if (s <= 15) return 15;
+  if (s <= 30) return 30;
+  if (s <= 100) return 50;
+  return 100;
 };
 
 export const getLevel = (xp: number) => {

@@ -15,7 +15,7 @@ const taskSchema = z.object({
   description: z.string().optional(),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
   dueDate: z.string().optional().describe('Due date in ISO format'),
-  score: z.number().min(1).max(9).describe('Difficulty: 1-3 easy, 4-6 medium, 7-9 hard'),
+  score: z.number().min(1).describe('Difficulty score — YOU decide. 1-5 trivial, 6-15 moderate, 16-30 hard, 30+ massive'),
   parentTaskId: z.string().optional().describe('Parent task ID if this is a subtask'),
 });
 
@@ -62,7 +62,7 @@ export const makeTaskTools = (owner: Owner) => ({
         priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
         status: z.enum(['todo', 'in_progress', 'done']).optional(),
         dueDate: z.string().nullable().optional(),
-        score: z.number().min(1).max(9).optional(),
+        score: z.number().min(1).optional(),
       })).describe('Tasks to update'),
     }),
     execute: async ({ updates }) => {
@@ -109,7 +109,7 @@ export const makeTaskTools = (owner: Owner) => ({
       name: z.string().describe('Name of task to break down'),
       subtasks: z.array(z.object({
         title: z.string(),
-        score: z.number().min(1).max(9),
+        score: z.number().min(1),
         description: z.string().optional(),
       })),
     }),
