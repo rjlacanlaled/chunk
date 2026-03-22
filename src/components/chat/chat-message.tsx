@@ -7,9 +7,11 @@ import { cn } from '@/lib/utils';
 
 const TOOL_LABELS: Record<string, string> = {
   createTask: 'Creating task',
-  updateTask: 'Updating task',
-  deleteTask: 'Deleting task',
-  listTasks: 'Looking up tasks',
+  createTasks: 'Creating tasks',
+  completeTask: 'Completing task',
+  updateTaskByName: 'Updating task',
+  deleteTaskByName: 'Deleting task',
+  listTasks: 'Checking your tasks',
 };
 
 function ToolChip({ part }: { part: Extract<UIMessage['parts'][number], { type: 'tool-invocation' }> }) {
@@ -94,7 +96,16 @@ export function ChatMessage({ message }: ChatMessageProps) {
         {/* If assistant message has tool calls but no text yet */}
         {!isUser && !hasText && hasTools && (
           <span className="text-sm font-medium animate-shimmer-text">
-            Working on it...
+            {(() => {
+              const activeTool = toolParts.find(
+                (p) => (p as any).toolInvocation?.state !== 'result',
+              );
+              if (activeTool) {
+                const name = (activeTool as any).toolInvocation?.toolName;
+                return TOOL_LABELS[name] || 'Working on it...';
+              }
+              return 'Working on it...';
+            })()}
           </span>
         )}
       </div>

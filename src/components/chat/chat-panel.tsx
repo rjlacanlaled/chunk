@@ -136,14 +136,7 @@ export function ChatPanel({
           {messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} />
           ))}
-          {(status === 'submitted' || (
-            status === 'streaming'
-            && messages.length > 0
-            && messages[messages.length - 1].role === 'assistant'
-            && !messages[messages.length - 1].parts.some(
-              (p) => p.type === 'text' && p.text.length > 0,
-            )
-          )) && <ChatThinking />}
+          {status === 'submitted' && <ChatThinking />}
           <div ref={bottomRef} />
         </div>
       </ScrollArea>
