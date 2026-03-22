@@ -2,48 +2,49 @@
 
 **Your chaos, made manageable.**
 
-Chunk is a chat-first productivity app where you talk to an AI buddy instead of clicking around a boring task manager. Tell it what you need to do, and it turns your brain dumps into organized tasks. Built as a web development course project at OPIT University.
+Chunk is a chat-first productivity app. You talk to an AI, it manages your to-do list. No clicking through menus, no drag-and-drop nonsense — just tell it what you need to do and it handles the rest. I built this for my web development course at OPIT University.
 
-## What It Does
+<!-- TODO: Add screenshot here -->
 
-- **Chat to create tasks** — just tell the AI what you need to do and it handles the rest
-- **Smart prioritization** — mention a deadline and it flags it as high priority
-- **Guest sessions** — start using it immediately, no sign-up required
-- **Account migration** — when you do sign up (Google or GitHub OAuth), your guest tasks come with you
-- **Task list with live updates** — optimistic UI powered by TanStack Query
-- **Board view** — coming soon (placeholder is there, Kanban is next)
-- **Message persistence** — your chat history sticks around between sessions
-- **Dark mode by default** — because we have taste
+## Features
+
+- **Chat to manage tasks** — tell the AI what you need to do, it creates, updates, and completes tasks for you
+- **Smart task breakdown** — big tasks get automatically split into smaller subtasks
+- **Gamification** — earn XP, level up, collect medals, and maintain daily streaks
+- **Difficulty scoring** — the AI assigns scores to tasks based on effort, and subtask scores always add up to the parent
+- **Guest mode** — start using it right away without signing up
+- **Account migration** — sign up later with Google or GitHub and your guest data carries over
+- **Task hierarchy** — tasks can have subtasks, which can have subtasks, recursively
+- **Live updates** — optimistic UI so everything feels instant
+- **Dark mode by default** — because obviously
 
 ## Tech Stack
 
-| Layer       | What We're Using                          |
-|-------------|-------------------------------------------|
-| Framework   | Next.js 16 (App Router, React 19)        |
-| Language    | TypeScript (strict)                       |
-| Runtime     | Bun                                       |
-| Styling     | Tailwind CSS v4 + shadcn/ui              |
-| Database    | PostgreSQL via Supabase                   |
-| ORM         | Drizzle ORM                               |
-| Auth        | Better-Auth (Google + GitHub OAuth)       |
-| AI          | Vercel AI SDK + OpenRouter                |
-| State       | TanStack Query                            |
-| Testing     | Vitest + React Testing Library            |
+| Layer | Technology |
+|-------|------------|
+| Framework | Next.js 16 (App Router, React 19) |
+| Language | TypeScript (strict mode) |
+| Runtime | Bun |
+| Styling | Tailwind CSS v4 + shadcn/ui |
+| Database | PostgreSQL via Supabase |
+| ORM | Drizzle ORM |
+| Auth | Better-Auth (Google + GitHub OAuth) |
+| AI | Vercel AI SDK + OpenRouter |
+| State | TanStack Query |
+| Testing | Vitest + React Testing Library + MSW |
 
 ## Getting Started
 
 ### Prerequisites
 
-You'll need these installed:
-
-- [Bun](https://bun.sh) (v1.0+)
-- A [Supabase](https://supabase.com) project (free tier works fine)
+- [Bun](https://bun.sh) (v1.0+) — if you don't have it, go to bun.sh
+- A [Supabase](https://supabase.com) project (free tier works)
 - An [OpenRouter](https://openrouter.ai) API key
-- Google and/or GitHub OAuth credentials (for auth)
+- Google and/or GitHub OAuth credentials
 
 ### Setup
 
-1. Clone the repo and install dependencies:
+1. Clone and install:
 
 ```bash
 git clone https://github.com/rjlacanlaled/chunk.git
@@ -51,11 +52,13 @@ cd chunk
 bun install
 ```
 
-2. Copy the example env file and fill in your values:
+2. Set up environment variables:
 
 ```bash
 cp .env.example .env
 ```
+
+Fill in the values (see table below).
 
 3. Push the database schema:
 
@@ -63,35 +66,35 @@ cp .env.example .env
 bun drizzle-kit push
 ```
 
-4. Start the dev server:
+4. Run the dev server:
 
 ```bash
 bun dev
 ```
 
-That's it. Open [http://localhost:3000](http://localhost:3000) and start chatting.
+Open [http://localhost:3000](http://localhost:3000) and start chatting.
 
 ## Environment Variables
 
-| Variable                | What It's For                              |
-|-------------------------|--------------------------------------------|
-| `DATABASE_URL`          | Supabase PostgreSQL connection string      |
-| `BETTER_AUTH_SECRET`    | Secret key for session encryption          |
-| `BETTER_AUTH_URL`       | Base URL for auth callbacks (e.g. `http://localhost:3000`) |
-| `GOOGLE_CLIENT_ID`     | Google OAuth client ID                     |
-| `GOOGLE_CLIENT_SECRET`  | Google OAuth client secret                 |
-| `GITHUB_CLIENT_ID`     | GitHub OAuth client ID                     |
-| `GITHUB_CLIENT_SECRET`  | GitHub OAuth client secret                 |
-| `OPENROUTER_API_KEY`   | OpenRouter API key for the AI model        |
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | Supabase PostgreSQL connection string |
+| `BETTER_AUTH_SECRET` | Random 32+ character string for session encryption |
+| `BETTER_AUTH_URL` | Base URL for auth callbacks (e.g. `http://localhost:3000`) |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID ([console.cloud.google.com](https://console.cloud.google.com)) |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
+| `GITHUB_CLIENT_ID` | GitHub OAuth client ID ([github.com/settings/developers](https://github.com/settings/developers)) |
+| `GITHUB_CLIENT_SECRET` | GitHub OAuth client secret |
+| `OPENROUTER_API_KEY` | OpenRouter API key ([openrouter.ai/keys](https://openrouter.ai/keys)) |
 
-Check `.env.example` for the full list.
+See `.env.example` for the full list with comments.
 
-## Testing
+## Running Tests
 
-We use Vitest with React Testing Library. Tests live in `__tests__/` and mirror the `src/` structure.
+Tests use Vitest with React Testing Library. Test files live in `__tests__/` and mirror the `src/` structure.
 
 ```bash
-# Run tests in watch mode
+# Watch mode
 bun run test
 
 # Single run
@@ -102,33 +105,45 @@ bun run test:run
 
 ```
 chunk/
-├── __tests__/              # Test files (mirrors src/ structure)
+├── __tests__/              # Tests (mirrors src/)
+│   ├── app/                # Page tests
+│   ├── components/         # Component tests
+│   ├── hooks/              # Hook tests
+│   ├── lib/                # Utility + AI tool tests
+│   └── server/             # Server action tests
 ├── src/
 │   ├── app/                # Next.js pages + API routes
-│   │   └── api/chat/       # AI chat streaming endpoint
+│   │   ├── api/chat/       # AI chat streaming endpoint
+│   │   └── dashboard/      # Main app page
 │   ├── components/
 │   │   ├── ui/             # shadcn/ui primitives
-│   │   ├── chat/           # Chat panel, messages
+│   │   ├── chat/           # Chat panel, messages, input
 │   │   ├── tasks/          # Task list, items, board placeholder
+│   │   ├── gamification/   # XP bar, streaks, medals, score summary
 │   │   └── auth/           # OAuth buttons, sign-up CTA
-│   ├── hooks/              # React hooks (tasks, auth, guest)
-│   ├── lib/                # Auth config, AI tools, utilities
+│   ├── hooks/              # React hooks (tasks, auth, guest, gamification)
+│   ├── lib/                # Auth config, AI tools + prompt, gamification logic
 │   ├── server/
 │   │   ├── actions/        # Server actions (tasks, messages, migration)
 │   │   └── db/             # Drizzle schema + connection
 │   └── types/              # Shared TypeScript types
-├── vitest.config.ts        # Test configuration
+├── public/                 # Static assets, logos, medals
+├── vitest.config.ts
 └── package.json
 ```
 
 ## Deployment
 
-Chunk is built for [Vercel](https://vercel.com). To deploy:
+Built for [Vercel](https://vercel.com):
 
-1. Push your repo to GitHub
+1. Push to GitHub
 2. Import the project in Vercel
-3. Set the framework preset to **Next.js**
-4. Add all the environment variables from `.env.example`
+3. Set framework to Next.js
+4. Add all the environment variables
 5. Deploy
 
-Vercel auto-detects the Bun runtime and handles the rest. Make sure your Supabase database is accessible from Vercel's servers (it should be by default).
+Vercel picks up the Bun runtime automatically. Make sure your Supabase database allows external connections (it does by default).
+
+## Built for OPIT
+
+This is a course project for Web Development at [OPIT University](https://www.opit.com). It's a real, working app — not just a prototype.
