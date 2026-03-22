@@ -7,6 +7,7 @@ import {
   Brain,
   Sparkles,
 } from 'lucide-react';
+import LandingHero from '@/components/landing/hero';
 
 const TECH_STACK = [
   'Next.js',
@@ -108,87 +109,7 @@ const CHAT_EXCHANGES = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#1C1C4E]">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#1C1C4E]/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <img
-            src="/chunk-logos/chunk-logo-horizontal-dark.svg"
-            alt="Chunk"
-            className="h-7"
-          />
-          <div className="hidden items-center gap-8 md:flex">
-            <a
-              href="#features"
-              className="text-sm text-white/60 transition-colors hover:text-white"
-            >
-              Features
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-sm text-white/60 transition-colors hover:text-white"
-            >
-              How it Works
-            </a>
-            <a
-              href="#gamification"
-              className="text-sm text-white/60 transition-colors hover:text-white"
-            >
-              Gamification
-            </a>
-          </div>
-          <a
-            href="/dashboard"
-            className="rounded-[5px] bg-[#4945FF] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#3b38e0]"
-          >
-            Start chunking
-          </a>
-        </div>
-      </nav>
-
-      {/* Hero */}
-      <section className="relative flex min-h-[calc(100vh-57px)] items-center justify-center overflow-hidden">
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(ellipse at center, rgba(73,69,255,0.1) 0%, transparent 70%)',
-          }}
-        />
-        <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
-          <img
-            src="/chunk-logos/chunk-ai-icon-idle.svg"
-            alt="Chunky mascot"
-            className="mx-auto mb-8 size-32"
-          />
-          <h1 className="text-4xl font-bold leading-tight text-white md:text-6xl">
-            Your to-do app is broken.
-          </h1>
-          <h1 className="mt-2 text-4xl font-bold leading-tight text-[#4945FF] md:text-6xl">
-            Chunky fixed it.
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-white/60">
-            Meet Chunky — your AI productivity buddy that turns brain dumps into
-            game plans. Just chat, and watch the chaos sort itself out.
-          </p>
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <a
-              href="/dashboard"
-              className="rounded-[5px] bg-[#4945FF] px-8 py-3 text-base font-semibold text-white shadow-[0_0_60px_-12px_rgba(73,69,255,0.5)] transition-colors hover:bg-[#3b38e0]"
-            >
-              Start chunking — it&apos;s free
-            </a>
-            <a
-              href="#how-it-works"
-              className="rounded-[5px] border border-white/20 px-8 py-3 text-base font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/5"
-            >
-              See how it works
-            </a>
-          </div>
-          <p className="mt-6 text-sm text-white/40">
-            No sign-up required. Start in 3 seconds.
-          </p>
-        </div>
-      </section>
+      <LandingHero />
 
       {/* Tech Strip */}
       <section className="border-y border-white/10 bg-white/5 py-6">

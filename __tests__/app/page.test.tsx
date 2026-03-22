@@ -7,7 +7,7 @@ describe('Landing page', () => {
     render(<LandingPage />);
 
     expect(
-      screen.getByText('Your to-do app is broken.'),
+      screen.getByText('Chunky fixed it.'),
     ).toBeInTheDocument();
   });
 
@@ -15,20 +15,17 @@ describe('Landing page', () => {
     const { default: LandingPage } = await import('@/app/page');
     render(<LandingPage />);
 
-    const cta = screen.getByText('Start chunking — it\'s free');
+    const cta = screen.getByText(/Chat with Chunky/);
     expect(cta).toBeInTheDocument();
     expect(cta.closest('a')).toHaveAttribute('href', '/dashboard');
   });
 
-  it('renders the Chunk logo in nav and footer', async () => {
+  it('renders the Chunk logo in footer', async () => {
     const { default: LandingPage } = await import('@/app/page');
     render(<LandingPage />);
 
-    const logos = screen.getAllByAltText('Chunk');
-    expect(logos.length).toBeGreaterThanOrEqual(2);
-    const headerLogo = logos.find(
-      (el) => el.getAttribute('src') === '/chunk-logos/chunk-logo-horizontal-dark.svg',
-    );
-    expect(headerLogo).toBeInTheDocument();
+    const logo = screen.getByAltText('Chunk');
+    expect(logo).toBeInTheDocument();
+    expect(logo.getAttribute('src')).toBe('/chunk-logos/chunk-logo-horizontal-dark.svg');
   });
 });
