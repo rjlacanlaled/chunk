@@ -1,6 +1,6 @@
 'use server';
 
-import { eq, or, and, isNull, sql } from 'drizzle-orm';
+import { eq, or, and, isNull, sql, desc } from 'drizzle-orm';
 import { db } from '@/server/db';
 import { tasks } from '@/server/db/schema';
 import type { CreateTaskInput, UpdateTaskInput } from '@/types/task';
@@ -138,8 +138,8 @@ export const searchTasks = async (
   });
 };
 
-// Only returns non-deleted tasks
-export const listTasks = async (owner: Owner) => {
+// Only returns non-deleted tasks, limited to 200 most recent
+export const listTasks = async (owner: Owner, limit = 200) => {
   if (!owner.userId && !owner.guestId) return [];
 
   const conditions = [];
@@ -156,7 +156,7 @@ export const listTasks = async (owner: Owner) => {
 
   const result = await db.select().from(tasks).where(
     and(ownerCondition, isNull(tasks.deletedAt)),
-  );
+  ).orderBy(desc(tasks.createdAt)).limit(limit);
 
   return result;
 };

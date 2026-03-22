@@ -11,20 +11,19 @@ import type { Task, CreateTaskInput, UpdateTaskInput } from '@/types/task';
 
 type Owner = { userId?: string; guestId?: string };
 
-const taskKeys = {
-  all: (owner: Owner) => ['tasks', owner] as const,
-};
+const getTaskKey = (owner: Owner) => ['tasks', owner.userId || owner.guestId || ''] as const;
 
 export const useTasksQuery = (owner: Owner) => useQuery({
-  queryKey: taskKeys.all(owner),
+  queryKey: getTaskKey(owner),
   queryFn: () => listTasks(owner),
   enabled: !!(owner.userId || owner.guestId),
-  refetchInterval: 5000, // auto-refresh every 5s as fallback
+  staleTime: 30000,
+  refetchOnWindowFocus: false,
 });
 
 export const useTaskMutations = (owner: Owner) => {
   const queryClient = useQueryClient();
-  const key = taskKeys.all(owner);
+  const key = getTaskKey(owner);
 
   const createMutation = useMutation({
     mutationFn: (input: CreateTaskInput) => createTask(input, owner),
