@@ -72,14 +72,14 @@ function ChatPanelInner({
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const transport = new DefaultChatTransport({
-    api: '/api/chat',
-    body: {
-      owner,
-      clientTime: new Date().toLocaleString('en-CA', { hour12: false }).replace(',', ''),
-      clientTimezone: timezone,
-    },
+  // Body uses a getter so clientTime is fresh when serialized, not stale from render
+  const body: Record<string, unknown> = { owner, clientTimezone: timezone };
+  Object.defineProperty(body, 'clientTime', {
+    get: () => new Date().toLocaleString('en-CA', { hour12: false }).replace(',', ''),
+    enumerable: true,
   });
+
+  const transport = new DefaultChatTransport({ api: '/api/chat', body });
 
   const { messages, sendMessage, setMessages, status } = useChat({
     transport,
