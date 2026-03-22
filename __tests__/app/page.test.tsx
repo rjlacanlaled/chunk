@@ -78,11 +78,10 @@ describe('Home page', () => {
     const Wrapper = createWrapper();
     render(<Wrapper><Home /></Wrapper>);
 
-    const logo = screen.getByAltText('Chunk');
-    expect(logo).toBeInTheDocument();
-    expect(logo).toHaveAttribute(
-      'src',
-      '/chunk-logos/chunk-logo-horizontal-dark.svg',
+    const logos = screen.getAllByAltText('Chunk');
+    const headerLogo = logos.find(
+      (el) => el.getAttribute('src') === '/chunk-logos/chunk-logo-horizontal-dark.svg',
     );
+    expect(headerLogo).toBeInTheDocument();
   });
 });

@@ -15,6 +15,9 @@ import { BoardPlaceholder } from '@/components/tasks/board-placeholder';
 import { StreakBadge } from '@/components/gamification/streak-badge';
 import { XpBar } from '@/components/gamification/xp-bar';
 import { ScoreSummary } from '@/components/gamification/score-summary';
+import { DailyMission } from '@/components/gamification/daily-mission';
+import { StreakStrip } from '@/components/gamification/streak-strip';
+import { ActivityFeed } from '@/components/gamification/activity-feed';
 import { SignUpCta } from '@/components/auth/sign-up-cta';
 import { AuthButtons } from '@/components/auth/auth-buttons';
 import { Button } from '@/components/ui/button';
@@ -134,7 +137,12 @@ export default function Home() {
         >
           {hasTasks && view === 'list' && (
             <div className="flex h-full flex-col">
-              <div className="shrink-0 px-4 pt-3">
+              <div className="shrink-0 space-y-3 px-4 pt-3">
+                <DailyMission tasks={tasks} />
+                <div className="flex items-center justify-between gap-4 rounded-lg border border-border/40 bg-card/50 px-4 py-2">
+                  <StreakStrip tasks={tasks} streak={streak} />
+                  <XpBar xp={xp} level={level} />
+                </div>
                 <ScoreSummary tasks={tasks} />
               </div>
               <div className="flex-1 overflow-hidden">
@@ -144,6 +152,9 @@ export default function Home() {
                   onBreakDown={handleBreakDown}
                   lastXpGain={lastXpGain}
                 />
+              </div>
+              <div className="shrink-0 px-4 pb-3">
+                <ActivityFeed tasks={tasks} />
               </div>
             </div>
           )}
