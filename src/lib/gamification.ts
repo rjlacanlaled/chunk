@@ -1,11 +1,10 @@
 export const LEVELS = [
-  { name: 'Brain Dump Beginner', xp: 0 },
-  { name: 'Chaos Wrangler', xp: 100 },
-  { name: 'Task Tamer', xp: 500 },
-  { name: 'Productivity Padawan', xp: 1500 },
-  { name: 'Flow State Finder', xp: 3500 },
-  { name: 'Chunk Champion', xp: 7000 },
-  { name: 'Zen Master', xp: 15000 },
+  { name: 'Starter', xp: 0, medal: '/chunk-gamification/chunk-medal-1-starter.svg' },
+  { name: 'Builder', xp: 100, medal: '/chunk-gamification/chunk-medal-2-builder.svg' },
+  { name: 'Chunker', xp: 500, medal: '/chunk-gamification/chunk-medal-3-chunker.svg' },
+  { name: 'Crusher', xp: 1500, medal: '/chunk-gamification/chunk-medal-4-crusher.svg' },
+  { name: 'Champion', xp: 3500, medal: '/chunk-gamification/chunk-medal-5-champion.svg' },
+  { name: 'Legend', xp: 10000, medal: '/chunk-gamification/chunk-medal-6-legend.svg' },
 ];
 
 export const getXpForTask = (score: number | null): number => {

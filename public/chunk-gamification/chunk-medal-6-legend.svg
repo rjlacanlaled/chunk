@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="148" viewBox="0 0 128 148">
+  <defs>
+    <linearGradient id="legend-stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#4945FF"/>
+      <stop offset="40%"  stop-color="#9736E8"/>
+      <stop offset="70%"  stop-color="#F5CF0D"/>
+      <stop offset="100%" stop-color="#4945FF"/>
+    </linearGradient>
+    <style>
+      .lr { animation: lspin 8s linear infinite; transform-origin: 64px 64px; transform-box: fill-box; }
+      .lc { animation: lbob 1.8s ease-in-out infinite; transform-origin: 64px 32px; transform-box: fill-box; }
+      @keyframes lspin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+      @keyframes lbob  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+    </style>
+  </defs>
+  <g class="lr">
+    <circle cx="64" cy="64" r="58" fill="none" stroke="#4945FF" stroke-width="1" stroke-dasharray="4 8" opacity="0.5"/>
+    <circle cx="64" cy="6"   r="4" fill="#4945FF" opacity="0.7"/>
+    <circle cx="64" cy="122" r="4" fill="#4945FF" opacity="0.7"/>
+    <circle cx="6"  cy="64"  r="4" fill="#4945FF" opacity="0.7"/>
+    <circle cx="122" cy="64" r="4" fill="#4945FF" opacity="0.7"/>
+  </g>
+  <polygon points="64,14 112,38 112,90 64,114 16,90 16,38" fill="#120820" stroke="url(#legend-stroke)" stroke-width="6" stroke-linejoin="round"/>
+  <polygon points="64,23 105,44 105,84 64,105 23,84 23,44" fill="none" stroke="#9736E8" stroke-width="2" opacity="0.5" stroke-linejoin="round"/>
+  <polygon points="64,32 98,50 98,78 64,96 30,78 30,50" fill="none" stroke="#F5CF0D" stroke-width="1.5" opacity="0.3" stroke-linejoin="round"/>
+  <polygon points="64,41 91,56 91,72 64,87 37,72 37,56" fill="none" stroke="#4945FF" stroke-width="1" opacity="0.2" stroke-linejoin="round"/>
+  <rect x="47" y="52" width="34" height="11" rx="3.5" fill="#4945FF"/>
+  <rect x="47" y="67" width="25" height="11" rx="3.5" fill="#9736E8"/>
+  <rect x="47" y="82" width="16" height="11" rx="3.5" fill="#F5CF0D"/>
+  <g class="lc">
+    <rect x="56" y="18" width="16" height="14" rx="3.5" fill="#F5CF0D"/>
+    <rect x="59" y="21" width="7" height="5" rx="1.5" fill="white" opacity="0.6"/>
+    <circle cx="74" cy="17" r="3" fill="#9736E8" opacity="0.7"/>
+  </g>
+  <circle cx="16"  cy="38"  r="7" fill="#4945FF"/><circle cx="16"  cy="38"  r="3" fill="white" opacity="0.6"/>
+  <circle cx="112" cy="38"  r="7" fill="#9736E8"/><circle cx="112" cy="38"  r="3" fill="white" opacity="0.6"/>
+  <circle cx="16"  cy="90"  r="7" fill="#9736E8"/><circle cx="16"  cy="90"  r="3" fill="white" opacity="0.6"/>
+  <circle cx="112" cy="90"  r="7" fill="#F5CF0D"/><circle cx="112" cy="90"  r="3" fill="#32324D" opacity="0.5"/>
+  <circle cx="64"  cy="14"  r="7" fill="#F5CF0D"/><circle cx="64"  cy="14"  r="3" fill="#32324D" opacity="0.5"/>
+  <circle cx="64"  cy="114" r="7" fill="#4945FF"/><circle cx="64"  cy="114" r="3" fill="white" opacity="0.6"/>
+  <circle cx="38"  cy="25"  r="4" fill="#F5CF0D" opacity="0.5"/>
+  <circle cx="90"  cy="25"  r="4" fill="#F5CF0D" opacity="0.5"/>
+  <circle cx="38"  cy="103" r="4" fill="#9736E8" opacity="0.5"/>
+  <circle cx="90"  cy="103" r="4" fill="#9736E8" opacity="0.5"/>
+  <polygon points="64,36 67,44 76,44 69,50 71,58 64,53 57,58 59,50 52,44 61,44" fill="#F5CF0D" opacity="0.35"/>
+  <line x1="64" y1="114" x2="50" y2="132" stroke="#9736E8" stroke-width="5.5" stroke-linecap="round"/>
+  <line x1="64" y1="114" x2="78" y2="132" stroke="#9736E8" stroke-width="5.5" stroke-linecap="round"/>
+  <line x1="46" y1="132" x2="82" y2="132" stroke="#9736E8" stroke-width="5.5" stroke-linecap="round"/>
+  <circle cx="46" cy="132" r="3.5" fill="#4945FF"/>
+  <circle cx="82" cy="132" r="3.5" fill="#F5CF0D"/>
+</svg>

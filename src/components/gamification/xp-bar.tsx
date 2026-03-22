@@ -3,17 +3,11 @@
 import { cn } from '@/lib/utils';
 import { LEVELS } from '@/lib/gamification';
 
-function getBadgeSrc(levelNum: number): string {
-  if (levelNum <= 2) return '/chunk-gamification/chunk-badge-common.svg';
-  if (levelNum <= 4) return '/chunk-gamification/chunk-badge-rare.svg';
-  return '/chunk-gamification/chunk-badge-epic.svg';
-}
-
 interface XpBarProps {
   xp: number;
   level: {
-    current: { name: string; xp: number };
-    next: { name: string; xp: number } | null;
+    current: { name: string; xp: number; medal: string };
+    next: { name: string; xp: number; medal: string } | null;
   };
 }
 
@@ -32,33 +26,40 @@ export function XpBar({ xp, level }: XpBarProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center gap-1 text-primary">
-        <img
-          src={getBadgeSrc(levelNum)}
-          alt={`Level ${levelNum} badge`}
-          width={20}
-          height={20}
-          className="size-5"
-        />
-        <span className="text-xs font-bold tabular-nums">
-          Lv.{levelNum}
-        </span>
-      </div>
-      <span className="hidden text-[10px] font-medium text-muted-foreground sm:inline">
-        {current.name}
-      </span>
-      <div className="relative h-2 w-20 overflow-hidden rounded-full bg-muted">
-        <div
-          className={cn(
-            'absolute inset-y-0 left-0 rounded-full bg-primary',
-            'transition-all duration-700 ease-out',
+      <img
+        src={current.medal}
+        alt={current.name}
+        className="size-6"
+      />
+      <div className="flex flex-col gap-0.5">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] font-bold text-foreground">
+            {current.name}
+          </span>
+          {next && (
+            <img
+              src={next.medal}
+              alt={next.name}
+              className="size-3.5 opacity-30"
+              title={`Next: ${next.name}`}
+            />
           )}
-          style={{ width: `${Math.min(progress, 100)}%` }}
-        />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="relative h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+            <div
+              className={cn(
+                'absolute inset-y-0 left-0 rounded-full bg-primary',
+                'transition-all duration-700 ease-out',
+              )}
+              style={{ width: `${Math.min(progress, 100)}%` }}
+            />
+          </div>
+          <span className="text-[10px] tabular-nums text-muted-foreground whitespace-nowrap">
+            {next ? `${currentXp}/${neededXp} XP` : `${xp} XP`}
+          </span>
+        </div>
       </div>
-      <span className="text-[10px] tabular-nums text-muted-foreground whitespace-nowrap">
-        {next ? `${currentXp}/${neededXp} XP` : `${xp} XP`}
-      </span>
     </div>
   );
 }
