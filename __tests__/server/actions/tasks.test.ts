@@ -11,6 +11,8 @@ const mockTask: Task = {
   status: 'todo',
   position: 0,
   dueDate: null,
+  parentTaskId: null,
+  score: null,
   metadata: {},
   createdAt: new Date('2026-01-01'),
   updatedAt: new Date('2026-01-01'),

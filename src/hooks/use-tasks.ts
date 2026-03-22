@@ -42,6 +42,8 @@ export const useTaskMutations = (owner: Owner) => {
           status: input.status ?? 'todo',
           position: old.length,
           dueDate: input.dueDate ?? null,
+          parentTaskId: input.parentTaskId ?? null,
+          score: input.score ?? null,
           metadata: {},
           createdAt: new Date(),
           updatedAt: new Date(),

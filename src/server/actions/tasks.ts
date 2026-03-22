@@ -15,6 +15,8 @@ export const createTask = async (
     priority: input.priority ?? 'medium',
     status: input.status ?? 'todo',
     dueDate: input.dueDate ?? null,
+    parentTaskId: input.parentTaskId ?? null,
+    score: input.score ?? null,
     userId: owner.userId ?? null,
     guestId: owner.guestId ?? null,
   }).returning();
@@ -32,6 +34,8 @@ export const createTasks = async (
     priority: input.priority ?? 'medium',
     status: input.status ?? 'todo',
     dueDate: input.dueDate ?? null,
+    parentTaskId: input.parentTaskId ?? null,
+    score: input.score ?? null,
     userId: owner.userId ?? null,
     guestId: owner.guestId ?? null,
   }));

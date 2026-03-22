@@ -11,6 +11,8 @@ export interface Task {
   status: Status;
   position: number;
   dueDate: Date | null;
+  parentTaskId: string | null;
+  score: number | null;
   metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
@@ -22,6 +24,8 @@ export interface CreateTaskInput {
   priority?: Priority;
   status?: Status;
   dueDate?: Date;
+  parentTaskId?: string;
+  score?: number;
 }
 
 export interface UpdateTaskInput {

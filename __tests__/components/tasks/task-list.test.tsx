@@ -13,6 +13,8 @@ const mockTask = (overrides: Partial<Task> = {}): Task => ({
   status: 'todo',
   position: 0,
   dueDate: null,
+  parentTaskId: null,
+  score: null,
   metadata: {},
   createdAt: new Date(),
   updatedAt: new Date(),
