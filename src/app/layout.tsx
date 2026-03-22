@@ -12,6 +12,10 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: 'Chunk',
   description: 'Chat-first AI productivity app',
+  icons: {
+    icon: '/chunk-logos/chunk-ai-icon.svg',
+    apple: '/chunk-logos/chunk-icon-80.svg',
+  },
 };
 
 export default function RootLayout({
