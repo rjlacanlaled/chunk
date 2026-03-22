@@ -148,7 +148,18 @@ export default function Home() {
     }
     if (task.status === 'done') uncompleteTask(task);
     deleteMutation.mutate(task.id);
-  }, [getDescendants, uncompleteTask, deleteMutation]);
+
+    // Adjust parent score: subtract deleted task's score
+    if (task.parentTaskId) {
+      const parent = tasks.find((t) => t.id === task.parentTaskId);
+      if (parent) {
+        const deletedScore = (task.score ?? 0)
+          + descendants.reduce((sum, d) => sum + (d.score ?? 0), 0);
+        const newParentScore = Math.max(1, (parent.score ?? 0) - (task.score ?? 0));
+        updateMutation.mutate({ id: parent.id, score: newParentScore });
+      }
+    }
+  }, [getDescendants, uncompleteTask, deleteMutation, tasks, updateMutation]);
 
   const hasTasks = tasks.length > 0;
 
