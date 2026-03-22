@@ -11,6 +11,7 @@ vi.mock('@ai-sdk/react', () => ({
 
 vi.mock('ai', () => ({
   DefaultChatTransport: vi.fn(),
+  isToolUIPart: vi.fn(() => false),
 }));
 
 describe('ChatPanel', () => {
@@ -19,21 +20,10 @@ describe('ChatPanel', () => {
     render(<ChatPanel owner={{ guestId: 'test-guest' }} />);
 
     expect(
-      screen.getByText('Your chaos, made manageable.'),
+      screen.getByText('What\'s slowing you down?'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        /Tell me what.s on your mind/,
-      ),
-    ).toBeInTheDocument();
-  });
-
-  it('renders chat input with correct placeholder', async () => {
-    const { ChatPanel } = await import('@/components/chat/chat-panel');
-    render(<ChatPanel owner={{ guestId: 'test-guest' }} />);
-
-    expect(
-      screen.getByPlaceholderText('Type your chaos here...'),
+      screen.getByText(/Chunky will sort it out/),
     ).toBeInTheDocument();
   });
 

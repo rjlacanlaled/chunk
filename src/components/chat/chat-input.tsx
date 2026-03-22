@@ -104,7 +104,7 @@ export function ChatInput({
           onKeyDown={handleKeyDown}
           placeholder={PLACEHOLDERS[placeholderIdx]}
           disabled={isLoading}
-          autoFocus
+          autoFocus // eslint-disable-line jsx-a11y/no-autofocus
           rows={1}
           className={`
             flex-1 resize-none bg-transparent outline-none

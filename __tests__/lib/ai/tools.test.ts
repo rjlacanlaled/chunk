@@ -11,7 +11,8 @@ vi.mock('@/server/actions/tasks', () => ({
 
 describe('taskTools', () => {
   it('should export all 7 tools', async () => {
-    const { taskTools } = await import('@/lib/ai/tools');
+    const { makeTaskTools } = await import('@/lib/ai/tools');
+    const taskTools = makeTaskTools({ guestId: 'test' });
     const toolNames = Object.keys(taskTools);
 
     expect(toolNames).toContain('createTasks');
@@ -25,7 +26,8 @@ describe('taskTools', () => {
   });
 
   it('each tool should have a description defined', async () => {
-    const { taskTools } = await import('@/lib/ai/tools');
+    const { makeTaskTools } = await import('@/lib/ai/tools');
+    const taskTools = makeTaskTools({ guestId: 'test' });
 
     for (const [name, toolDef] of Object.entries(taskTools)) {
       expect(toolDef.description, `${name} should have a description`).toBeDefined();
@@ -35,7 +37,8 @@ describe('taskTools', () => {
   });
 
   it('each tool should have an input schema defined', async () => {
-    const { taskTools } = await import('@/lib/ai/tools');
+    const { makeTaskTools } = await import('@/lib/ai/tools');
+    const taskTools = makeTaskTools({ guestId: 'test' });
 
     for (const [name, toolDef] of Object.entries(taskTools)) {
       expect(toolDef.inputSchema, `${name} should have an input schema`).toBeDefined();

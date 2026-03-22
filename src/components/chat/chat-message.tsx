@@ -77,7 +77,8 @@ function ToolChip({ part }: { part: Extract<UIMessage['parts'][number], { type: 
         <ChunkIcon variant="animated" className="size-3.5 shrink-0" />
       )}
       <span className="font-medium">
-        {label}{detail}
+        {label}
+        {detail}
       </span>
     </div>
   );
@@ -124,6 +125,7 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
           if (part.type === 'text' && part.text.length > 0) {
             return (
               <div
+                // eslint-disable-next-line react/no-array-index-key
                 key={`text-${i}`}
                 className="rounded-2xl rounded-bl-md bg-card px-4 py-2.5 text-sm leading-relaxed text-card-foreground ring-1 ring-border/50"
               >
