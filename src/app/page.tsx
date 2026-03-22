@@ -49,22 +49,38 @@ export default function Home() {
     return children.flatMap((c) => [c, ...getDescendants(c.id)]);
   }, [tasks]);
 
+  const getChildren = useCallback((parentId: string): Task[] => (
+    tasks.filter((t) => t.parentTaskId === parentId)
+  ), [tasks]);
+
+  const getAncestors = useCallback((taskId: string): Task[] => {
+    const t = tasks.find((x) => x.id === taskId);
+    if (!t?.parentTaskId) return [];
+    const parent = tasks.find((x) => x.id === t.parentTaskId);
+    if (!parent) return [];
+    return [parent, ...getAncestors(parent.id)];
+  }, [tasks]);
+
   const handleToggleDone = (task: Task) => {
     const newStatus = task.status === 'done' ? 'todo' : 'done';
     const marking = newStatus === 'done';
+    const hasChildren = getChildren(task.id).length > 0;
 
-    if (marking) {
-      completeTask(task);
-      if ((task.score ?? 0) >= 20) {
-        confetti({
-          particleCount: 80 + (task.score ?? 0),
-          spread: 70,
-          origin: { y: 0.7 },
-          colors: ['#4945FF', '#9593FF', '#5CB176', '#F5CF0D'],
-        });
+    // Only award XP for leaf tasks (no children)
+    if (!hasChildren) {
+      if (marking) {
+        completeTask(task);
+        if ((task.score ?? 0) >= 20) {
+          confetti({
+            particleCount: 80 + (task.score ?? 0),
+            spread: 70,
+            origin: { y: 0.7 },
+            colors: ['#4945FF', '#9593FF', '#5CB176', '#F5CF0D'],
+          });
+        }
+      } else {
+        uncompleteTask(task);
       }
-    } else {
-      uncompleteTask(task);
     }
 
     // Update this task
@@ -74,9 +90,40 @@ export default function Home() {
     const descendants = getDescendants(task.id);
     for (const child of descendants) {
       if (child.status !== newStatus) {
-        if (marking) completeTask(child);
-        else uncompleteTask(child);
+        const childHasChildren = getChildren(child.id).length > 0;
+        if (!childHasChildren) {
+          if (marking) completeTask(child);
+          else uncompleteTask(child);
+        }
         updateMutation.mutate({ id: child.id, status: newStatus });
+      }
+    }
+
+    // Auto-complete parent if all siblings are now done
+    if (marking && task.parentTaskId) {
+      const siblings = getChildren(task.parentTaskId);
+      const allSiblingsDone = siblings.every(
+        (s) => s.id === task.id ? true : s.status === 'done',
+      );
+      if (allSiblingsDone) {
+        const parent = tasks.find((t) => t.id === task.parentTaskId);
+        if (parent && parent.status !== 'done') {
+          updateMutation.mutate({ id: parent.id, status: 'done' });
+          // Recurse up — check if parent's siblings are all done too
+          const grandparentId = parent.parentTaskId;
+          if (grandparentId) {
+            const parentSiblings = getChildren(grandparentId);
+            const allParentSiblingsDone = parentSiblings.every(
+              (s) => s.id === parent.id ? true : s.status === 'done',
+            );
+            if (allParentSiblingsDone) {
+              const grandparent = tasks.find((t) => t.id === grandparentId);
+              if (grandparent && grandparent.status !== 'done') {
+                updateMutation.mutate({ id: grandparent.id, status: 'done' });
+              }
+            }
+          }
+        }
       }
     }
   };
