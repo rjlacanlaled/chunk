@@ -8,6 +8,7 @@ import { useAuthWithMigration } from '@/hooks/use-auth-with-migration';
 import { useTasksQuery, useTaskMutations } from '@/hooks/use-tasks';
 import { ChatPanel } from '@/components/chat/chat-panel';
 import { TaskList } from '@/components/tasks/task-list';
+import { BoardPlaceholder } from '@/components/tasks/board-placeholder';
 import { SignUpCta } from '@/components/auth/sign-up-cta';
 import { AuthButtons } from '@/components/auth/auth-buttons';
 import { Button } from '@/components/ui/button';
@@ -83,11 +84,7 @@ export default function Home() {
             <TaskList tasks={tasks} onToggleDone={handleToggleDone} />
           )}
           {hasTasks && view === 'board' && (
-            <div className="flex h-full items-center justify-center p-6">
-              <p className="text-muted-foreground">
-                Board view coming soon!
-              </p>
-            </div>
+            <BoardPlaceholder />
           )}
         </div>
 
