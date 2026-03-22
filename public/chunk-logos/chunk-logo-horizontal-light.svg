@@ -1,0 +1,7 @@
+<svg width="340" height="90" viewBox="0 0 340 90" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="90" height="90" rx="19" fill="#4945FF"/>
+  <rect x="16" y="16" width="58" height="16" rx="4" fill="white"/>
+  <rect x="16" y="38" width="43" height="16" rx="4" fill="white"/>
+  <rect x="16" y="60" width="27" height="16" rx="4" fill="white"/>
+  <text x="108" y="63" font-family="system-ui, -apple-system, sans-serif" font-size="50" font-weight="700" letter-spacing="-1.5" fill="#32324D">chunk</text>
+</svg>
