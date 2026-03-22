@@ -17,7 +17,6 @@ import { XpBar } from '@/components/gamification/xp-bar';
 import { ScoreSummary } from '@/components/gamification/score-summary';
 import { DailyMission } from '@/components/gamification/daily-mission';
 import { StreakStrip } from '@/components/gamification/streak-strip';
-import { ActivityFeed } from '@/components/gamification/activity-feed';
 import { SignUpCta } from '@/components/auth/sign-up-cta';
 import { AuthButtons } from '@/components/auth/auth-buttons';
 import { Button } from '@/components/ui/button';
@@ -154,9 +153,6 @@ export default function Home() {
                   onBreakDown={handleBreakDown}
                   lastXpGain={lastXpGain}
                 />
-              </div>
-              <div className="shrink-0 px-4 pb-3">
-                <ActivityFeed tasks={tasks} />
               </div>
             </div>
           )}

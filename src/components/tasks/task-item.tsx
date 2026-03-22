@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { Task } from '@/types/task';
 
-/* ── Score color helpers ─────────────────────────────────── */
+/* -- Score color helpers ---------------------------------------- */
 
 const getScoreColor = (score: number): string => {
   if (score <= 5) return 'text-emerald-400';
@@ -34,33 +34,51 @@ const getScoreDotColor = (score: number): string => {
   return 'bg-pink-400';
 };
 
-/* ── Score indicator ─────────────────────────────────────── */
+const getScoreBorderColor = (score: number | null): string => {
+  if (!score) return 'border-l-border/50';
+  if (score <= 5) return 'border-l-emerald-400/60';
+  if (score <= 15) return 'border-l-amber-400/60';
+  if (score <= 30) return 'border-l-orange-400/60';
+  if (score <= 100) return 'border-l-red-400/60';
+  if (score <= 500) return 'border-l-purple-400/60';
+  return 'border-l-pink-400/60';
+};
 
-function ScoreMeter({ score }: { score: number | null }) {
+/* -- Score indicator -------------------------------------------- */
+
+function ScoreMeter({ score, large }: { score: number | null; large?: boolean }) {
   if (!score) return null;
 
   return (
     <div className="flex items-center gap-1 shrink-0">
       <span className={cn('size-2 rounded-full', getScoreDotColor(score))} />
-      <span className={cn('text-[10px] font-bold tabular-nums', getScoreColor(score))}>
+      <span
+        className={cn(
+          'font-bold tabular-nums',
+          large ? 'text-xs' : 'text-[10px]',
+          getScoreColor(score),
+        )}
+      >
         {score}
       </span>
     </div>
   );
 }
 
-/* ── Time ago label ──────────────────────────────────────── */
+/* -- Time ago label --------------------------------------------- */
 
 function TimeAgo({ date }: { date: Date }) {
   const label = formatDistanceToNow(new Date(date), { addSuffix: false });
   return (
     <span className="text-[10px] text-muted-foreground/60 whitespace-nowrap">
-      {label} ago
+      {label}
+      {' '}
+      ago
     </span>
   );
 }
 
-/* ── Due date display ────────────────────────────────────── */
+/* -- Due date display ------------------------------------------- */
 
 function DueDateLabel({ dueDate }: { dueDate: Date | null }) {
   if (!dueDate) return null;
@@ -78,7 +96,7 @@ function DueDateLabel({ dueDate }: { dueDate: Date | null }) {
     <span
       className={cn(
         'inline-flex items-center gap-1 text-[11px]',
-        overdue ? 'font-semibold text-red-400' : 'text-muted-foreground',
+        overdue ? 'font-semibold text-red-400' : 'text-amber-400/80',
       )}
     >
       {overdue ? <AlertTriangle className="size-3" /> : <Clock className="size-3" />}
@@ -87,7 +105,7 @@ function DueDateLabel({ dueDate }: { dueDate: Date | null }) {
   );
 }
 
-/* ── Subtask progress bar (score-based) ──────────────────── */
+/* -- Subtask progress bar (score-based) ------------------------- */
 
 function SubtaskProgress({ doneScore, totalScore }: { doneScore: number; totalScore: number }) {
   const pct = totalScore > 0 ? Math.round((doneScore / totalScore) * 100) : 0;
@@ -103,43 +121,74 @@ function SubtaskProgress({ doneScore, totalScore }: { doneScore: number; totalSc
         />
       </div>
       <span className="text-[11px] tabular-nums text-muted-foreground">
-        {doneScore}/{totalScore} pts
+        {doneScore}
+        /
+        {totalScore}
+        {' '}
+        pts
       </span>
     </div>
   );
 }
 
-/* ── Subtask row (simplified) ────────────────────────────── */
+/* -- Depth style config ----------------------------------------- */
+
+const getDepthStyles = (depth: number) => {
+  if (depth === 0) {
+    return {
+      padding: '',
+      text: 'text-sm font-semibold text-foreground',
+      checkbox: 'size-5',
+    };
+  }
+  if (depth === 1) {
+    return {
+      padding: 'pl-8',
+      text: 'text-[13px] font-normal text-foreground/90',
+      checkbox: 'size-4',
+    };
+  }
+  if (depth === 2) {
+    return {
+      padding: 'pl-14',
+      text: 'text-[13px] font-normal text-muted-foreground',
+      checkbox: 'size-3.5',
+    };
+  }
+  return {
+    padding: 'pl-20',
+    text: 'text-xs font-normal text-muted-foreground/80',
+    checkbox: 'size-3.5',
+  };
+};
+
+/* -- Subtask row (clean, no connectors) ------------------------- */
 
 interface SubtaskRowProps {
   task: Task;
   allTasks: Task[];
   onToggleDone: (task: Task) => void;
   onBreakDown?: (taskTitle: string) => void;
-  isLast: boolean;
+  depth: number;
 }
 
-function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, isLast }: SubtaskRowProps) {
+function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, depth }: SubtaskRowProps) {
   const [expanded, setExpanded] = useState(true);
   const isDone = task.status === 'done';
   const showChunkIt = !isDone && (task.score ?? 0) > 7;
   const children = allTasks.filter((t) => t.parentTaskId === task.id);
   const hasChildren = children.length > 0;
+  const styles = getDepthStyles(depth);
 
   return (
     <div>
-      <div className="relative flex items-center gap-2.5 py-1.5 pl-4">
-        {/* tree connector */}
-        <div
-          className={cn(
-            'absolute left-0 top-0 w-3 border-l-2 border-b-2 border-border/50 rounded-bl-md',
-            isLast ? 'h-[50%]' : 'h-full',
-          )}
-        />
-        {!isLast && (
-          <div className="absolute left-0 top-0 h-full w-0 border-l-2 border-border/50" />
+      <div
+        className={cn(
+          'flex items-center gap-2.5 py-1.5 rounded-md border-l-2 border-l-transparent',
+          'transition-colors hover:bg-muted/20 hover:border-l-primary/30',
+          styles.padding,
         )}
-
+      >
         {hasChildren && (
           <Button
             variant="ghost"
@@ -163,13 +212,14 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, isLast }: Subta
           aria-label={isDone ? 'Mark as not done' : 'Mark as done'}
         >
           {isDone
-            ? <CheckCircle2 className="size-4 text-primary" />
-            : <Circle className="size-4 text-muted-foreground/60" />}
+            ? <CheckCircle2 className={cn(styles.checkbox, 'text-primary')} />
+            : <Circle className={cn(styles.checkbox, 'text-muted-foreground/60')} />}
         </Button>
 
         <span
           className={cn(
-            'flex-1 truncate text-[13px]',
+            'flex-1 truncate',
+            styles.text,
             isDone && 'text-muted-foreground line-through',
           )}
         >
@@ -181,7 +231,7 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, isLast }: Subta
             variant="ghost"
             size="sm"
             onClick={() => onBreakDown(task.title)}
-            className="shrink-0 text-[11px] text-muted-foreground hover:text-primary h-6 px-2"
+            className="shrink-0 text-[11px] bg-primary/10 text-primary hover:bg-primary/20 h-6 px-2"
           >
             <Zap className="mr-0.5 size-2.5" />
             {(task.score ?? 0) >= 20 ? 'Chunk it!' : 'Break down'}
@@ -195,15 +245,15 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, isLast }: Subta
 
       {/* Recursive children */}
       {hasChildren && expanded && (
-        <div className="ml-6">
-          {children.map((child, i) => (
+        <div>
+          {children.map((child) => (
             <SubtaskRow
               key={child.id}
               task={child}
               allTasks={allTasks}
               onToggleDone={onToggleDone}
               onBreakDown={onBreakDown}
-              isLast={i === children.length - 1}
+              depth={depth + 1}
             />
           ))}
         </div>
@@ -212,7 +262,7 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, isLast }: Subta
   );
 }
 
-/* ── Main TaskItem (parent card) ─────────────────────────── */
+/* -- Main TaskItem (parent card) -------------------------------- */
 
 export interface TaskItemProps {
   task: Task;
@@ -254,16 +304,17 @@ export function TaskItem({
   return (
     <div
       className={cn(
-        'rounded-lg border transition-all',
+        'rounded-lg border border-l-[3px] transition-all',
         isDone
-          ? 'border-border/30 bg-card/30 opacity-60'
+          ? 'border-border/30 border-l-border/30 bg-card/30 opacity-60'
           : isOverdue
             ? 'border-red-500/30 bg-card/80'
             : 'border-border/50 bg-card/60',
+        !isDone && !isOverdue && getScoreBorderColor(task.score),
         recentlyCompleted && 'animate-success-flash',
       )}
     >
-      {/* ── Card header row ──────────────────────────────── */}
+      {/* -- Card header row ------------------------------------- */}
       <div className="relative flex items-center gap-3 p-3">
         {hasChildren && (
           <Button
@@ -293,11 +344,11 @@ export function TaskItem({
             : <Circle className="size-5 text-muted-foreground" />}
         </Button>
 
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <p
               className={cn(
-                'truncate text-sm font-semibold',
+                'truncate text-sm font-semibold text-foreground',
                 isDone && 'text-muted-foreground line-through',
               )}
             >
@@ -323,7 +374,7 @@ export function TaskItem({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <ScoreMeter score={task.score} />
+          <ScoreMeter score={task.score} large />
           <TimeAgo date={task.createdAt} />
         </div>
 
@@ -341,22 +392,25 @@ export function TaskItem({
 
         {recentlyCompleted && xpGain && (
           <span className="absolute -top-2 right-3 animate-float-up text-xs font-bold text-primary">
-            +{xpGain} XP
+            +
+            {xpGain}
+            {' '}
+            XP
           </span>
         )}
       </div>
 
-      {/* ── Subtask tree ─────────────────────────────────── */}
+      {/* -- Subtask list (no tree lines) ------------------------ */}
       {hasChildren && expanded && (
-        <div className="border-t border-border/30 px-3 pb-2 pl-10 pt-1">
-          {subtasks.map((sub, i) => (
+        <div className="border-t border-border/30 px-3 pb-2 pt-1">
+          {subtasks.map((sub) => (
             <SubtaskRow
               key={sub.id}
               task={sub}
               allTasks={allTasks}
               onToggleDone={onToggleDone}
               onBreakDown={onBreakDown}
-              isLast={i === subtasks.length - 1}
+              depth={1}
             />
           ))}
         </div>
