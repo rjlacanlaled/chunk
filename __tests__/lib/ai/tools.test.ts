@@ -20,7 +20,8 @@ describe('taskTools', () => {
     expect(toolNames).toContain('updateTaskByName');
     expect(toolNames).toContain('deleteTaskByName');
     expect(toolNames).toContain('listTasks');
-    expect(toolNames).toHaveLength(6);
+    expect(toolNames).toContain('breakDownTask');
+    expect(toolNames).toHaveLength(7);
   });
 
   it('each tool should have a description defined', async () => {

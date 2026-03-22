@@ -21,6 +21,8 @@ export const makeTaskTools = (owner: Owner) => ({
         .describe('The priority level'),
       status: z.enum(['todo', 'in_progress', 'done']).optional(),
       dueDate: z.string().optional().describe('Due date in ISO format'),
+      score: z.number().min(1).max(9).describe('Difficulty score: 1-3 easy, 4-6 medium, 7-9 hard'),
+      parentTaskId: z.string().optional().describe('ID of parent task if this is a subtask'),
     }),
     execute: async (input) => {
       const task = await createTask(
@@ -30,6 +32,8 @@ export const makeTaskTools = (owner: Owner) => ({
           priority: input.priority,
           status: input.status,
           dueDate: input.dueDate ? new Date(input.dueDate) : undefined,
+          score: input.score,
+          parentTaskId: input.parentTaskId,
         },
         owner,
       );
@@ -45,10 +49,18 @@ export const makeTaskTools = (owner: Owner) => ({
         description: z.string().optional(),
         priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
         dueDate: z.string().optional().describe('Due date in ISO format'),
+        score: z.number().min(1).max(9).describe('Difficulty score: 1-3 easy, 4-6 medium, 7-9 hard'),
+        parentTaskId: z.string().optional().describe('ID of parent task if this is a subtask'),
       })).describe('Array of tasks to create'),
     }),
     execute: async ({ tasks: taskInputs }) => {
-      const result = await createTasks(taskInputs, owner);
+      const result = await createTasks(
+        taskInputs.map((t) => ({
+          ...t,
+          dueDate: t.dueDate ? new Date(t.dueDate) : undefined,
+        })),
+        owner,
+      );
       return result;
     },
   }),
@@ -108,8 +120,29 @@ export const makeTaskTools = (owner: Owner) => ({
     description: 'List all tasks for the current user',
     inputSchema: z.object({}),
     execute: async () => {
-      const tasks = await listTasks(owner);
-      return tasks;
+      const allTasks = await listTasks(owner);
+      return allTasks;
+    },
+  }),
+
+  breakDownTask: tool({
+    description: 'Break a complex task into smaller subtasks. Use when a task has a high score (5+) and the user wants it broken down.',
+    inputSchema: z.object({
+      name: z.string().describe('Name of the task to break down'),
+      subtasks: z.array(z.object({
+        title: z.string(),
+        score: z.number().min(1).max(9),
+        description: z.string().optional(),
+      })).describe('The subtasks to create'),
+    }),
+    execute: async ({ name, subtasks }) => {
+      const parent = await findTaskByName(name, owner);
+      if (!parent) return { error: `No task found matching "${name}"` };
+      const created = await createTasks(
+        subtasks.map((s) => ({ ...s, parentTaskId: parent.id })),
+        owner,
+      );
+      return { parent: parent.title, subtasks: created };
     },
   }),
 });
