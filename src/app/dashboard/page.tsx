@@ -149,15 +149,16 @@ export default function Home() {
     if (task.status === 'done') uncompleteTask(task);
     deleteMutation.mutate(task.id);
 
-    // Adjust parent score: subtract deleted task's score
+    // Adjust parent score to match remaining children
     if (task.parentTaskId) {
-      const parent = tasks.find((t) => t.id === task.parentTaskId);
-      if (parent) {
-        const deletedScore = (task.score ?? 0)
-          + descendants.reduce((sum, d) => sum + (d.score ?? 0), 0);
-        const newParentScore = Math.max(1, (parent.score ?? 0) - (task.score ?? 0));
-        updateMutation.mutate({ id: parent.id, score: newParentScore });
-      }
+      const deletedIds = new Set([task.id, ...descendants.map((d) => d.id)]);
+      const remainingSiblings = tasks.filter(
+        (t) => t.parentTaskId === task.parentTaskId && !deletedIds.has(t.id),
+      );
+      const newParentScore = remainingSiblings.length > 0
+        ? remainingSiblings.reduce((sum, s) => sum + (s.score ?? 0), 0)
+        : 1;
+      updateMutation.mutate({ id: task.parentTaskId, score: newParentScore });
     }
   }, [getDescendants, uncompleteTask, deleteMutation, tasks, updateMutation]);
 

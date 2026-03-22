@@ -244,7 +244,7 @@ export function TaskItem({
             type="button"
             onClick={(e) => { e.stopPropagation(); onDelete(task); }}
             aria-label="Delete task"
-            className="shrink-0 rounded-md p-1 text-muted-foreground/30 opacity-0 transition-all hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
+            className="shrink-0 cursor-pointer rounded-md p-1 text-muted-foreground/30 opacity-0 transition-all hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
           >
             <Trash2 className="size-3" />
           </button>
