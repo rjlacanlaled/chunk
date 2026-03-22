@@ -128,6 +128,16 @@ export default function Home() {
         }
       }
     }
+
+    // Auto-uncomplete ancestors when unchecking a subtask
+    if (!marking && task.parentTaskId) {
+      const ancestors = getAncestors(task.id);
+      for (const ancestor of ancestors) {
+        if (ancestor.status === 'done') {
+          updateMutation.mutate({ id: ancestor.id, status: 'todo' });
+        }
+      }
+    }
   };
 
   const handleBreakDown = useCallback((taskTitle: string) => {
