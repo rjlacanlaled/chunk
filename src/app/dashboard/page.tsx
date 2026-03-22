@@ -25,22 +25,24 @@ import type { Task } from '@/types/task';
 type ViewMode = 'list' | 'board';
 
 export default function Home() {
-  const { data: session } = useSession();
+  const { data: session, isPending: sessionPending } = useSession();
   const guestId = useGuestId();
   const [view, setView] = useState<ViewMode>('list');
   const sendChatRef = useRef<(text: string) => void>(null);
 
   useAuthWithMigration();
-  const isGuest = !session?.user;
 
+  // Wait for session check before deciding owner
   const owner = useMemo(() => {
+    if (sessionPending) return null; // still checking auth
     if (session?.user) return { userId: session.user.id };
     return { guestId };
-  }, [session?.user, guestId]);
+  }, [sessionPending, session?.user, guestId]);
 
+  const isGuest = !session?.user;
   const queryClient = useQueryClient();
-  const { data: tasks = [] } = useTasksQuery(owner);
-  const { updateMutation } = useTaskMutations(owner);
+  const { data: tasks = [], isFetched: tasksFetched } = useTasksQuery(owner ?? { guestId: '' });
+  const { updateMutation } = useTaskMutations(owner ?? { guestId: '' });
   const { xp, level, streak, lastXpGain, completeTask, uncompleteTask } = useGamification(tasks);
 
   const getDescendants = useCallback((parentId: string): Task[] => {
@@ -138,6 +140,17 @@ export default function Home() {
 
   const hasTasks = tasks.length > 0;
 
+  // Single loading gate — wait for auth + tasks before showing anything
+  if (!owner || !tasksFetched) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
+        <img src="/chunk-logos/chunky-thinking.svg" alt="Loading" className="size-24" />
+        <p className="animate-shimmer-text text-sm font-medium">
+          {sessionPending ? 'Checking your account...' : 'Getting things ready...'}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen flex-col">

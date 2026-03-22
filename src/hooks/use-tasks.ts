@@ -18,6 +18,7 @@ const taskKeys = {
 export const useTasksQuery = (owner: Owner) => useQuery({
   queryKey: taskKeys.all(owner),
   queryFn: () => listTasks(owner),
+  enabled: !!(owner.userId || owner.guestId),
 });
 
 export const useTaskMutations = (owner: Owner) => {
