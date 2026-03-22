@@ -22,7 +22,7 @@ function extractText(msg: Record<string, unknown>): string {
 
 export const POST = async (req: Request) => {
   const body = await req.json();
-  const { messages, owner } = body;
+  const { messages, owner, clientTime, clientTimezone } = body;
 
   const resolvedOwner = owner ?? { guestId: 'anonymous' };
   const tools = makeTaskTools(resolvedOwner);
@@ -55,7 +55,7 @@ export const POST = async (req: Request) => {
 
   const result = streamText({
     model: openrouter('google/gemini-2.0-flash-001'),
-    system: getSystemPrompt(),
+    system: getSystemPrompt(clientTime, clientTimezone),
     messages: modelMessages,
     tools,
     stopWhen: stepCountIs(20),

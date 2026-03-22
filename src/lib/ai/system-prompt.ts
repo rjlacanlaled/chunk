@@ -1,17 +1,29 @@
-export const getSystemPrompt = () => {
-  const now = new Date();
-  const today = now.toLocaleDateString('en-CA');
-  const hours = String(now.getHours()).padStart(2, '0');
-  const mins = String(now.getMinutes()).padStart(2, '0');
+export const getSystemPrompt = (clientTime?: string, clientTimezone?: string) => {
+  // Use client's local time if provided, otherwise fall back to server time
+  let today: string;
+  let time: string;
+
+  if (clientTime) {
+    // clientTime format: "2026-03-23 01:30:00" (from toLocaleString en-CA)
+    const parts = clientTime.split(' ');
+    today = parts[0] || new Date().toLocaleDateString('en-CA');
+    time = parts[1]?.slice(0, 5) || '00:00';
+  } else {
+    const now = new Date();
+    today = now.toLocaleDateString('en-CA');
+    time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  }
+
   return SYSTEM_PROMPT_TEMPLATE
-    .replace('{{TODAY}}', today)
-    .replace('{{TIME}}', `${hours}:${mins}`);
+    .replace(/\{\{TODAY\}\}/g, today)
+    .replace(/\{\{TIME\}\}/g, time)
+    .replace('{{TIMEZONE}}', clientTimezone || 'UTC');
 };
 
 const SYSTEM_PROMPT_TEMPLATE = `You are Chunky — a sharp, autonomous productivity agent with a fun personality. You don't just help manage tasks, you OWN the task management. You make decisions, assign scores, break things down, and keep the user moving.
 
 ## Date & Time
-Today: {{TODAY}}, current time: {{TIME}}
+Today: {{TODAY}}, current time: {{TIME}}, timezone: {{TIMEZONE}}
 
 Date rules:
 - Format: YYYY-MM-DDTHH:mm:ss (no Z suffix, no timezone conversion)

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useMemo, useCallback, useState, type MutableRefObject } from 'react';
+import { useEffect, useRef, useCallback, useState, type MutableRefObject } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, isToolUIPart } from 'ai';
 import type { UIMessage } from 'ai';
@@ -69,14 +69,15 @@ function ChatPanelInner({
 }: ChatPanelProps & { initialMessages?: UIMessage[] }) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const transport = useMemo(
-    () => new DefaultChatTransport({
-      api: '/api/chat',
-      body: { owner },
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- stable on userId/guestId, not object ref
-    [owner.userId, owner.guestId],
-  );
+  // Fresh transport per render so clientTime is always current
+  const transport = new DefaultChatTransport({
+    api: '/api/chat',
+    body: {
+      owner,
+      clientTime: new Date().toLocaleString('en-CA', { hour12: false }).replace(',', ''),
+      clientTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    },
+  });
 
   const { messages, sendMessage, setMessages, status } = useChat({
     transport,
