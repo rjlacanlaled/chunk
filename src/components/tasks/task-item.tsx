@@ -182,7 +182,7 @@ export function TaskItem({
   const [expanded, setExpanded] = useState(true);
   const isDone = task.status === 'done';
   const hasChildren = subtasks.length > 0;
-  const showBreakDown = !isDone && (task.score ?? 0) > 20 && !hasChildren;
+  const showBreakDown = !isDone && (task.score ?? 0) > 7 && !hasChildren;
 
   const dueDate = task.dueDate ? new Date(task.dueDate) : null;
   const isOverdue = dueDate && isPast(dueDate) && !isToday(dueDate) && !isDone;
@@ -281,7 +281,7 @@ export function TaskItem({
             className="shrink-0 text-xs bg-primary/20 text-primary hover:bg-primary/30"
           >
             <Zap className="mr-1 size-3" />
-            Chunk it!
+            {(task.score ?? 0) >= 20 ? 'Chunk it!' : 'Break it down'}
           </Button>
         )}
 

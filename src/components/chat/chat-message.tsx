@@ -8,12 +8,12 @@ import { ChunkIcon } from './chunk-icon';
 import { cn } from '@/lib/utils';
 
 const TOOL_LABELS: Record<string, string> = {
-  createTask: 'Creating task',
   createTasks: 'Creating tasks',
-  completeTask: 'Completing task',
-  updateTaskByName: 'Updating task',
-  deleteTaskByName: 'Deleting task',
+  completeTasks: 'Completing tasks',
+  updateTasks: 'Updating tasks',
+  deleteTasks: 'Deleting tasks',
   listTasks: 'Checking your tasks',
+  breakDownTask: 'Breaking it down',
 };
 
 const mdComponents: Components = {
