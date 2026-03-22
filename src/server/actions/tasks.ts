@@ -1,6 +1,6 @@
 'use server';
 
-import { eq, or, and, isNull, sql, desc } from 'drizzle-orm';
+import { eq, or, and, isNull, sql, desc, ilike } from 'drizzle-orm';
 import { db } from '@/server/db';
 import { tasks } from '@/server/db/schema';
 import type { CreateTaskInput, UpdateTaskInput } from '@/types/task';
@@ -86,63 +86,64 @@ export const deleteTask = async (id: string) => {
     .where(eq(tasks.id, id));
 };
 
+// Build owner WHERE condition
+const ownerCondition = (owner: Owner) => {
+  const conditions = [];
+  if (owner.userId) conditions.push(eq(tasks.userId, owner.userId));
+  if (owner.guestId) conditions.push(eq(tasks.guestId, owner.guestId));
+  if (conditions.length === 0) return null;
+  return conditions.length > 1 ? or(...conditions) : conditions[0]!;
+};
+
 export const findTaskByName = async (
   name: string,
   owner: Owner,
 ) => {
-  const lower = name.toLowerCase().trim();
+  const oc = ownerCondition(owner);
+  if (!oc) return null;
+  const trimmed = name.trim();
 
-  // Match by task number — query DB directly, no limit
-  const numMatch = lower.replace('#', '');
+  // Match by task number
+  const numMatch = trimmed.replace('#', '');
   if (/^\d+$/.test(numMatch)) {
-    const num = parseInt(numMatch, 10);
-    const conditions = [];
-    if (owner.userId) conditions.push(eq(tasks.userId, owner.userId));
-    if (owner.guestId) conditions.push(eq(tasks.guestId, owner.guestId));
-    if (conditions.length === 0) return null;
-
-    const ownerCond = conditions.length > 1 ? or(...conditions) : conditions[0]!;
     const [found] = await db.select().from(tasks).where(
-      and(ownerCond, eq(tasks.taskNumber, num), isNull(tasks.deletedAt)),
+      and(oc, eq(tasks.taskNumber, parseInt(numMatch, 10)), isNull(tasks.deletedAt)),
     ).limit(1);
     return found ?? null;
   }
 
-  // Fuzzy match by title — prefer parent tasks over subtasks
-  const allTasks = await listTasks(owner);
-  const words = lower.split(/\s+/);
-  const matches = allTasks.filter((t) => {
-    const title = t.title.toLowerCase();
-    return words.every((word) => title.includes(word));
-  });
+  // DB-level ILIKE search — prefer root tasks
+  const pattern = `%${trimmed}%`;
+  const matches = await db.select().from(tasks).where(
+    and(oc, ilike(tasks.title, pattern), isNull(tasks.deletedAt)),
+  ).limit(10);
 
   if (matches.length === 0) return null;
   if (matches.length === 1) return matches[0];
-
-  const root = matches.find((t) => !t.parentTaskId);
-  return root ?? matches[0];
+  return matches.find((t) => !t.parentTaskId) ?? matches[0];
 };
 
 export const searchTasks = async (
   query: string,
   owner: Owner,
 ) => {
-  const allTasks = await listTasks(owner);
-  const lower = query.toLowerCase().trim();
+  const oc = ownerCondition(owner);
+  if (!oc) return [];
+  const trimmed = query.trim();
 
   // Match by task number
-  const numMatch = lower.replace('#', '');
+  const numMatch = trimmed.replace('#', '');
   if (/^\d+$/.test(numMatch)) {
-    const num = parseInt(numMatch, 10);
-    return allTasks.filter((t) => t.taskNumber === num);
+    return db.select().from(tasks).where(
+      and(oc, eq(tasks.taskNumber, parseInt(numMatch, 10)), isNull(tasks.deletedAt)),
+    ).limit(10);
   }
 
-  // Fuzzy match
-  const words = lower.split(/\s+/);
-  return allTasks.filter((t) => {
-    const title = t.title.toLowerCase();
-    return words.every((word) => title.includes(word));
-  });
+  // DB-level ILIKE search
+  const pattern = `%${trimmed}%`;
+  return db.select().from(tasks).where(
+    and(oc, ilike(tasks.title, pattern), isNull(tasks.deletedAt)),
+  ).limit(20);
 };
 
 // Only returns non-deleted tasks, limited to 200 most recent
