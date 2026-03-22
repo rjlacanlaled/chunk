@@ -80,8 +80,9 @@ export const useTaskMutations = (owner: Owner) => {
         queryClient.setQueryData(key, context.previous);
       }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: key });
+    onSuccess: () => {
+      // Delay refetch to ensure DB write is committed
+      setTimeout(() => queryClient.invalidateQueries({ queryKey: key }), 1000);
     },
   });
 
@@ -102,8 +103,8 @@ export const useTaskMutations = (owner: Owner) => {
         queryClient.setQueryData(key, context.previous);
       }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: key });
+    onSuccess: () => {
+      setTimeout(() => queryClient.invalidateQueries({ queryKey: key }), 1000);
     },
   });
 
