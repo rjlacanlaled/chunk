@@ -17,7 +17,7 @@ export const useTasksQuery = (owner: Owner) => useQuery({
   queryKey: getTaskKey(owner),
   queryFn: () => listTasks(owner),
   enabled: !!(owner.userId || owner.guestId),
-  staleTime: 30000,
+  staleTime: 5000,
   refetchOnWindowFocus: false,
 });
 
