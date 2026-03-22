@@ -107,7 +107,7 @@ function ChatPanelInner({
   // Detect stuck state — if loading for more than 30 seconds, show retry
   useEffect(() => {
     if (!isLoading) { setStuck(false); return; }
-    const timer = setTimeout(() => setStuck(true), 30000);
+    const timer = setTimeout(() => setStuck(true), 120000);
     return () => clearTimeout(timer);
   }, [isLoading, messages.length]);
 
