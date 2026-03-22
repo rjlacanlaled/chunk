@@ -100,3 +100,6 @@ export const POST = async (req: Request) => {
 
   return result.toUIMessageStreamResponse();
 };
+
+// Allow longer execution for multi-step tool calling
+export const maxDuration = 60;

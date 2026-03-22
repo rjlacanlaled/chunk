@@ -34,47 +34,48 @@ export const makeTaskTools = (owner: Owner) => ({
       tasks: z.array(taskSchema).describe('Tasks to create (1 or more)'),
     }),
     execute: async ({ tasks: inputs }) => {
-      const results = [];
+      try {
+        const results = [];
 
-      for (const input of inputs) {
-        const { subtasks: subs, ...taskInput } = input;
+        for (const input of inputs) {
+          const { subtasks: subs, ...taskInput } = input;
 
-        // Create the parent task
-        const [parent] = await createTasks(
-          [{ ...taskInput, dueDate: taskInput.dueDate ? new Date(taskInput.dueDate) : undefined }],
-          owner,
-        );
-        results.push(parent);
-
-        // Create inline subtasks if provided
-        if (subs && subs.length > 0) {
-          const parentScore = parent.score ?? 0;
-          const subTotal = subs.reduce((sum, s) => sum + s.score, 0);
-
-          // Proportionally adjust subtask scores to match parent
-          let adjusted = subs;
-          if (parentScore > 0 && subTotal !== parentScore) {
-            adjusted = subs.map((s) => ({
-              ...s,
-              score: Math.max(1, Math.round((s.score / subTotal) * parentScore)),
-            }));
-            const adjTotal = adjusted.reduce((sum, s) => sum + s.score, 0);
-            const diff = parentScore - adjTotal;
-            if (diff !== 0) {
-              const largest = adjusted.reduce((max, s, i) => s.score > adjusted[max].score ? i : max, 0);
-              adjusted[largest].score += diff;
-            }
-          }
-
-          const children = await createTasks(
-            adjusted.map((s) => ({ ...s, parentTaskId: parent.id })),
+          const [parent] = await createTasks(
+            [{ ...taskInput, dueDate: taskInput.dueDate ? new Date(taskInput.dueDate) : undefined }],
             owner,
           );
-          results.push(...children);
-        }
-      }
+          results.push(parent);
 
-      return results;
+          if (subs && subs.length > 0) {
+            const parentScore = parent.score ?? 0;
+            const subTotal = subs.reduce((sum, s) => sum + s.score, 0);
+
+            let adjusted = subs;
+            if (parentScore > 0 && subTotal !== parentScore) {
+              adjusted = subs.map((s) => ({
+                ...s,
+                score: Math.max(1, Math.round((s.score / subTotal) * parentScore)),
+              }));
+              const adjTotal = adjusted.reduce((sum, s) => sum + s.score, 0);
+              const diff = parentScore - adjTotal;
+              if (diff !== 0) {
+                const largest = adjusted.reduce((max, s, i) => s.score > adjusted[max].score ? i : max, 0);
+                adjusted[largest].score += diff;
+              }
+            }
+
+            const children = await createTasks(
+              adjusted.map((s) => ({ ...s, parentTaskId: parent.id })),
+              owner,
+            );
+            results.push(...children);
+          }
+        }
+
+        return results;
+      } catch (err) {
+        return { error: `Failed to create tasks: ${err instanceof Error ? err.message : 'Unknown error'}` };
+      }
     },
   }),
 
