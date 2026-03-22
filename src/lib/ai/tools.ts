@@ -184,9 +184,29 @@ export const makeTaskTools = (owner: Owner) => ({
   }),
 
   listTasks: tool({
-    description: 'List all current tasks for the user.',
-    inputSchema: z.object({}),
-    execute: async () => listTasks(owner),
+    description: 'List tasks with optional filters. Use filter "overdue" to find past-due tasks, "today" for tasks due today, or "all" for everything.',
+    inputSchema: z.object({
+      filter: z.enum(['all', 'overdue', 'today', 'todo', 'done']).optional().describe('Filter tasks. Default: all'),
+    }),
+    execute: async ({ filter }) => {
+      const all = await listTasks(owner);
+      if (!filter || filter === 'all') return all;
+
+      const now = new Date();
+      if (filter === 'overdue') {
+        return all.filter((t) => t.dueDate && new Date(t.dueDate) < now && t.status !== 'done');
+      }
+      if (filter === 'today') {
+        return all.filter((t) => {
+          if (!t.dueDate) return false;
+          const d = new Date(t.dueDate);
+          return d.toDateString() === now.toDateString();
+        });
+      }
+      if (filter === 'todo') return all.filter((t) => t.status === 'todo');
+      if (filter === 'done') return all.filter((t) => t.status === 'done');
+      return all;
+    },
   }),
 
   breakDownTask: tool({
