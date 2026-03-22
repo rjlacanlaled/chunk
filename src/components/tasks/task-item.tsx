@@ -301,21 +301,21 @@ export function TaskItem({
   return (
     <div
       className={cn(
-        'rounded-lg border border-l-[3px] transition-all',
+        'rounded-lg border transition-all overflow-hidden',
         isDone
-          ? 'border-border/30 border-l-border/30 bg-card/30 opacity-60'
+          ? 'border-border/30 bg-card/30 opacity-60'
           : isOverdue
             ? 'border-red-500/30 bg-card/80'
             : 'border-border/50 bg-card/60',
-        !isDone && !isOverdue && getScoreBorderColor(task.score),
         recentlyCompleted && 'animate-success-flash',
       )}
     >
       {/* -- Card header row ------------------------------------- */}
       <div
         className={cn(
-          'relative flex items-center gap-3 p-3',
+          'relative flex items-center gap-3 p-3 border-l-[3px] border-l-transparent',
           hasChildren && 'cursor-pointer',
+          !isDone && !isOverdue && getScoreBorderColor(task.score),
         )}
         onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
       >
