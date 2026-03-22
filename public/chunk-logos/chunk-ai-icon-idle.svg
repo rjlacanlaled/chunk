@@ -1,0 +1,48 @@
+<svg width="200" height="200" viewBox="-100 -100 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="ck-idle">
+      <path d="M 0,-80 C 28,-31 28,-31 80,0 C 28,31 28,31 0,80 C -28,31 -28,31 -80,0 C -28,-31 -28,-31 0,-80 Z"/>
+    </clipPath>
+    <style>
+      .idle-body {
+        animation: idle-pulse 2.8s ease-in-out infinite;
+        transform-origin: 0px 0px;
+      }
+      .idle-cube {
+        animation: idle-cube 2.8s ease-in-out infinite;
+        transform-origin: 79px -83px;
+        animation-delay: 0.3s;
+      }
+      .idle-dot {
+        animation: idle-dot 2.8s ease-in-out infinite;
+        transform-origin: -72px 66px;
+        animation-delay: 0.6s;
+      }
+      @keyframes idle-pulse {
+        0%, 100% { transform: scale(1);    opacity: 1; }
+        50%      { transform: scale(1.07); opacity: 0.9; }
+      }
+      @keyframes idle-cube {
+        0%, 100% { transform: scale(1);    opacity: 1; }
+        50%      { transform: scale(1.15); opacity: 0.85; }
+      }
+      @keyframes idle-dot {
+        0%, 100% { transform: scale(1);   opacity: 1; }
+        50%      { transform: scale(1.3); opacity: 0.6; }
+      }
+    </style>
+  </defs>
+  <g class="idle-body">
+    <path d="M 0,-80 C 28,-31 28,-31 80,0 C 28,31 28,31 0,80 C -28,31 -28,31 -80,0 C -28,-31 -28,-31 0,-80 Z" fill="#4945FF"/>
+    <g clip-path="url(#ck-idle)">
+      <rect x="-33" y="-25" width="66" height="17" rx="5" fill="white" opacity="0.96"/>
+      <rect x="-24" y="-2"  width="48" height="17" rx="5" fill="white" opacity="0.96"/>
+      <rect x="-16" y="21"  width="32" height="17" rx="5" fill="white" opacity="0.96"/>
+    </g>
+  </g>
+  <g class="idle-cube">
+    <rect x="62" y="-98" width="34" height="30" rx="7" fill="#F5CF0D"/>
+    <rect x="66" y="-94" width="14" height="10" rx="3" fill="white" opacity="0.5"/>
+  </g>
+  <circle class="idle-dot" cx="-72" cy="66" r="11" fill="#9736E8"/>
+</svg>
