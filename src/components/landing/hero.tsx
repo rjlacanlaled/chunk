@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import '@/app/landing.css';
 
 export default function LandingHero() {
   const ctxtRef = useRef<HTMLParagraphElement>(null);
