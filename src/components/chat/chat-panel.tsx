@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState, type MutableRefObject } from 'react';
+import { useEffect, useRef, useCallback, useState, useMemo, type MutableRefObject } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, isToolUIPart } from 'ai';
 import type { UIMessage } from 'ai';
@@ -69,15 +69,21 @@ function ChatPanelInner({
 }: ChatPanelProps & { initialMessages?: UIMessage[] }) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Fresh transport per render so clientTime is always current
-  const transport = new DefaultChatTransport({
-    api: '/api/chat',
-    body: {
-      owner,
-      clientTime: new Date().toLocaleString('en-CA', { hour12: false }).replace(',', ''),
-      clientTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    },
-  });
+  const timezone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone, []);
+
+  const transport = useMemo(
+    () => new DefaultChatTransport({
+      api: '/api/chat',
+      body: {
+        owner,
+        // Client time is computed fresh each request by the transport
+        clientTime: new Date().toLocaleString('en-CA', { hour12: false }).replace(',', ''),
+        clientTimezone: timezone,
+      },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [owner.userId, owner.guestId, timezone],
+  );
 
   const { messages, sendMessage, setMessages, status } = useChat({
     transport,
@@ -95,6 +101,14 @@ function ChatPanelInner({
 
   const isLoading = status === 'submitted' || status === 'streaming';
   const prevStatusRef = useRef(status);
+  const [stuck, setStuck] = useState(false);
+
+  // Detect stuck state — if loading for more than 30 seconds, show retry
+  useEffect(() => {
+    if (!isLoading) { setStuck(false); return; }
+    const timer = setTimeout(() => setStuck(true), 30000);
+    return () => clearTimeout(timer);
+  }, [isLoading, messages.length]);
 
   useEffect(() => {
     if (prevStatusRef.current !== 'ready' && status === 'ready') {
@@ -197,7 +211,12 @@ function ChatPanelInner({
               <ChatMessage key={msg.id} message={msg} isStreaming={msgIsStreaming} />
             );
           })}
-          {status === 'submitted' && <ChatThinking />}
+          {status === 'submitted' && !stuck && <ChatThinking />}
+          {stuck && (
+            <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-400">
+              <span>Chunky seems stuck. Try sending your message again.</span>
+            </div>
+          )}
           <div ref={bottomRef} />
         </div>
       </ScrollArea>
