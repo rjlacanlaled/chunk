@@ -10,12 +10,23 @@ const openrouter = createOpenRouter({
 
 export const POST = async (req: Request) => {
   const body = await req.json();
-  const { messages, owner }: { messages: UIMessage[]; owner: any } = body;
+  const { messages, owner } = body;
 
   const resolvedOwner = owner ?? { guestId: 'anonymous' };
   const tools = makeTaskTools(resolvedOwner);
 
-  const modelMessages = await convertToModelMessages(messages);
+  // Normalize messages to UIMessage format for convertToModelMessages
+  const uiMessages: UIMessage[] = messages.map((msg: any) => {
+    if (msg.parts) return msg; // already UIMessage format
+    // Convert legacy { role, content } to UIMessage with parts
+    return {
+      ...msg,
+      id: msg.id ?? crypto.randomUUID(),
+      parts: [{ type: 'text' as const, text: typeof msg.content === 'string' ? msg.content : '' }],
+    };
+  });
+
+  const modelMessages = await convertToModelMessages(uiMessages);
 
   const result = streamText({
     model: openrouter('google/gemini-2.0-flash-001'),
