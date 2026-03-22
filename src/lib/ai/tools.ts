@@ -21,7 +21,7 @@ const taskSchema = z.object({
   title: z.string().describe('Task title'),
   description: z.string().optional(),
   priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
-  dueDate: z.string().optional().describe('Due date/time in full ISO 8601 UTC: YYYY-MM-DDTHH:mm:ssZ'),
+  dueDate: z.string().optional().describe('Due date/time as YYYY-MM-DDTHH:mm:ss — use the time the user says, no timezone conversion'),
   score: z.number().min(1).describe('Difficulty score — YOU decide. 1-5 trivial, 6-15 moderate, 16-30 hard, 30+ massive'),
   parentTaskId: z.string().optional().describe('Parent task ID if this is a subtask'),
   subtasks: z.array(subtaskSchema).optional().describe('Optional subtasks to create immediately. Scores MUST sum to parent score. Use this instead of calling breakDownTask separately.'),
