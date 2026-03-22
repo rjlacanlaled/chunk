@@ -1,8 +1,13 @@
 'use client';
 
-import { Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LEVELS } from '@/lib/gamification';
+
+function getBadgeSrc(levelNum: number): string {
+  if (levelNum <= 2) return '/chunk-gamification/chunk-badge-common.svg';
+  if (levelNum <= 4) return '/chunk-gamification/chunk-badge-rare.svg';
+  return '/chunk-gamification/chunk-badge-epic.svg';
+}
 
 interface XpBarProps {
   xp: number;
@@ -28,7 +33,13 @@ export function XpBar({ xp, level }: XpBarProps) {
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-1 text-primary">
-        <Shield className="size-3.5" />
+        <img
+          src={getBadgeSrc(levelNum)}
+          alt={`Level ${levelNum} badge`}
+          width={20}
+          height={20}
+          className="size-5"
+        />
         <span className="text-xs font-bold tabular-nums">
           Lv.{levelNum}
         </span>

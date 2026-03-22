@@ -1,6 +1,5 @@
 'use client';
 
-import { Flame } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface StreakBadgeProps {
@@ -19,7 +18,13 @@ export function StreakBadge({ streak }: StreakBadgeProps) {
       )}
       title={`${streak} day streak`}
     >
-      <Flame className="size-3.5" />
+      <img
+        src="/chunk-gamification/chunk-flame-animated.svg"
+        alt="Streak flame"
+        width={16}
+        height={16}
+        className="size-4"
+      />
       <span className="text-xs font-semibold">{streak}</span>
     </div>
   );

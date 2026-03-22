@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Flame } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Task } from '@/types/task';
 
@@ -68,7 +67,13 @@ export function StreakStrip({ tasks, streak }: StreakStripProps) {
       </div>
       {streak > 0 && (
         <div className="flex items-center gap-1 text-orange-400">
-          <Flame className="size-3.5" />
+          <img
+            src="/chunk-gamification/chunk-flame-animated.svg"
+            alt="Streak flame"
+            width={14}
+            height={14}
+            className="size-3.5"
+          />
           <span className="text-xs font-bold tabular-nums">
             {streak}
             d

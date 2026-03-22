@@ -11,48 +11,29 @@ const DAILY_TASK_GOAL = 3;
 const DAILY_SCORE_GOAL = 30;
 
 function ProgressRing({ progress, size = 48 }: { progress: number; size?: number }) {
-  const radius = (size - 4) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference * (1 - Math.min(progress, 1));
   const complete = progress >= 1;
+  const empty = progress === 0;
+
+  const src = complete
+    ? '/chunk-gamification/chunk-progress-ring-complete.svg'
+    : empty
+      ? '/chunk-gamification/chunk-progress-ring-empty.svg'
+      : '/chunk-gamification/chunk-progress-ring.svg';
+
+  const alt = complete
+    ? 'Mission complete'
+    : empty
+      ? 'No progress'
+      : `${Math.round(progress * 100)}% progress`;
 
   return (
-    <svg width={size} height={size} className="shrink-0">
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={3}
-        className="text-muted/30"
-      />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        strokeWidth={3}
-        className={complete ? 'text-emerald-400' : 'text-primary'}
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        style={{ transition: 'stroke-dashoffset 0.5s ease' }}
-      />
-      <text
-        x={size / 2}
-        y={size / 2}
-        textAnchor="middle"
-        dy="0.35em"
-        className={cn(
-          'text-xs font-bold fill-current',
-          complete ? 'text-emerald-400' : 'text-foreground',
-        )}
-      >
-        {complete ? '\u2713' : `${Math.round(progress * 100)}%`}
-      </text>
-    </svg>
+    <img
+      src={src}
+      alt={alt}
+      width={size}
+      height={size}
+      className="shrink-0"
+    />
   );
 }
 
