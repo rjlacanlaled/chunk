@@ -120,14 +120,14 @@
   display: flex;
   align-items: center;
   padding: 20px 56px 48px;
-  gap: 40px;
+  gap: 0;
   z-index: 5;
   min-height: calc(100vh - 80px);
 }
 
 .hl {
   flex: 1;
-  max-width: 540px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
   gap: 22px;
@@ -289,8 +289,7 @@
 .proof strong { color: rgba(255,255,255,.65); }
 
 .hr {
-  flex: 0 0 auto;
-  width: 440px;
+  flex: 1;
   height: 520px;
   position: relative;
   opacity: 0;
@@ -300,14 +299,14 @@
 .cwrap {
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-52%);
+  left: 45%;
+  transform: translateX(-50%);
   animation: cfloat 3.5s ease-in-out infinite 2s;
 }
 
 .tcards {
   position: absolute;
-  right: 0;
+  right: -40px;
   top: 24px;
   display: flex;
   flex-direction: column;
