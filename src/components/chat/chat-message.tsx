@@ -1,6 +1,7 @@
 'use client';
 
 import type { UIMessage } from 'ai';
+import { isToolUIPart } from 'ai';
 import type { Components } from 'react-markdown';
 import ReactMarkdown from 'react-markdown';
 import { User, CheckCircle2 } from 'lucide-react';
@@ -13,7 +14,7 @@ const TOOL_LABELS: Record<string, string> = {
   updateTasks: 'Updating tasks',
   deleteTasks: 'Deleting tasks',
   listTasks: 'Checking your tasks',
-  breakDownTask: 'Breaking it down',
+  searchTasks: 'Searching tasks',
 };
 
 const mdComponents: Components = {
@@ -49,18 +50,19 @@ const mdComponents: Components = {
   ),
 };
 
-function ToolChip({ part }: { part: { type: 'tool-invocation'; toolInvocation: { toolCallId: string; toolName: string; state: string; args: unknown } } }) {
-  const { toolInvocation } = part;
-  const toolName = toolInvocation.toolName;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ToolChip({ part }: { part: any }) {
+  // v6: part.type is 'tool-<name>', toolName from type prefix
+  const toolName = (part.type as string).replace('tool-', '');
   const label = TOOL_LABELS[toolName] || toolName;
-  const isComplete = toolInvocation.state === 'result';
+  const isComplete = part.state === 'output-available';
 
-  const args = (toolInvocation.args ?? {}) as Record<string, unknown>;
+  const args = (part.input ?? {}) as Record<string, unknown>;
   let detail = '';
   if (args?.title) detail = `: ${args.title}`;
   else if (Array.isArray(args?.tasks)) detail = ` (${args.tasks.length})`;
   else if (Array.isArray(args?.names)) detail = ` (${args.names.length})`;
-  else if (args?.name) detail = `: ${args.name}`;
+  else if (args?.query) detail = `: "${args.query}"`;
 
   return (
     <div
@@ -136,12 +138,11 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
             );
           }
 
-          if (part.type === 'tool-invocation') {
-            const tp = part as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+          if (isToolUIPart(part)) {
             return (
               <ToolChip
-                key={tp.toolInvocation.toolCallId}
-                part={tp}
+                key={(part as any).toolCallId} // eslint-disable-line @typescript-eslint/no-explicit-any
+                part={part}
               />
             );
           }

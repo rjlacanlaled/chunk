@@ -258,7 +258,10 @@ export default function Home() {
         >
           <ChatPanel
             owner={owner}
-            onTasksChanged={() => queryClient.refetchQueries({ queryKey: ['tasks'] })}
+            onTasksChanged={() => {
+              // Small delay to ensure DB write is committed before refetch
+              setTimeout(() => queryClient.refetchQueries({ queryKey: ['tasks'] }), 500);
+            }}
             compact={hasTasks}
             sendRef={sendChatRef}
           />
