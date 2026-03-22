@@ -13,6 +13,7 @@ import { TaskList } from '@/components/tasks/task-list';
 import { BoardPlaceholder } from '@/components/tasks/board-placeholder';
 import { StreakBadge } from '@/components/gamification/streak-badge';
 import { XpBar } from '@/components/gamification/xp-bar';
+import { ScoreSummary } from '@/components/gamification/score-summary';
 import { SignUpCta } from '@/components/auth/sign-up-cta';
 import { AuthButtons } from '@/components/auth/auth-buttons';
 import { Button } from '@/components/ui/button';
@@ -107,12 +108,19 @@ export default function Home() {
           style={{ width: hasTasks ? '70%' : '0%' }}
         >
           {hasTasks && view === 'list' && (
-            <TaskList
-              tasks={tasks}
-              onToggleDone={handleToggleDone}
-              onBreakDown={handleBreakDown}
-              lastXpGain={lastXpGain}
-            />
+            <div className="flex h-full flex-col">
+              <div className="shrink-0 px-4 pt-3">
+                <ScoreSummary tasks={tasks} />
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <TaskList
+                  tasks={tasks}
+                  onToggleDone={handleToggleDone}
+                  onBreakDown={handleBreakDown}
+                  lastXpGain={lastXpGain}
+                />
+              </div>
+            </div>
           )}
           {hasTasks && view === 'board' && (
             <BoardPlaceholder />
