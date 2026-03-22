@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react';
 import {
   Circle,
   CheckCircle2,
-  ChevronRight,
   Zap,
   AlertTriangle,
   Clock,
@@ -162,6 +161,18 @@ const getDepthStyles = (depth: number) => {
   };
 };
 
+/* -- Group colors for nesting depth ------------------------------ */
+
+const GROUP_COLORS = [
+  'border-primary/30',
+  'border-purple-400/30',
+  'border-amber-400/30',
+  'border-emerald-400/30',
+  'border-pink-400/30',
+];
+
+const getGroupColor = (depth: number) => GROUP_COLORS[depth % GROUP_COLORS.length];
+
 /* -- Subtask row (clean, no connectors) ------------------------- */
 
 interface SubtaskRowProps {
@@ -184,31 +195,17 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, depth }: Subtas
     <div>
       <div
         className={cn(
-          'flex items-center gap-2.5 py-1.5 rounded-md border-l-2 border-l-transparent',
-          'transition-colors hover:bg-muted/20 hover:border-l-primary/30',
+          'flex items-center gap-2.5 py-2 rounded-md',
+          'transition-colors hover:bg-muted/20',
+          hasChildren && 'cursor-pointer',
           styles.padding,
         )}
+        onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
       >
-        {hasChildren && (
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => setExpanded(!expanded)}
-            className="shrink-0"
-          >
-            <ChevronRight
-              className={cn(
-                'size-3 text-muted-foreground transition-transform',
-                expanded && 'rotate-90',
-              )}
-            />
-          </Button>
-        )}
-
         <Button
           variant="ghost"
           size="icon-xs"
-          onClick={() => onToggleDone(task)}
+          onClick={(e) => { e.stopPropagation(); onToggleDone(task); }}
           aria-label={isDone ? 'Mark as not done' : 'Mark as done'}
         >
           {isDone
@@ -230,7 +227,7 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, depth }: Subtas
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onBreakDown(task.title)}
+            onClick={(e) => { e.stopPropagation(); onBreakDown(task.title); }}
             className="shrink-0 text-[11px] bg-primary/10 text-primary hover:bg-primary/20 h-6 px-2"
           >
             <Zap className="mr-0.5 size-2.5" />
@@ -245,7 +242,7 @@ function SubtaskRow({ task, allTasks, onToggleDone, onBreakDown, depth }: Subtas
 
       {/* Recursive children */}
       {hasChildren && expanded && (
-        <div>
+        <div className={cn('ml-4 border-l-2 pl-1', getGroupColor(depth))}>
           {children.map((child) => (
             <SubtaskRow
               key={child.id}
@@ -315,27 +312,17 @@ export function TaskItem({
       )}
     >
       {/* -- Card header row ------------------------------------- */}
-      <div className="relative flex items-center gap-3 p-3">
-        {hasChildren && (
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => setExpanded(!expanded)}
-            aria-label={expanded ? 'Collapse subtasks' : 'Expand subtasks'}
-          >
-            <ChevronRight
-              className={cn(
-                'size-4 text-muted-foreground transition-transform duration-200',
-                expanded && 'rotate-90',
-              )}
-            />
-          </Button>
+      <div
+        className={cn(
+          'relative flex items-center gap-3 p-3',
+          hasChildren && 'cursor-pointer',
         )}
-
+        onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
+      >
         <Button
           variant="ghost"
           size="icon-xs"
-          onClick={() => onToggleDone(task)}
+          onClick={(e) => { e.stopPropagation(); onToggleDone(task); }}
           aria-label={isDone ? 'Mark as not done' : 'Mark as done'}
           className={cn(recentlyCompleted && 'animate-bounce')}
         >
@@ -382,7 +369,7 @@ export function TaskItem({
           <Button
             variant="default"
             size="sm"
-            onClick={() => onBreakDown(task.title)}
+            onClick={(e) => { e.stopPropagation(); onBreakDown(task.title); }}
             className="shrink-0 text-xs bg-primary/20 text-primary hover:bg-primary/30"
           >
             <Zap className="mr-1 size-3" />
@@ -402,7 +389,7 @@ export function TaskItem({
 
       {/* -- Subtask list (no tree lines) ------------------------ */}
       {hasChildren && expanded && (
-        <div className="border-t border-border/30 px-3 pb-2 pt-1">
+        <div className={cn('ml-4 border-l-2 px-3 pb-2 pt-1', getGroupColor(0))}>
           {subtasks.map((sub) => (
             <SubtaskRow
               key={sub.id}
