@@ -528,7 +528,7 @@ export default function LandingPage() {
             />
             <div className="flex items-center gap-6">
               <a
-                href="https://github.com/rjlacanlale/chunk"
+                href="https://github.com/rjlacanlaled/chunk"
                 className="text-sm text-white/50 transition-colors hover:text-white"
                 target="_blank"
                 rel="noopener noreferrer"
