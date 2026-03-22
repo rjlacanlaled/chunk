@@ -37,6 +37,15 @@ export const deleteTask = async (id: string) => {
   await db.delete(tasks).where(eq(tasks.id, id));
 };
 
+export const findTaskByName = async (
+  name: string,
+  owner: { userId?: string; guestId?: string },
+) => {
+  const allTasks = await listTasks(owner);
+  const lower = name.toLowerCase();
+  return allTasks.find((t) => t.title.toLowerCase().includes(lower)) ?? null;
+};
+
 export const listTasks = async (
   owner: { userId?: string; guestId?: string },
 ) => {

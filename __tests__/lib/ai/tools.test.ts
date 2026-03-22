@@ -5,18 +5,20 @@ vi.mock('@/server/actions/tasks', () => ({
   updateTask: vi.fn(),
   deleteTask: vi.fn(),
   listTasks: vi.fn(),
+  findTaskByName: vi.fn(),
 }));
 
 describe('taskTools', () => {
-  it('should export all 4 tools', async () => {
+  it('should export all 5 tools', async () => {
     const { taskTools } = await import('@/lib/ai/tools');
     const toolNames = Object.keys(taskTools);
 
     expect(toolNames).toContain('createTask');
-    expect(toolNames).toContain('updateTask');
-    expect(toolNames).toContain('deleteTask');
+    expect(toolNames).toContain('completeTask');
+    expect(toolNames).toContain('updateTaskByName');
+    expect(toolNames).toContain('deleteTaskByName');
     expect(toolNames).toContain('listTasks');
-    expect(toolNames).toHaveLength(4);
+    expect(toolNames).toHaveLength(5);
   });
 
   it('each tool should have a description defined', async () => {

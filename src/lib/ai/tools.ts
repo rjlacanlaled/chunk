@@ -5,6 +5,7 @@ import {
   updateTask,
   deleteTask,
   listTasks,
+  findTaskByName,
 } from '@/server/actions/tasks';
 
 type Owner = { userId?: string; guestId?: string };
@@ -16,11 +17,9 @@ export const makeTaskTools = (owner: Owner) => ({
       title: z.string().describe('The title of the task'),
       description: z.string().optional().describe('A description of the task'),
       priority: z.enum(['low', 'medium', 'high', 'urgent']).optional()
-        .describe('The priority level of the task'),
-      status: z.enum(['todo', 'in_progress', 'done']).optional()
-        .describe('The current status of the task'),
-      dueDate: z.string().optional()
-        .describe('The due date in ISO format'),
+        .describe('The priority level'),
+      status: z.enum(['todo', 'in_progress', 'done']).optional(),
+      dueDate: z.string().optional().describe('Due date in ISO format'),
     }),
     execute: async (input) => {
       const task = await createTask(
@@ -37,51 +36,56 @@ export const makeTaskTools = (owner: Owner) => ({
     },
   }),
 
-  updateTask: tool({
-    description: 'Update an existing task',
+  completeTask: tool({
+    description: 'Mark a task as done by its name. Use this when the user says they finished something.',
     inputSchema: z.object({
-      id: z.string().describe('The id of the task to update'),
-      title: z.string().optional().describe('The new title'),
-      description: z.string().optional().describe('The new description'),
-      priority: z.enum(['low', 'medium', 'high', 'urgent']).optional()
-        .describe('The new priority level'),
-      status: z.enum(['todo', 'in_progress', 'done']).optional()
-        .describe('The new status'),
-      dueDate: z.string().nullable().optional()
-        .describe('The new due date in ISO format, or null to clear'),
+      name: z.string().describe('The name/title of the task to mark as done (partial match works)'),
     }),
-    execute: async (input) => {
-      const task = await updateTask({
-        id: input.id,
-        title: input.title,
-        description: input.description,
-        priority: input.priority,
-        status: input.status,
-        dueDate: input.dueDate ? new Date(input.dueDate) : input.dueDate === null ? null : undefined,
-      });
-      return task;
+    execute: async ({ name }) => {
+      const task = await findTaskByName(name, owner);
+      if (!task) return { error: `No task found matching "${name}"` };
+      const updated = await updateTask({ id: task.id, status: 'done' });
+      return updated;
     },
   }),
 
-  deleteTask: tool({
-    description: 'Delete a task by its id',
+  updateTaskByName: tool({
+    description: 'Update a task by its name. Use for changing priority, due date, title, or status.',
     inputSchema: z.object({
-      id: z.string().describe('The id of the task to delete'),
+      name: z.string().describe('The name/title of the task to update (partial match works)'),
+      title: z.string().optional().describe('New title'),
+      priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
+      status: z.enum(['todo', 'in_progress', 'done']).optional(),
+      dueDate: z.string().nullable().optional().describe('New due date in ISO format, or null to clear'),
     }),
-    execute: async ({ id }) => {
-      await deleteTask(id);
-      return { success: true };
+    execute: async ({ name, ...fields }) => {
+      const task = await findTaskByName(name, owner);
+      if (!task) return { error: `No task found matching "${name}"` };
+      const updated = await updateTask({
+        id: task.id,
+        ...fields,
+        dueDate: fields.dueDate ? new Date(fields.dueDate) : fields.dueDate === null ? null : undefined,
+      });
+      return updated;
+    },
+  }),
+
+  deleteTaskByName: tool({
+    description: 'Delete a task by its name.',
+    inputSchema: z.object({
+      name: z.string().describe('The name/title of the task to delete (partial match works)'),
+    }),
+    execute: async ({ name }) => {
+      const task = await findTaskByName(name, owner);
+      if (!task) return { error: `No task found matching "${name}"` };
+      await deleteTask(task.id);
+      return { deleted: true, title: task.title };
     },
   }),
 
   listTasks: tool({
-    description: 'List all tasks for the current user, optionally filtered by status or priority',
-    inputSchema: z.object({
-      status: z.enum(['todo', 'in_progress', 'done']).optional()
-        .describe('Filter by status'),
-      priority: z.enum(['low', 'medium', 'high', 'urgent']).optional()
-        .describe('Filter by priority'),
-    }),
+    description: 'List all tasks for the current user',
+    inputSchema: z.object({}),
     execute: async () => {
       const tasks = await listTasks(owner);
       return tasks;
