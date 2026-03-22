@@ -289,15 +289,11 @@ export function TaskList({
     );
   }
 
-  const getSubtasks = (parentId: string) =>
-    tasks.filter((t) => t.parentTaskId === parentId);
-
   const renderSection = (sectionTasks: Task[]) =>
     sectionTasks.map((task) => (
       <TaskItem
         key={task.id}
         task={task}
-        subtasks={getSubtasks(task.id)}
         allTasks={tasks}
         onToggleDone={onToggleDone}
         onBreakDown={onBreakDown}
