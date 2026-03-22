@@ -15,7 +15,7 @@ export function SignUpCta() {
       <span className="opacity-30">·</span>
       <button
         type="button"
-        onClick={() => signIn.social({ provider: 'google' })}
+        onClick={() => signIn.social({ provider: 'google', callbackURL: '/dashboard' })}
         className="text-primary/80 underline-offset-2 transition-colors hover:text-primary hover:underline"
       >
         Sign up to save

@@ -19,7 +19,7 @@ export function AuthButtons() {
       <Button
         variant="outline"
         size="sm"
-        onClick={() => signIn.social({ provider: 'google' })}
+        onClick={() => signIn.social({ provider: 'google', callbackURL: '/dashboard' })}
       >
         Sign in
       </Button>
