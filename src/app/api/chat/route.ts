@@ -35,7 +35,7 @@ export const POST = async (req: Request) => {
     system: SYSTEM_PROMPT,
     messages: coreMessages,
     tools,
-    maxSteps: 5,
+    maxSteps: 10,
     maxTokens: 4096,
   });
 
