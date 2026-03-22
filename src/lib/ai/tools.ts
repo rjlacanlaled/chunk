@@ -166,13 +166,20 @@ export const makeTaskTools = (owner: Owner) => ({
   }),
 
   searchTasks: tool({
-    description: 'Search tasks by keyword. Returns ALL matches. Use this when unsure which task the user means — if multiple results, ask the user to clarify.',
+    description: 'Search tasks by keyword or task number (#N). Returns ALL matches with task numbers for disambiguation.',
     inputSchema: z.object({
-      query: z.string().describe('Search keyword (partial match on title)'),
+      query: z.string().describe('Search keyword (partial match on title) or task number (#N)'),
     }),
     execute: async ({ query }) => {
       const matches = await searchTasks(query, owner);
-      return matches.map((t) => ({ id: t.id, title: t.title, score: t.score, status: t.status, parentTaskId: t.parentTaskId }));
+      return matches.map((t) => ({
+        id: t.id,
+        taskNumber: t.taskNumber,
+        title: t.title,
+        score: t.score,
+        status: t.status,
+        parentTaskId: t.parentTaskId,
+      }));
     },
   }),
 

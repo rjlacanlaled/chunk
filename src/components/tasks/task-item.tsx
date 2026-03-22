@@ -201,6 +201,12 @@ export function TaskItem({
 
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
+          {task.taskNumber && (
+            <span className="text-[10px] font-mono text-muted-foreground/40 shrink-0">
+              #
+              {task.taskNumber}
+            </span>
+          )}
           <span className={cn('truncate', textStyle, isDone && 'text-muted-foreground line-through')}>
             {task.title}
           </span>

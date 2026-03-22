@@ -15,6 +15,7 @@ const mockTask = (overrides: Partial<Task> = {}): Task => ({
   dueDate: null,
   parentTaskId: null,
   score: null,
+  taskNumber: null,
   metadata: {},
   createdAt: new Date(),
   updatedAt: new Date(),

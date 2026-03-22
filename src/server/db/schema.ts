@@ -68,6 +68,7 @@ export const tasks = pgTable('tasks', {
   dueDate: timestamp('due_date'),
   parentTaskId: uuid('parent_task_id'),
   score: real('score'),
+  taskNumber: real('task_number'),
   metadata: jsonb('metadata').default({}),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull().$onUpdate(() => new Date()),

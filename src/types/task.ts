@@ -13,6 +13,7 @@ export interface Task {
   dueDate: Date | null;
   parentTaskId: string | null;
   score: number | null;
+  taskNumber: number | null;
   metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;

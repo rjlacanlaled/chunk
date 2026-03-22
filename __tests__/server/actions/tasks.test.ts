@@ -13,6 +13,7 @@ const mockTask: Task = {
   dueDate: null,
   parentTaskId: null,
   score: null,
+  taskNumber: 1,
   metadata: {},
   createdAt: new Date('2026-01-01'),
   updatedAt: new Date('2026-01-01'),
@@ -49,6 +50,9 @@ describe('task server actions', () => {
 
   describe('createTask', () => {
     it('should create a task and return it', async () => {
+      // First call: listTasks inside getNextTaskNumber
+      mockSelectWhere.mockResolvedValueOnce([]);
+      // Second call: the insert returning
       mockReturning.mockResolvedValueOnce([mockTask]);
 
       const { createTask } = await import('@/server/actions/tasks');
@@ -59,7 +63,7 @@ describe('task server actions', () => {
 
       expect(mockInsert).toHaveBeenCalled();
       expect(mockValues).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'Test task', guestId: 'guest-123' }),
+        expect.objectContaining({ title: 'Test task', guestId: 'guest-123', taskNumber: 1 }),
       );
       expect(mockReturning).toHaveBeenCalled();
       expect(result).toEqual(mockTask);
