@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  createTask,
+  createTasks,
   updateTask,
   deleteTask,
   listTasks,
@@ -15,7 +15,10 @@ const getTaskKey = (owner: Owner) => ['tasks', owner.userId || owner.guestId || 
 
 export const useTasksQuery = (owner: Owner) => useQuery({
   queryKey: getTaskKey(owner),
-  queryFn: () => listTasks(owner),
+  queryFn: async () => {
+    const result = await listTasks(owner);
+    return result.tasks;
+  },
   enabled: !!(owner.userId || owner.guestId),
   staleTime: 5000,
   refetchOnWindowFocus: false,
@@ -26,7 +29,10 @@ export const useTaskMutations = (owner: Owner) => {
   const key = getTaskKey(owner);
 
   const createMutation = useMutation({
-    mutationFn: (input: CreateTaskInput) => createTask(input, owner),
+    mutationFn: async (input: CreateTaskInput) => {
+      const [task] = await createTasks([input], owner);
+      return task;
+    },
     onMutate: async (input) => {
       await queryClient.cancelQueries({ queryKey: key });
       const previous = queryClient.getQueryData<Task[]>(key);

@@ -143,7 +143,7 @@ export default function Home() {
   };
 
   const handleBreakDown = useCallback((taskTitle: string) => {
-    sendChatRef.current?.(`break down "${taskTitle}" into subtasks`);
+    sendChatRef.current?.(`chunk "${taskTitle}" into subtasks`);
   }, []);
 
   const handleDelete = useCallback((task: Task) => {

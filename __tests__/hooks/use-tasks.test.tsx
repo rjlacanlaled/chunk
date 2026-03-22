@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
 vi.mock('@/server/actions/tasks', () => ({
-  createTask: vi.fn().mockResolvedValue({
+  createTasks: vi.fn().mockResolvedValue([{
     id: 'new-id',
     title: 'New task',
     userId: null,
@@ -17,7 +17,7 @@ vi.mock('@/server/actions/tasks', () => ({
     metadata: {},
     createdAt: new Date(),
     updatedAt: new Date(),
-  }),
+  }]),
   updateTask: vi.fn().mockResolvedValue({
     id: 'test-id',
     title: 'Updated task',
@@ -33,7 +33,7 @@ vi.mock('@/server/actions/tasks', () => ({
     updatedAt: new Date(),
   }),
   deleteTask: vi.fn().mockResolvedValue(undefined),
-  listTasks: vi.fn().mockResolvedValue([]),
+  listTasks: vi.fn().mockResolvedValue({ tasks: [], nextCursor: null }),
 }));
 
 const createWrapper = () => {
@@ -68,8 +68,8 @@ describe('useTaskMutations', () => {
     expect(result.current.deleteMutation).toBeDefined();
   });
 
-  it('should call createTask action on createMutation.mutate', async () => {
-    const { createTask } = await import('@/server/actions/tasks');
+  it('should call createTasks action on createMutation.mutate', async () => {
+    const { createTasks } = await import('@/server/actions/tasks');
     const { useTaskMutations } = await import('@/hooks/use-tasks');
     const wrapper = createWrapper();
 
@@ -81,8 +81,8 @@ describe('useTaskMutations', () => {
     result.current.createMutation.mutate({ title: 'New task' });
 
     await waitFor(() => {
-      expect(createTask).toHaveBeenCalledWith(
-        { title: 'New task' },
+      expect(createTasks).toHaveBeenCalledWith(
+        [{ title: 'New task' }],
         { guestId: 'guest-123' },
       );
     });

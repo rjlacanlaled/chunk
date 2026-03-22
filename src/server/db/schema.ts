@@ -4,6 +4,7 @@ import {
   text,
   timestamp,
   real,
+  integer,
   jsonb,
   boolean,
 } from 'drizzle-orm/pg-core';
@@ -67,8 +68,8 @@ export const tasks = pgTable('tasks', {
   position: real('position').notNull().default(0),
   dueDate: timestamp('due_date'),
   parentTaskId: uuid('parent_task_id'),
-  score: real('score'),
-  taskNumber: real('task_number'),
+  score: integer('score'),
+  taskNumber: integer('task_number'),
   deletedAt: timestamp('deleted_at'),
   metadata: jsonb('metadata').default({}),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),

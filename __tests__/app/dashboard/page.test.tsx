@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
 vi.mock('@/lib/auth-client', () => ({
-  useSession: () => ({ data: null }),
+  useSession: () => ({ data: null, isPending: false }),
   signIn: { social: vi.fn() },
   signOut: vi.fn(),
 }));
@@ -18,8 +18,8 @@ vi.mock('@/hooks/use-auth-with-migration', () => ({
 }));
 
 vi.mock('@/server/actions/tasks', () => ({
-  listTasks: vi.fn().mockResolvedValue([]),
-  createTask: vi.fn(),
+  listTasks: vi.fn().mockResolvedValue({ tasks: [], nextCursor: null }),
+  createTasks: vi.fn(),
   updateTask: vi.fn(),
   deleteTask: vi.fn(),
 }));
@@ -58,10 +58,12 @@ describe('Dashboard page', () => {
     const Wrapper = createWrapper();
     render(<Wrapper><Dashboard /></Wrapper>);
 
-    const logos = screen.getAllByAltText('Chunk');
-    const headerLogo = logos.find(
-      (el) => el.getAttribute('src') === '/chunk-logos/chunk-logo-horizontal-dark.svg',
-    );
-    expect(headerLogo).toBeInTheDocument();
+    await waitFor(() => {
+      const logos = screen.getAllByAltText('Chunk');
+      const headerLogo = logos.find(
+        (el) => el.getAttribute('src') === '/chunk-logos/chunk-logo-horizontal-dark.svg',
+      );
+      expect(headerLogo).toBeInTheDocument();
+    });
   });
 });

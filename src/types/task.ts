@@ -13,7 +13,7 @@ export interface Task {
   dueDate: Date | null;
   parentTaskId: string | null;
   score: number | null;
-  taskNumber: number | null;
+  taskNumber: number;
   deletedAt: Date | null;
   metadata: unknown;
   createdAt: Date;
@@ -40,3 +40,24 @@ export interface UpdateTaskInput {
   dueDate?: Date | null;
   score?: number | null;
 }
+
+export type ResolveResult =
+  | { match: Task }
+  | { matches: Pick<Task, 'id' | 'taskNumber' | 'title' | 'score' | 'status' | 'parentTaskId'>[] }
+  | { error: string };
+
+export type CompletionResult = {
+  completed: string[];
+  ambiguous: { name: string; matches: { taskNumber: number; title: string }[] }[];
+  notFound: string[];
+};
+
+export type DeletionResult = {
+  deleted: number;
+  titles: string[];
+};
+
+export type PaginatedTasks = {
+  tasks: Task[];
+  nextCursor: string | null;
+};
