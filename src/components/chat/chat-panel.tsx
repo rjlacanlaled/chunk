@@ -30,25 +30,42 @@ export function ChatPanel({
   sendRef,
 }: ChatPanelProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
-  const [initialMessages, setInitialMessages] = useState<UIMessage[] | undefined>(undefined);
-  const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [loadedMessages, setLoadedMessages] = useState<UIMessage[] | null>(null);
 
-  // Load chat history from DB on mount
+  // Load chat history from DB on mount — must complete before useChat mounts
   useEffect(() => {
-    if (historyLoaded) return;
+    if (loadedMessages !== null) return;
     fetch('/api/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ owner }),
     })
       .then((res) => res.json())
-      .then((msgs: UIMessage[]) => {
-        if (msgs.length > 0) setInitialMessages(msgs);
-        setHistoryLoaded(true);
-      })
-      .catch(() => setHistoryLoaded(true));
+      .then((msgs: UIMessage[]) => setLoadedMessages(msgs.length > 0 ? msgs : []))
+      .catch(() => setLoadedMessages([]));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [owner.userId, owner.guestId]);
+
+  // Don't mount useChat until history is loaded
+  if (loadedMessages === null) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <img src="/chunk-logos/chunky-thinking.svg" alt="Loading" className="size-16" />
+      </div>
+    );
+  }
+
+  return <ChatPanelInner owner={owner} onTasksChanged={onTasksChanged} compact={compact} sendRef={sendRef} initialMessages={loadedMessages.length > 0 ? loadedMessages : undefined} />;
+}
+
+function ChatPanelInner({
+  owner,
+  onTasksChanged,
+  compact,
+  sendRef,
+  initialMessages,
+}: ChatPanelProps & { initialMessages?: UIMessage[] }) {
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const transport = useMemo(
     () => new DefaultChatTransport({
