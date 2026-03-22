@@ -103,8 +103,9 @@ export function ChatPanel({
   // Show loading state while fetching chat history
   if (!historyLoaded) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <ChunkIcon variant="animated" className="size-8" />
+      <div className="flex h-full flex-col items-center justify-center gap-3">
+        <img src="/chunk-logos/chunky-thinking.svg" alt="Loading" className="size-16" />
+        <p className="animate-shimmer-text text-xs font-medium">Loading your chats...</p>
       </div>
     );
   }

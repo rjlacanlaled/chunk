@@ -142,8 +142,9 @@ export default function Home() {
   // Wait for owner to be ready (guest ID from localStorage)
   if (!owner) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <img src="/chunk-logos/chunk-mascot.svg" alt="Chunk" className="size-8 animate-breathe" />
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
+        <img src="/chunk-logos/chunky-thinking.svg" alt="Loading" className="size-24" />
+        <p className="animate-shimmer-text text-sm font-medium">Getting things ready...</p>
       </div>
     );
   }
