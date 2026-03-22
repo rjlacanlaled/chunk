@@ -41,7 +41,7 @@ export const POST = async (req: Request) => {
     }
   }
 
-  // Normalize messages to UIMessage format for convertToModelMessages
+  // Normalize messages to UIMessage format
   const uiMessages: UIMessage[] = messages.map((msg: Record<string, unknown>) => {
     if (msg.parts) return msg;
     return {
@@ -51,7 +51,32 @@ export const POST = async (req: Request) => {
     };
   });
 
-  const modelMessages = await convertToModelMessages(uiMessages);
+  // Clean up message history — remove empty assistant messages and merge consecutive user messages
+  const cleaned: UIMessage[] = [];
+  for (const msg of uiMessages) {
+    const text = msg.parts
+      ?.filter((p: { type: string; text?: string }) => p.type === 'text')
+      .map((p: { type: string; text?: string }) => p.text?.trim())
+      .join('') || '';
+
+    // Skip empty messages
+    if (!text && msg.role === 'assistant') continue;
+
+    // Merge consecutive user messages
+    const last = cleaned[cleaned.length - 1];
+    if (msg.role === 'user' && last?.role === 'user') {
+      const lastText = last.parts
+        ?.filter((p: { type: string; text?: string }) => p.type === 'text')
+        .map((p: { type: string; text?: string }) => p.text)
+        .join('') || '';
+      last.parts = [{ type: 'text' as const, text: `${lastText}\n${text}` }];
+      continue;
+    }
+
+    cleaned.push(msg);
+  }
+
+  const modelMessages = await convertToModelMessages(cleaned);
 
   const result = streamText({
     model: openrouter('google/gemini-2.0-flash-001'),
