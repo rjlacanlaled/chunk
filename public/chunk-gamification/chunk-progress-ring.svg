@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <defs>
+    <style>
+      .rp { animation: ring-fill 1.8s ease-out forwards; }
+      .rd { animation: dot-spin 3s linear infinite; transform-origin: 80px 80px; transform-box: fill-box; }
+      @keyframes ring-fill { from { stroke-dashoffset: 428; } to { stroke-dashoffset: 107; } }
+      @keyframes dot-spin  { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+  </defs>
+  <circle cx="80" cy="80" r="68" fill="none" stroke="#32324D" stroke-width="10"/>
+  <circle cx="80" cy="80" r="68" fill="none" stroke="#9736E8" stroke-width="10"
+    stroke-dasharray="22 6" stroke-linecap="round"
+    transform="rotate(-90 80 80)" opacity="0.3"/>
+  <circle cx="80" cy="80" r="68" fill="none" stroke="#4945FF" stroke-width="10"
+    stroke-dasharray="321 107" stroke-linecap="round"
+    transform="rotate(-90 80 80)" class="rp"/>
+  <g class="rd">
+    <circle cx="80" cy="12" r="7" fill="#F5CF0D"/>
+    <circle cx="80" cy="12" r="3.5" fill="white" opacity="0.5"/>
+  </g>
+  <rect x="57" y="62" width="46" height="13" rx="4" fill="#4945FF"/>
+  <rect x="57" y="80" width="34" height="13" rx="4" fill="#4945FF"/>
+  <rect x="57" y="98" width="22" height="13" rx="4" fill="#4945FF"/>
+</svg>

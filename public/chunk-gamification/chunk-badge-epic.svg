@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="110" height="124" viewBox="0 0 110 124">
+  <polygon points="55,6 102,30 102,80 55,118 8,80 8,30" fill="#9736E8" opacity="0.1"/>
+  <polygon points="55,6 102,30 102,80 55,118 8,80 8,30" fill="none" stroke="#9736E8" stroke-width="4" stroke-linejoin="round"/>
+  <polygon points="55,14 96,34 96,78 55,112 14,78 14,34" fill="none" stroke="#9736E8" stroke-width="1" opacity="0.3" stroke-linejoin="round"/>
+  <polygon points="55,22 90,38 90,76 55,106 20,76 20,38" fill="none" stroke="#9736E8" stroke-width="1" opacity="0.2" stroke-linejoin="round"/>
+  <circle cx="55" cy="6"   r="7" fill="#9736E8"/>
+  <circle cx="55" cy="6"   r="3.5" fill="white" opacity="0.6"/>
+  <circle cx="102" cy="30" r="5.5" fill="#9736E8" opacity="0.9"/>
+  <circle cx="102" cy="30" r="2.5" fill="white" opacity="0.5"/>
+  <circle cx="102" cy="80" r="5.5" fill="#9736E8" opacity="0.9"/>
+  <circle cx="102" cy="80" r="2.5" fill="white" opacity="0.5"/>
+  <circle cx="55" cy="118" r="7" fill="#9736E8"/>
+  <circle cx="55" cy="118" r="3.5" fill="white" opacity="0.6"/>
+  <circle cx="8" cy="80"   r="5.5" fill="#9736E8" opacity="0.9"/>
+  <circle cx="8" cy="80"   r="2.5" fill="white" opacity="0.5"/>
+  <circle cx="8" cy="30"   r="5.5" fill="#9736E8" opacity="0.9"/>
+  <circle cx="8" cy="30"   r="2.5" fill="white" opacity="0.5"/>
+</svg>

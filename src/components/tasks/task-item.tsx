@@ -112,11 +112,13 @@ function SubtaskProgress({ doneScore, totalScore }: { doneScore: number; totalSc
 interface SubtaskRowProps {
   task: Task;
   onToggleDone: (task: Task) => void;
+  onBreakDown?: (taskTitle: string) => void;
   isLast: boolean;
 }
 
-function SubtaskRow({ task, onToggleDone, isLast }: SubtaskRowProps) {
+function SubtaskRow({ task, onToggleDone, onBreakDown, isLast }: SubtaskRowProps) {
   const isDone = task.status === 'done';
+  const showChunkIt = !isDone && (task.score ?? 0) > 7;
 
   return (
     <div className="relative flex items-center gap-2.5 py-1.5 pl-4">
@@ -150,6 +152,18 @@ function SubtaskRow({ task, onToggleDone, isLast }: SubtaskRowProps) {
       >
         {task.title}
       </span>
+
+      {showChunkIt && onBreakDown && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onBreakDown(task.title)}
+          className="shrink-0 text-[11px] text-muted-foreground hover:text-primary h-6 px-2"
+        >
+          <Zap className="mr-0.5 size-2.5" />
+          {(task.score ?? 0) >= 20 ? 'Chunk it!' : 'Break down'}
+        </Button>
+      )}
 
       <ScoreMeter score={task.score} />
 
@@ -300,6 +314,7 @@ export function TaskItem({
               key={sub.id}
               task={sub}
               onToggleDone={onToggleDone}
+              onBreakDown={onBreakDown}
               isLast={i === subtasks.length - 1}
             />
           ))}

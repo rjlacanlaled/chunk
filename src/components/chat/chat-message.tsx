@@ -90,83 +90,69 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
   const isUser = message.role === 'user';
-
-  const textParts = message.parts.filter((p) => p.type === 'text');
-  const toolParts = message.parts.filter((p) => p.type === 'tool-invocation');
-  const hasText = textParts.some((p) => p.text.length > 0);
-  const hasTools = toolParts.length > 0;
-
-  // Use animated icon while this message is still streaming
   const iconVariant = !isUser && isStreaming ? 'animated' : 'static';
 
-  return (
-    <div
-      className={cn(
-        'flex w-full gap-3',
-        isUser ? 'justify-end' : 'justify-start',
-      )}
-    >
-      {!isUser && (
-        <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15">
-          <ChunkIcon className="size-4" variant={iconVariant} />
+  // For user messages, just render plain text
+  if (isUser) {
+    const text = message.parts
+      .filter((p) => p.type === 'text')
+      .map((p) => p.text)
+      .join('');
+
+    return (
+      <div className="flex w-full gap-3 justify-end">
+        <div className="max-w-[75%]">
+          <div className="rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-sm leading-relaxed text-primary-foreground">
+            <p className="whitespace-pre-wrap">{text}</p>
+          </div>
         </div>
-      )}
-      <div className="flex max-w-[75%] flex-col gap-2">
-        {/* Tool invocation chips — always visible */}
-        {!isUser && hasTools && (
-          <div className="flex flex-col gap-1">
-            {toolParts.map((part) => (
-              <ToolChip
-                key={(part as Extract<UIMessage['parts'][number], { type: 'tool-invocation' }>).toolInvocation.toolCallId}
-                part={part as Extract<UIMessage['parts'][number], { type: 'tool-invocation' }>}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Text content */}
-        {hasText && (
-          <div
-            className={cn(
-              'rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
-              isUser
-                ? 'bg-primary text-primary-foreground rounded-br-md'
-                : 'bg-card ring-1 ring-border/50 text-card-foreground rounded-bl-md',
-            )}
-          >
-            {isUser ? (
-              <p className="whitespace-pre-wrap">
-                {textParts.map((p) => p.text).join('')}
-              </p>
-            ) : (
-              <ReactMarkdown components={mdComponents}>
-                {textParts.map((p) => p.text).join('')}
-              </ReactMarkdown>
-            )}
-          </div>
-        )}
-
-        {/* Shimmer status when tools are running but no text yet */}
-        {!isUser && !hasText && hasTools && (
-          <span className="text-sm font-medium animate-shimmer-text">
-            {(() => {
-              const activeTool = toolParts.find(
-                (p) => (p as any).toolInvocation?.state !== 'result',
-              );
-              if (activeTool) {
-                const name = (activeTool as any).toolInvocation?.toolName;
-                return TOOL_LABELS[name] || 'Working on it...';
-              }
-              return 'Finishing up...';
-            })()}
-          </span>
-        )}
-      </div>
-      {isUser && (
         <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
           <User className="size-4" />
         </div>
-      )}
+      </div>
+    );
+  }
+
+  // For assistant messages, render parts in chronological order
+  return (
+    <div className="flex w-full gap-3 justify-start">
+      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15">
+        <ChunkIcon className="size-4" variant={iconVariant} />
+      </div>
+      <div className="flex max-w-[75%] flex-col gap-2">
+        {message.parts.map((part, i) => {
+          if (part.type === 'text' && part.text.length > 0) {
+            return (
+              <div
+                key={`text-${i}`}
+                className="rounded-2xl rounded-bl-md bg-card px-4 py-2.5 text-sm leading-relaxed text-card-foreground ring-1 ring-border/50"
+              >
+                <ReactMarkdown components={mdComponents}>
+                  {part.text}
+                </ReactMarkdown>
+              </div>
+            );
+          }
+
+          if (part.type === 'tool-invocation') {
+            return (
+              <ToolChip
+                key={part.toolInvocation.toolCallId}
+                part={part as Extract<UIMessage['parts'][number], { type: 'tool-invocation' }>}
+              />
+            );
+          }
+
+          return null;
+        })}
+
+        {/* Shimmer while tools are running with no text yet */}
+        {isStreaming && !message.parts.some((p) => p.type === 'text' && p.text.length > 0) && (
+          <span className="text-sm font-medium animate-shimmer-text">
+            Working on it...
+          </span>
+        )}
+      </div>
     </div>
   );
 }
