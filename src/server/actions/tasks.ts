@@ -90,18 +90,26 @@ export const findTaskByName = async (
   name: string,
   owner: Owner,
 ) => {
-  const allTasks = await listTasks(owner);
   const lower = name.toLowerCase().trim();
 
-  // Match by task number
+  // Match by task number — query DB directly, no limit
   const numMatch = lower.replace('#', '');
   if (/^\d+$/.test(numMatch)) {
     const num = parseInt(numMatch, 10);
-    const byNumber = allTasks.find((t) => t.taskNumber === num);
-    if (byNumber) return byNumber;
+    const conditions = [];
+    if (owner.userId) conditions.push(eq(tasks.userId, owner.userId));
+    if (owner.guestId) conditions.push(eq(tasks.guestId, owner.guestId));
+    if (conditions.length === 0) return null;
+
+    const ownerCond = conditions.length > 1 ? or(...conditions) : conditions[0]!;
+    const [found] = await db.select().from(tasks).where(
+      and(ownerCond, eq(tasks.taskNumber, num), isNull(tasks.deletedAt)),
+    ).limit(1);
+    return found ?? null;
   }
 
   // Fuzzy match by title — prefer parent tasks over subtasks
+  const allTasks = await listTasks(owner);
   const words = lower.split(/\s+/);
   const matches = allTasks.filter((t) => {
     const title = t.title.toLowerCase();
@@ -111,7 +119,6 @@ export const findTaskByName = async (
   if (matches.length === 0) return null;
   if (matches.length === 1) return matches[0];
 
-  // Prefer root tasks (no parent) over subtasks
   const root = matches.find((t) => !t.parentTaskId);
   return root ?? matches[0];
 };
