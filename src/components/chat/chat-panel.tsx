@@ -6,6 +6,7 @@ import { DefaultChatTransport } from 'ai';
 import { Sparkles } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from './chat-message';
+import { ChatThinking } from './chat-thinking';
 import { ChatInput } from './chat-input';
 
 const SUGGESTIONS = [
@@ -111,6 +112,7 @@ export function ChatPanel({
           {messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} />
           ))}
+          {status === 'submitted' && <ChatThinking />}
           <div ref={bottomRef} />
         </div>
       </ScrollArea>
