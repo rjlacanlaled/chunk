@@ -78,11 +78,19 @@ function ChatPanelInner({
     [owner.userId, owner.guestId],
   );
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, setMessages, status } = useChat({
     transport,
-    initialMessages,
     onFinish: () => onTasksChanged?.(),
   });
+
+  // Load initial messages from DB on first mount
+  const hasSetInitial = useRef(false);
+  useEffect(() => {
+    if (initialMessages && initialMessages.length > 0 && !hasSetInitial.current) {
+      hasSetInitial.current = true;
+      setMessages(initialMessages);
+    }
+  }, [initialMessages, setMessages]);
 
   const isLoading = status === 'submitted' || status === 'streaming';
   const prevStatusRef = useRef(status);

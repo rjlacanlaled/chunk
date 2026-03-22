@@ -7,15 +7,15 @@ export interface Task {
   guestId: string | null;
   title: string;
   description: string | null;
-  priority: Priority;
-  status: Status;
+  priority: string;
+  status: string;
   position: number;
   dueDate: Date | null;
   parentTaskId: string | null;
   score: number | null;
   taskNumber: number | null;
   deletedAt: Date | null;
-  metadata: Record<string, unknown>;
+  metadata: unknown;
   createdAt: Date;
   updatedAt: Date;
 }

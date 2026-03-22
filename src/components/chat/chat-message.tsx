@@ -49,13 +49,13 @@ const mdComponents: Components = {
   ),
 };
 
-function ToolChip({ part }: { part: Extract<UIMessage['parts'][number], { type: 'tool-invocation' }> }) {
+function ToolChip({ part }: { part: { type: 'tool-invocation'; toolInvocation: { toolCallId: string; toolName: string; state: string; args: unknown } } }) {
   const { toolInvocation } = part;
-  const label = TOOL_LABELS[toolInvocation.toolName] ?? toolInvocation.toolName;
+  const toolName = toolInvocation.toolName;
+  const label = TOOL_LABELS[toolName] || toolName;
   const isComplete = toolInvocation.state === 'result';
 
-  // Try to get a meaningful description from the args
-  const args = toolInvocation.args as Record<string, unknown>;
+  const args = (toolInvocation.args ?? {}) as Record<string, unknown>;
   let detail = '';
   if (args?.title) detail = `: ${args.title}`;
   else if (Array.isArray(args?.tasks)) detail = ` (${args.tasks.length})`;
@@ -137,10 +137,11 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
           }
 
           if (part.type === 'tool-invocation') {
+            const tp = part as any; // eslint-disable-line @typescript-eslint/no-explicit-any
             return (
               <ToolChip
-                key={part.toolInvocation.toolCallId}
-                part={part as Extract<UIMessage['parts'][number], { type: 'tool-invocation' }>}
+                key={tp.toolInvocation.toolCallId}
+                part={tp}
               />
             );
           }
