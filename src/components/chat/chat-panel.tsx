@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useMemo, useCallback, type MutableRefObject } from 'react';
+import { useEffect, useRef, useMemo, useCallback, useState, type MutableRefObject } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, isToolUIPart } from 'ai';
+import type { UIMessage } from 'ai';
 import { ChunkIcon } from './chunk-icon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from './chat-message';
@@ -29,6 +30,25 @@ export function ChatPanel({
   sendRef,
 }: ChatPanelProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [initialMessages, setInitialMessages] = useState<UIMessage[] | undefined>(undefined);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
+
+  // Load chat history from DB on mount
+  useEffect(() => {
+    if (historyLoaded) return;
+    fetch('/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ owner }),
+    })
+      .then((res) => res.json())
+      .then((msgs: UIMessage[]) => {
+        if (msgs.length > 0) setInitialMessages(msgs);
+        setHistoryLoaded(true);
+      })
+      .catch(() => setHistoryLoaded(true));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [owner.userId, owner.guestId]);
 
   const transport = useMemo(
     () => new DefaultChatTransport({
@@ -41,6 +61,7 @@ export function ChatPanel({
 
   const { messages, sendMessage, status } = useChat({
     transport,
+    initialMessages,
     onFinish: () => onTasksChanged?.(),
   });
 
@@ -78,6 +99,15 @@ export function ChatPanel({
       sendRef.current = handleSend;
     }
   }, [sendRef, handleSend]);
+
+  // Show loading state while fetching chat history
+  if (!historyLoaded) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <ChunkIcon variant="animated" className="size-8" />
+      </div>
+    );
+  }
 
   if (messages.length === 0 && !compact) {
     return (
