@@ -156,6 +156,25 @@
   -webkit-text-fill-color: transparent;
 }
 
+@keyframes float-up {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+@keyframes success-flash {
+  0% { background-color: transparent; }
+  50% { background-color: rgba(73, 69, 255, 0.1); }
+  100% { background-color: transparent; }
+}
+
+.animate-float-up {
+  animation: float-up 1.2s ease-out forwards;
+}
+
+.animate-success-flash {
+  animation: success-flash 0.6s ease-out;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
