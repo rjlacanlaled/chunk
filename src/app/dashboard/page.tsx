@@ -51,7 +51,7 @@ export default function Home() {
   const queryClient = useQueryClient();
   const { data: tasks = [], isFetched: tasksFetched } = useTasksQuery(owner ?? { guestId: '' });
   const { updateMutation, deleteMutation } = useTaskMutations(owner ?? { guestId: '' });
-  const { xp, level, streak, lastXpGain, completeTask, uncompleteTask } = useGamification(tasks);
+  const { xp, level, streak, lastXpGain, completeTask, uncompleteTask } = useGamification(tasks, session?.user?.id);
 
   const getDescendants = useCallback((parentId: string): Task[] => {
     const children = tasks.filter((t) => t.parentTaskId === parentId);
