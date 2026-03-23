@@ -4,28 +4,7 @@ import type { UIMessage } from 'ai';
 import type { Components } from 'react-markdown';
 import ReactMarkdown from 'react-markdown';
 import { User } from 'lucide-react';
-
-import { cn } from '@/lib/utils';
-
-const TOOL_LABELS: Record<string, string> = {
-  createTasks: 'Creating tasks',
-  completeTasks: 'Completing tasks',
-  updateTasks: 'Updating tasks',
-  deleteTasks: 'Deleting tasks',
-  listTasks: 'Checking your tasks',
-  searchTasks: 'Searching tasks',
-};
-
-const TOOL_ICONS: Record<string, { active: string; done: string }> = {
-  createTasks: { active: '/chunk-icons-expressions 2/icon-big-goals.svg', done: '/chunk-icons-expressions 2/chunky-celebrating.svg' },
-  completeTasks: { active: '/chunk-icons-expressions 2/icon-earns-xp.svg', done: '/chunk-icons-expressions 2/chunky-celebrating.svg' },
-  updateTasks: { active: '/chunk-icons-expressions 2/chunky-thinking.svg', done: '/chunk-icons-expressions 2/chunky-happy.svg' },
-  deleteTasks: { active: '/chunk-icons-expressions 2/icon-zero-friction.svg', done: '/chunk-icons-expressions 2/chunky-happy.svg' },
-  searchTasks: { active: '/chunk-icons-expressions 2/chunky-thinking.svg', done: '/chunk-icons-expressions 2/chunky-happy.svg' },
-  listTasks: { active: '/chunk-icons-expressions 2/chunky-thinking.svg', done: '/chunk-icons-expressions 2/chunky-happy.svg' },
-};
-
-const DEFAULT_TOOL_ICON = { active: '/chunk-icons-expressions 2/chunky-thinking.svg', done: '/chunk-icons-expressions 2/chunky-celebrating.svg' };
+import ToolChip from '@/components/chat/tool-chip';
 
 const mdComponents: Components = {
   p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
@@ -60,42 +39,6 @@ const mdComponents: Components = {
   ),
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function ToolChip({ part }: { part: any }) {
-  // v6: part.type is 'tool-<name>', toolName from type prefix
-  const toolName = (part.type as string).replace('tool-', '');
-  const label = TOOL_LABELS[toolName] || toolName;
-  const isComplete = part.state === 'output-available';
-
-  const args = (part.input ?? {}) as Record<string, unknown>;
-  let detail = '';
-  if (args?.title) detail = `: ${args.title}`;
-  else if (Array.isArray(args?.tasks)) detail = ` (${args.tasks.length})`;
-  else if (Array.isArray(args?.names)) detail = ` (${args.names.length})`;
-  else if (args?.query) detail = `: "${args.query}"`;
-
-  return (
-    <div
-      className={cn(
-        'flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs',
-        isComplete
-          ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
-          : 'border-primary/30 bg-primary/10 text-primary',
-      )}
-    >
-      {(() => {
-        const icons = TOOL_ICONS[toolName] || DEFAULT_TOOL_ICON;
-        const src = isComplete ? icons.done : icons.active;
-        return <img src={src} alt="" className={`size-5 shrink-0 ${isComplete ? '' : 'animate-pulse'}`} />;
-      })()}
-      <span className="font-medium">
-        {label}
-        {detail}
-      </span>
-    </div>
-  );
-}
-
 interface ChatMessageProps {
   message: UIMessage;
   isStreaming?: boolean;
@@ -125,16 +68,15 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
     );
   }
 
+  // Pick avatar based on state
+  const avatar = isStreaming
+    ? '/chunk-avatars/avatar-working-32.svg'
+    : '/chunk-avatars/avatar-idle-32.svg';
+
   // For assistant messages, render parts in chronological order
   return (
     <div className="flex w-full gap-3 justify-start">
-      <img
-        src={isStreaming
-          ? '/chunk-icons-expressions 2/chunky-thinking.svg'
-          : '/chunk-icons-expressions 2/chunky-happy.svg'}
-        alt="Chunky"
-        className="size-7 shrink-0"
-      />
+      <img src={avatar} alt="Chunky" className="size-8 shrink-0" />
       <div className="flex max-w-[75%] flex-col gap-2">
         {message.parts.map((part, i) => {
           if (part.type === 'text' && part.text.length > 0) {
@@ -152,10 +94,13 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
           }
 
           if (typeof part.type === 'string' && part.type.startsWith('tool-')) {
+            const toolName = part.type.replace('tool-', '');
             return (
               <ToolChip
                 key={(part as any).toolCallId} // eslint-disable-line @typescript-eslint/no-explicit-any
-                part={part}
+                tool={toolName}
+                state={(part as any).state}
+                input={(part as any).input}
               />
             );
           }
@@ -165,9 +110,7 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
 
         {/* Shimmer while tools are running with no text yet */}
         {isStreaming && !message.parts.some((p) => p.type === 'text' && p.text.length > 0) && (
-          <span className="text-sm font-medium animate-shimmer-text">
-            Working on it...
-          </span>
+          <ToolChip tool="thinking" />
         )}
       </div>
     </div>
