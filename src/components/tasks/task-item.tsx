@@ -52,7 +52,7 @@ function ScoreMeter({ score }: { score: number | null }) {
   return (
     <div className="flex items-center gap-1 shrink-0">
       <span className={cn('size-2 rounded-full', getScoreDotColor(score))} />
-      <span className={cn('text-[11px] font-bold tabular-nums', getScoreColor(score))}>
+      <span className={cn('text-xs md:text-[11px] font-bold tabular-nums', getScoreColor(score))}>
         {score}
       </span>
     </div>
@@ -61,7 +61,7 @@ function ScoreMeter({ score }: { score: number | null }) {
 
 function TimeAgo({ date }: { date: Date }) {
   return (
-    <span className="text-[10px] text-muted-foreground/50 whitespace-nowrap">
+    <span className="text-xs md:text-[10px] text-muted-foreground/50 whitespace-nowrap">
       {formatDistanceToNow(new Date(date), { addSuffix: false })}
       {' '}
       ago
@@ -105,7 +105,7 @@ function DueDateLabel({ dueDate }: { dueDate: Date | null }) {
 
   return (
     <span className={cn(
-      'inline-flex items-center gap-1 text-[11px] font-medium',
+      'inline-flex items-center gap-1 text-xs md:text-[11px] font-medium',
       overdue ? 'text-red-400' : isTodays ? 'text-amber-400' : 'text-muted-foreground/70',
     )}>
       {overdue ? <AlertTriangle className="size-3" /> : <Clock className="size-3" />}
@@ -124,7 +124,7 @@ function SubtaskProgress({ doneScore, totalScore }: { doneScore: number; totalSc
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-[11px] tabular-nums text-muted-foreground">
+      <span className="text-xs md:text-[11px] tabular-nums text-muted-foreground">
         {doneScore}
         /
         {totalScore}
@@ -232,7 +232,7 @@ export function TaskItem({
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
           {task.taskNumber && (
-            <span className="text-[10px] font-mono text-muted-foreground/40 shrink-0">
+            <span className="text-xs md:text-[10px] font-mono text-muted-foreground/40 shrink-0">
               #
               {task.taskNumber}
             </span>
@@ -241,7 +241,7 @@ export function TaskItem({
             {task.title}
           </span>
           {isOverdue && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-red-500/15 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-red-400">
+            <span className="inline-flex items-center gap-1 rounded-md bg-red-500/15 px-1.5 py-0.5 text-xs md:text-[10px] font-semibold leading-none text-red-400">
               <AlertTriangle className="size-2.5" />
               Overdue
             </span>
@@ -261,20 +261,20 @@ export function TaskItem({
             variant="ghost"
             size="sm"
             onClick={(e) => { e.stopPropagation(); setChunking(true); onBreakDown(task.title); }}
-            className="text-[11px] bg-primary/10 text-primary hover:bg-primary/20 h-6 px-2 cursor-pointer"
+            className="text-xs md:text-[11px] bg-primary/10 text-primary hover:bg-primary/20 h-8 md:h-6 px-2 cursor-pointer"
           >
             <Zap className="mr-0.5 size-2.5" />
             Chunk it!
           </Button>
         )}
         {chunking && (
-          <span className="flex items-center gap-1.5 text-[11px] text-primary">
+          <span className="flex items-center gap-1.5 text-xs md:text-[11px] text-primary">
             <ChunkIcon variant="animated" className="size-3.5" />
             <span className="animate-shimmer-text font-medium">Chunking...</span>
           </span>
         )}
         <ScoreMeter score={task.score} />
-        {isRoot && <TimeAgo date={task.createdAt} />}
+        {isRoot && <span className="hidden md:inline"><TimeAgo date={task.createdAt} /></span>}
         {onDelete && (
           <button
             type="button"
@@ -300,7 +300,7 @@ export function TaskItem({
 
   // Children block
   const childrenBlock = hasChildren && expanded && (
-    <div className="pl-6 pr-2 pb-1">
+    <div className="pl-3 md:pl-6 pr-2 pb-1">
       {children.map((child) => (
         <TaskItem
           key={child.id}

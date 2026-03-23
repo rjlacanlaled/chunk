@@ -94,7 +94,7 @@ export function ChatInput({
           bg-card/80 backdrop-blur-sm shadow-lg
           transition-all duration-200
           focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/20
-          ${isHero ? 'px-5 py-4' : 'px-4 py-3'}
+          ${isHero ? 'px-3 py-3 md:px-5 md:py-4' : 'px-3 py-2.5 md:px-4 md:py-3'}
         `}
       >
         <textarea

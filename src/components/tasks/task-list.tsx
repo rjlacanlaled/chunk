@@ -65,7 +65,7 @@ function QuickStats({ total, completed, completedToday }: QuickStatsProps) {
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-border/40 bg-card/50 p-3">
       {/* stat row */}
-      <div className="flex items-center gap-4 text-xs">
+      <div className="flex flex-wrap items-center gap-4 text-xs">
         <div className="flex items-center gap-1.5">
           <ListChecks className="size-3.5 text-muted-foreground" />
           <span className="text-muted-foreground">Total</span>
@@ -177,7 +177,7 @@ function SectionHeader({
       </h3>
       <span
         className={cn(
-          'ml-1 inline-flex size-5 items-center justify-center rounded-full text-[10px] font-bold',
+          'ml-1 inline-flex size-5 items-center justify-center rounded-full text-xs md:text-[10px] font-bold',
           style.bg,
           style.color,
         )}
@@ -254,17 +254,17 @@ function InlineActivityFeed({ tasks }: { tasks: Task[] }) {
               {task.title}
             </span>
             {task.score && (
-              <span className={cn('shrink-0 text-[10px] font-bold tabular-nums', getColor(task.score))}>
+              <span className={cn('shrink-0 text-xs md:text-[10px] font-bold tabular-nums', getColor(task.score))}>
                 {task.score}
               </span>
             )}
             <span className={cn(
-              'ml-auto shrink-0 font-bold tabular-nums text-[11px]',
+              'ml-auto shrink-0 font-bold tabular-nums text-xs md:text-[11px]',
               isEpic ? 'text-primary' : 'text-primary/70',
             )}>
               +{earnedXp} XP
             </span>
-            <span className="shrink-0 text-[10px] text-muted-foreground/50 tabular-nums w-12 text-right">
+            <span className="shrink-0 text-xs md:text-[10px] text-muted-foreground/50 tabular-nums w-12 text-right">
               {timeAgo(task.updatedAt)}
             </span>
           </div>

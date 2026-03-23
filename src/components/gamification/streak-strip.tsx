@@ -41,12 +41,12 @@ export function StreakStrip({ tasks, streak }: StreakStripProps) {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1 md:gap-1.5">
         {days.map((day) => (
           <div key={day.key} className="flex flex-col items-center gap-1">
             <div
               className={cn(
-                'size-5 rounded-full transition-colors duration-300',
+                'size-4 md:size-5 rounded-full transition-colors duration-300',
                 day.active
                   ? 'bg-primary'
                   : 'bg-muted/50',
@@ -56,7 +56,7 @@ export function StreakStrip({ tasks, streak }: StreakStripProps) {
             />
             <span
               className={cn(
-                'text-[9px] font-medium',
+                'text-[10px] md:text-[9px] font-medium',
                 day.isToday ? 'text-foreground' : 'text-muted-foreground',
               )}
             >

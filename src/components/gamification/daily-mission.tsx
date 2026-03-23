@@ -91,7 +91,7 @@ export function DailyMission({ tasks }: DailyMissionProps) {
             {goalText}
           </p>
           {!isComplete && (
-            <span className="text-[10px] text-muted-foreground tabular-nums">
+            <span className="text-xs md:text-[10px] text-muted-foreground tabular-nums">
               {tasksDone}
               /
               {DAILY_TASK_GOAL}
