@@ -147,10 +147,16 @@ export default function ToolChip({ tool, state, input }: ToolChipProps) {
         letterSpacing: '-0.1px',
       }}
     >
-      <span className={isComplete ? 'tool-chip-done' : ''}>
+      {isComplete ? (
+        <svg width={18} height={18} viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="14" fill="none" stroke={colors.text} strokeWidth="2.8" opacity="0.4" />
+          <path d="M10 18 l6 6 l10 -12" fill="none" stroke={colors.text} strokeWidth="2.8"
+            strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : (
         <ToolIcon tool={tool} size={18} />
-      </span>
-      <span className={isComplete ? 'opacity-60' : 'animate-shimmer-text'}>
+      )}
+      <span className={isComplete ? '' : 'animate-shimmer-text'}>
         {label}{detail}
       </span>
     </span>
