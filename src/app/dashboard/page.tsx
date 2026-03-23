@@ -3,7 +3,7 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import confetti from 'canvas-confetti';
-import { List, LayoutGrid } from 'lucide-react';
+import { List, LayoutGrid, MessageCircle } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
 import { useGuestId } from '@/hooks/use-guest';
 import { useAuthWithMigration } from '@/hooks/use-auth-with-migration';
@@ -192,7 +192,7 @@ export default function Home() {
           alt="Chunk"
           className="h-6"
         />
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 lg:gap-3">
           {hasTasks && (
             <div className="hidden lg:flex">
               <XpBar xp={xp} level={level} />
@@ -273,23 +273,25 @@ export default function Home() {
       </main>
 
       {hasTasks && (
-        <div className="flex lg:hidden shrink-0 border-t border-border/40">
+        <div className="flex lg:hidden shrink-0 border-t border-border/40 pb-[env(safe-area-inset-bottom)]">
           <button
             type="button"
-            className={`flex-1 py-3 text-xs font-medium ${
+            className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-medium ${
               mobileView === 'tasks' ? 'text-primary bg-primary/10' : 'text-muted-foreground'
             }`}
             onClick={() => setMobileView('tasks')}
           >
+            <List className="size-5" />
             Tasks
           </button>
           <button
             type="button"
-            className={`flex-1 py-3 text-xs font-medium ${
+            className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-medium ${
               mobileView === 'chat' ? 'text-primary bg-primary/10' : 'text-muted-foreground'
             }`}
             onClick={() => setMobileView('chat')}
           >
+            <MessageCircle className="size-5" />
             Chat
           </button>
         </div>

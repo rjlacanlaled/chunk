@@ -57,13 +57,13 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
 
     return (
       <div className="flex w-full gap-2 justify-end">
-        <div className="max-w-[85%] md:max-w-[75%]">
-          <div className="rounded-2xl rounded-br-md bg-primary px-3 py-2 md:px-4 md:py-2.5 text-[13px] md:text-sm leading-relaxed text-primary-foreground">
+        <div className="max-w-[85%] lg:max-w-[75%]">
+          <div className="rounded-2xl rounded-br-md bg-primary px-3 py-2 lg:px-4 lg:py-2.5 text-[14px] lg:text-sm leading-relaxed text-primary-foreground">
             <p className="whitespace-pre-wrap">{text}</p>
           </div>
         </div>
-        <div className="flex size-6 md:size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-          <User className="size-3.5 md:size-4" />
+        <div className="flex size-6 lg:size-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+          <User className="size-3.5 lg:size-4" />
         </div>
       </div>
     );
@@ -77,15 +77,15 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
   // For assistant messages, render parts in chronological order
   return (
     <div className="flex w-full gap-2 justify-start">
-      <img src={avatar} alt="Chunky" className="size-6 md:size-8 shrink-0" />
-      <div className="flex max-w-[85%] md:max-w-[75%] flex-col gap-1.5 md:gap-2">
+      <img src={avatar} alt="Chunky" className="size-6 lg:size-8 shrink-0" />
+      <div className="flex max-w-[85%] lg:max-w-[75%] flex-col gap-1.5 lg:gap-2">
         {message.parts.map((part, i) => {
           if (part.type === 'text' && part.text.length > 0) {
             return (
               <div
                 // eslint-disable-next-line react/no-array-index-key
                 key={`text-${i}`}
-                className={`chat-bubble-assistant rounded-2xl rounded-bl-md bg-card px-3 py-2 md:px-4 md:py-2.5 text-[13px] md:text-sm leading-relaxed text-card-foreground${isStreaming ? ' animate-shimmer' : ''}`}
+                className={`chat-bubble-assistant rounded-2xl rounded-bl-md bg-card px-3 py-2 lg:px-4 lg:py-2.5 text-[14px] lg:text-sm leading-relaxed text-card-foreground${isStreaming ? ' animate-shimmer' : ''}`}
               >
                 <ReactMarkdown components={mdComponents}>
                   {part.text}
