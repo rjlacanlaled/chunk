@@ -84,7 +84,7 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
               <div
                 // eslint-disable-next-line react/no-array-index-key
                 key={`text-${i}`}
-                className={`chat-bubble-assistant rounded-2xl rounded-bl-md bg-card px-4 py-2.5 text-sm leading-relaxed text-card-foreground ring-1 ring-border/50${isStreaming ? ' animate-shimmer' : ''}`}
+                className={`chat-bubble-assistant rounded-2xl rounded-bl-md bg-card px-4 py-2.5 text-sm leading-relaxed text-card-foreground${isStreaming ? ' animate-shimmer' : ''}`}
               >
                 <ReactMarkdown components={mdComponents}>
                   {part.text}
