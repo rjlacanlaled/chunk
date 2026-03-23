@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+  <defs><style>
+    .idle{animation:breathe 2.8s ease-in-out infinite;}
+    @keyframes breathe{0%,100%{opacity:.5}50%{opacity:.85}}
+  </style></defs>
+  <rect width="56" height="56" rx="14" fill="#0C1530"/>
+  <g class="idle">
+    <circle cx="16" cy="29" r="5.5" fill="#4945FF"/>
+    <circle cx="28" cy="29" r="5.5" fill="#4945FF"/>
+    <circle cx="40" cy="29" r="5.5" fill="#4945FF"/>
+  </g>
+</svg>

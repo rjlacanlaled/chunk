@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 60 60">
+  <defs><style>
+    .av-body{animation:av-float 3s ease-in-out infinite;transform-origin:30px 30px;transform-box:fill-box;}
+    .av-eye{animation:av-blink 4s ease-in-out infinite;transform-box:fill-box;}
+    .av-eye2{animation:av-blink 4s ease-in-out infinite .18s;transform-box:fill-box;}
+    .av-blush{animation:av-blush 3s ease-in-out infinite;}
+    .av-cube{animation:av-cube 2s ease-in-out infinite;transform-origin:30px 4px;transform-box:fill-box;}
+    @keyframes av-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+    @keyframes av-blink{0%,93%,100%{transform:scaleY(1)}95%,98%{transform:scaleY(.05)}}
+    @keyframes av-blush{0%,100%{opacity:.45}50%{opacity:.78}}
+    @keyframes av-cube{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  </style></defs>
+  <g class="av-body">
+    <line x1="30" y1="13" x2="30" y2="5" stroke="#271FE0" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="av-cube">
+      <rect x="24" y="1" width="12" height="9" rx="2.5" fill="#F5CF0D"/>
+      <rect x="25.5" y="2.5" width="5" height="3.5" rx="1" fill="white" opacity="0.5"/>
+      <circle cx="37" cy="0" r="2" fill="#9736E8" opacity="0.8"/>
+    </g>
+    <rect x="12" y="13" width="36" height="34" rx="13" fill="#4945FF"/>
+    <circle class="av-eye"  cx="23" cy="27" r="8.5" fill="white" style="transform-origin:23px 27px;"/>
+    <circle cx="24.5" cy="29" r="5" fill="#32324D"/>
+    <circle cx="21"   cy="24" r="2.8" fill="white"/>
+    <circle class="av-eye2" cx="37" cy="27" r="8.5" fill="white" style="transform-origin:37px 27px;"/>
+    <circle cx="35.5" cy="29" r="5"   fill="#32324D"/>
+    <circle cx="33"   cy="24" r="2.8" fill="white"/>
+    <ellipse class="av-blush" cx="15" cy="37" rx="7"  ry="4"   fill="#FF9EC4"/>
+    <ellipse class="av-blush" cx="45" cy="37" rx="7"  ry="4"   fill="#FF9EC4"/>
+    <path d="M22 42 Q30 50 38 42" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chunk — Tool Icons & Chunky Avatars</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#060D1F;font-family:system-ui,sans-serif;padding:48px;}
+  h2{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4945FF;margin-bottom:28px;}
+  .row{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end;margin-bottom:48px;}
+  .item{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .bg{background:#0C1530;border-radius:14px;display:flex;align-items:center;justify-content:center;}
+  span{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+
+  /* Chat example */
+  .chat{max-width:400px;display:flex;flex-direction:column;gap:10px;}
+  .msg-ai{display:flex;gap:8px;align-items:flex-start;}
+  .avatar{width:36px;height:36px;background:#0C1530;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .bubble{background:rgba(255,255,255,.07);border-radius:4px 14px 14px 14px;padding:10px 14px;font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;}
+  .msg-user{background:#4945FF;border-radius:14px 14px 4px 14px;padding:10px 14px;font-size:13px;font-weight:500;color:white;align-self:flex-end;}
+  .tool-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(73,69,255,.15);border:1px solid rgba(73,69,255,.3);border-radius:100px;padding:4px 10px;font-size:10px;font-weight:700;color:#8B89FF;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px;}
+</style>
+</head>
+<body>
+
+<h2>Tool-use icons</h2>
+<div class="row">
+  <div class="item"><div class="bg" style="width:60px;height:60px;"><img src="tool-createTasks.svg" width="40" height="40"/></div><span>createTasks</span></div>
+  <div class="item"><div class="bg" style="width:60px;height:60px;"><img src="tool-completeTasks.svg" width="40" height="40"/></div><span>completeTasks</span></div>
+  <div class="item"><div class="bg" style="width:60px;height:60px;"><img src="tool-updateTasks.svg" width="40" height="40"/></div><span>updateTasks</span></div>
+  <div class="item"><div class="bg" style="width:60px;height:60px;"><img src="tool-deleteTasks.svg" width="40" height="40"/></div><span>deleteTasks</span></div>
+  <div class="item"><div class="bg" style="width:60px;height:60px;"><img src="tool-searchTasks.svg" width="40" height="40"/></div><span>searchTasks</span></div>
+  <div class="item"><div class="bg" style="width:60px;height:60px;"><img src="tool-listTasks.svg" width="40" height="40"/></div><span>listTasks</span></div>
+  <div class="item"><div class="bg" style="width:60px;height:60px;"><img src="tool-thinking.svg" width="40" height="40"/></div><span>thinking</span></div>
+</div>
+
+<h2>Chunky chat avatars</h2>
+<div class="row">
+  <div class="item"><div class="bg" style="width:52px;height:52px;border-radius:50%;"><img src="chunky-avatar-idle.svg" width="40" height="40"/></div><span>idle</span></div>
+  <div class="item"><div class="bg" style="width:52px;height:52px;border-radius:50%;"><img src="chunky-avatar-thinking.svg" width="40" height="40"/></div><span>thinking</span></div>
+  <div class="item"><div class="bg" style="width:52px;height:52px;border-radius:50%;"><img src="chunky-avatar-working.svg" width="40" height="40"/></div><span>working</span></div>
+  <div class="item"><div class="bg" style="width:52px;height:52px;border-radius:50%;"><img src="chunky-avatar-celebrating.svg" width="40" height="40"/></div><span>celebrating</span></div>
+</div>
+
+<h2>In-chat context example</h2>
+<div class="chat">
+  <div class="msg-user">I have a huge exam Monday and I haven't started studying</div>
+  <div class="msg-ai">
+    <div class="avatar"><img src="chunky-avatar-thinking.svg" width="34" height="34"/></div>
+    <div>
+      <div class="tool-chip"><img src="tool-thinking.svg" width="12" height="12"/> thinking</div>
+      <div class="bubble">On it...</div>
+    </div>
+  </div>
+  <div class="msg-ai">
+    <div class="avatar"><img src="chunky-avatar-working.svg" width="34" height="34"/></div>
+    <div>
+      <div class="tool-chip"><img src="tool-createTasks.svg" width="12" height="12"/> createTasks</div>
+      <div class="bubble">Say less. I just broke that down into 6 study sessions. First one's only 25 minutes. You've got this. 💪</div>
+    </div>
+  </div>
+  <div class="msg-user">done with the grocery run</div>
+  <div class="msg-ai">
+    <div class="avatar"><img src="chunky-avatar-celebrating.svg" width="34" height="34"/></div>
+    <div>
+      <div class="tool-chip"><img src="tool-completeTasks.svg" width="12" height="12"/> completeTasks</div>
+      <div class="bubble">Boom! +15 XP. You're 40 XP from leveling up. Keep that energy going! 🔥</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 60 60">
+  <defs><style>
+    .hw{animation:hwrk 1.4s ease-in-out infinite;transform-origin:30px 55px;transform-box:fill-box;}
+    .ac{animation:acub2 1.2s ease-in-out infinite;transform-origin:30px 5px;transform-box:fill-box;}
+    .wb1{animation:wbar 1.8s ease-in-out infinite 0s;transform-origin:17px 22px;transform-box:fill-box;}
+    .wb2{animation:wbar 1.8s ease-in-out infinite .25s;transform-origin:17px 31px;transform-box:fill-box;}
+    .wb3{animation:wbar 1.8s ease-in-out infinite .5s;transform-origin:17px 40px;transform-box:fill-box;}
+    .sp{animation:wspin 1.4s linear infinite;transform-origin:46px 14px;transform-box:fill-box;}
+    @keyframes hwrk{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    @keyframes acub2{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+    @keyframes wbar{0%,100%{transform:scaleX(.4);opacity:.2}50%{transform:scaleX(1);opacity:1}}
+    @keyframes wspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  </style></defs>
+  <g class="hw">
+    <line x1="30" y1="13" x2="30" y2="5" stroke="#271FE0" stroke-width="3" stroke-linecap="round"/>
+    <g class="ac"><rect x="24" y="1" width="12" height="10" rx="3" fill="#F5CF0D"/><rect x="26" y="3" width="5" height="4" rx="1.2" fill="white" opacity="0.5"/></g>
+    <rect x="14" y="13" width="32" height="36" rx="12" fill="#4945FF"/>
+    <rect class="wb1" x="17" y="18" width="26" height="7"  rx="2.5" fill="white" opacity="0.92"/>
+    <rect class="wb2" x="17" y="27" width="19" height="7"  rx="2.5" fill="white" opacity="0.75"/>
+    <rect class="wb3" x="17" y="36" width="12" height="7"  rx="2.5" fill="white" opacity="0.55"/>
+    <circle cx="46" cy="14" r="8" fill="#5CB176"/>
+    <g class="sp">
+      <circle cx="46" cy="14" r="6" fill="none" stroke="white" stroke-width="1.8" stroke-dasharray="4 5" opacity="0.85"/>
+    </g>
+  </g>
+</svg>

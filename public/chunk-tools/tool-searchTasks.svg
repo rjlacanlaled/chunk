@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+  <defs><style>
+    .sc-glass{animation:sc-pulse 2s ease-in-out infinite;transform-origin:22px 22px;transform-box:fill-box;}
+    .sc-scan{animation:sc-scan 2s ease-in-out infinite;}
+    @keyframes sc-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+    @keyframes sc-scan{0%{transform:translateY(-9px);opacity:0}20%,80%{opacity:.7}100%{transform:translateY(9px);opacity:0}}
+  </style></defs>
+  <rect width="56" height="56" rx="14" fill="#0D0D2E"/>
+  <g class="sc-glass">
+    <circle cx="22" cy="22" r="13" fill="none" stroke="#4945FF" stroke-width="2.5"/>
+    <circle cx="22" cy="22" r="7" fill="#4945FF" opacity=".1"/>
+    <line class="sc-scan" x1="15" y1="22" x2="29" y2="22" stroke="#4945FF" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+  <line x1="32" y1="32" x2="47" y2="47" stroke="#4945FF" stroke-width="3" stroke-linecap="round"/>
+</svg>

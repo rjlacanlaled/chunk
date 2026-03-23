@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chunk — Tool Icons Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #060D1F; font-family: system-ui, sans-serif; padding: 48px; }
+  h2 { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 20px; }
+  .row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .label { font-size: 10px; color: rgba(255,255,255,.35); font-family: monospace; }
+  .chat-row { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 10px 14px; }
+  .tool-chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(73,69,255,.1); border: 1px solid rgba(73,69,255,.2); border-radius: 100px; padding: 4px 10px 4px 6px; font-size: 11px; color: rgba(255,255,255,.55); font-family: monospace; }
+</style>
+</head>
+<body>
+  <h2>Tool call icons</h2>
+  <div class="row">
+    <div class="item"><img src="tool-createTasks.svg" width="56" height="56"/><span class="label">createTasks</span></div>
+    <div class="item"><img src="tool-completeTasks.svg" width="56" height="56"/><span class="label">completeTasks</span></div>
+    <div class="item"><img src="tool-updateTasks.svg" width="56" height="56"/><span class="label">updateTasks</span></div>
+    <div class="item"><img src="tool-deleteTasks.svg" width="56" height="56"/><span class="label">deleteTasks</span></div>
+    <div class="item"><img src="tool-searchTasks.svg" width="56" height="56"/><span class="label">searchTasks</span></div>
+    <div class="item"><img src="tool-listTasks.svg" width="56" height="56"/><span class="label">listTasks</span></div>
+    <div class="item"><img src="tool-thinking.svg" width="56" height="56"/><span class="label">thinking</span></div>
+  </div>
+
+  <h2>Chunky chat avatar</h2>
+  <div class="row">
+    <div class="item"><img src="avatar-chunky-40.svg" width="40" height="40"/><span class="label">40px</span></div>
+    <div class="item"><img src="avatar-chunky-32.svg" width="32" height="32"/><span class="label">32px</span></div>
+  </div>
+
+  <h2>In-chat usage example</h2>
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:400px;">
+    <div class="chat-row">
+      <img src="avatar-chunky-40.svg" width="40" height="40" style="border-radius:10px;"/>
+      <div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;">
+          <span class="tool-chip"><img src="tool-createTasks.svg" width="14" height="14"/> createTasks</span>
+        </div>
+        <span style="font-size:13px;color:rgba(255,255,255,.7);">Breaking that down into 3 tasks...</span>
+      </div>
+    </div>
+    <div class="chat-row">
+      <img src="avatar-chunky-40.svg" width="40" height="40" style="border-radius:10px;"/>
+      <div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;">
+          <span class="tool-chip"><img src="tool-thinking.svg" width="14" height="14"/> thinking</span>
+        </div>
+        <span style="font-size:13px;color:rgba(255,255,255,.7);">Chunky is working on it...</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

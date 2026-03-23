@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 60 60">
+  <defs><style>
+    .ib{animation:i-float 3.2s ease-in-out infinite;transform-origin:50% 50%;transform-box:fill-box;}
+    .ie{animation:i-blink 4.5s ease-in-out infinite;transform-box:fill-box;}
+    .ie2{animation:i-blink 4.5s ease-in-out infinite .2s;transform-box:fill-box;}
+    .ibl{animation:i-blush 3.2s ease-in-out infinite;}
+    .ic{animation:i-cube 3.2s ease-in-out infinite;transform-origin:30px 4px;transform-box:fill-box;}
+    @keyframes i-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+    @keyframes i-blink{0%,92%,100%{transform:scaleY(1)}94%,97%{transform:scaleY(.06)}}
+    @keyframes i-blush{0%,100%{opacity:.42}50%{opacity:.72}}
+    @keyframes i-cube{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  </style></defs>
+  <g class="ib">
+    <line x1="30" y1="12" x2="30" y2="4" stroke="#271FE0" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="ic">
+      <rect x="23" y="0" width="14" height="10" rx="3" fill="#F5CF0D"/>
+      <rect x="24.5" y="1.5" width="6" height="4" rx="1.2" fill="white" opacity=".5"/>
+      <circle cx="38" cy="-1" r="2" fill="#9736E8" opacity=".8"/>
+    </g>
+    <rect x="10" y="12" width="40" height="38" rx="14" fill="#4945FF"/>
+    <circle class="ie"  cx="22" cy="27" r="9" fill="white" style="transform-origin:22px 27px;"/>
+    <circle cx="23" cy="29" r="5.5" fill="#32324D"/>
+    <circle cx="20" cy="24.5" r="3" fill="white"/>
+    <circle class="ie2" cx="38" cy="27" r="9" fill="white" style="transform-origin:38px 27px;"/>
+    <circle cx="37" cy="29" r="5.5" fill="#32324D"/>
+    <circle cx="34.5" cy="24.5" r="3" fill="white"/>
+    <ellipse class="ibl" cx="13" cy="37" rx="7" ry="4" fill="#FF9EC4"/>
+    <ellipse class="ibl" cx="47" cy="37" rx="7" ry="4" fill="#FF9EC4"/>
+    <path d="M22 42 Q30 49 38 42" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>

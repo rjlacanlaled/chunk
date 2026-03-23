@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+  <defs><style>
+    .lt-r1{animation:lt-row 2.4s ease-out infinite 0s;}
+    .lt-r2{animation:lt-row 2.4s ease-out infinite .2s;}
+    .lt-r3{animation:lt-row 2.4s ease-out infinite .4s;}
+    .lt-r4{animation:lt-row 2.4s ease-out infinite .6s;}
+    @keyframes lt-row{0%,8%{opacity:0;transform:translateX(-5px)}30%,92%{opacity:1;transform:translateX(0)}100%{opacity:0;transform:translateX(-5px)}}
+  </style></defs>
+  <rect width="56" height="56" rx="14" fill="#120820"/>
+  <g class="lt-r1"><circle cx="10" cy="12" r="4"  fill="#9736E8"/><rect x="18" y="9"  width="30" height="6" rx="3" fill="#9736E8" opacity="0.85"/></g>
+  <g class="lt-r2"><circle cx="10" cy="24" r="4"  fill="#9736E8" opacity="0.85"/><rect x="18" y="21" width="23" height="6" rx="3" fill="#9736E8" opacity="0.7"/></g>
+  <g class="lt-r3"><circle cx="10" cy="36" r="4"  fill="#9736E8" opacity="0.7"/><rect x="18" y="33" width="27" height="6" rx="3" fill="#9736E8" opacity="0.55"/></g>
+  <g class="lt-r4"><circle cx="10" cy="48" r="4"  fill="#9736E8" opacity="0.5"/><rect x="18" y="45" width="18" height="6" rx="3" fill="#9736E8" opacity="0.4"/></g>
+</svg>

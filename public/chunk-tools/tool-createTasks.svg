@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+  <defs><style>
+    .ct-b1{animation:ct-bar 2s ease-in-out infinite 0s;transform-origin:6px 20px;transform-box:fill-box;}
+    .ct-b2{animation:ct-bar 2s ease-in-out infinite .2s;transform-origin:6px 31px;transform-box:fill-box;}
+    .ct-b3{animation:ct-bar 2s ease-in-out infinite .4s;transform-origin:6px 42px;transform-box:fill-box;}
+    .ct-plus{animation:ct-plus 2s ease-in-out infinite;transform-origin:42px 16px;transform-box:fill-box;}
+    @keyframes ct-bar{0%,15%{opacity:.15;transform:scaleX(.4)}45%,90%{opacity:1;transform:scaleX(1)}100%{opacity:.15;transform:scaleX(.4)}}
+    @keyframes ct-plus{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.3) rotate(90deg)}}
+  </style></defs>
+  <rect width="56" height="56" rx="14" fill="#0D0D2E"/>
+  <rect class="ct-b1" x="6" y="16" width="28" height="8" rx="4" fill="#4945FF"/>
+  <rect class="ct-b2" x="6" y="27" width="21" height="8" rx="4" fill="#4945FF" opacity="0.8"/>
+  <rect class="ct-b3" x="6" y="38" width="14" height="8" rx="4" fill="#4945FF" opacity="0.6"/>
+  <g class="ct-plus">
+    <circle cx="42" cy="16" r="10" fill="#5CB176"/>
+    <rect x="37" y="15" width="10" height="2.5" rx="1.25" fill="white"/>
+    <rect x="40.75" y="11" width="2.5" height="10" rx="1.25" fill="white"/>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+  <defs><style>
+    .sw-out1{animation:sw-out 2.4s ease-in-out infinite 0s;transform-origin:left center;transform-box:fill-box;}
+    .sw-in1{animation:sw-in 2.4s ease-in-out infinite 0s;transform-origin:left center;transform-box:fill-box;}
+    .sw-out2{animation:sw-out 2.4s ease-in-out infinite .5s;transform-origin:left center;transform-box:fill-box;}
+    .sw-in2{animation:sw-in 2.4s ease-in-out infinite .5s;transform-origin:left center;transform-box:fill-box;}
+    @keyframes sw-out{0%,30%{opacity:1;transform:scaleX(1)}45%,55%{opacity:0;transform:scaleX(0)}70%,100%{opacity:1;transform:scaleX(1)}}
+    @keyframes sw-in{0%,30%{opacity:0;transform:scaleX(0)}50%,70%{opacity:1;transform:scaleX(1)}100%{opacity:0;transform:scaleX(0)}}
+  </style></defs>
+  <rect width="56" height="56" rx="14" fill="#1A1000"/>
+  <rect x="8" y="11" width="30" height="8" rx="4" fill="#EF9F27" opacity=".9"/>
+  <rect class="sw-out1" x="8" y="23" width="20" height="8" rx="4" fill="#EF9F27" opacity=".8"/>
+  <rect class="sw-in1"  x="8" y="23" width="30" height="8" rx="4" fill="white"   opacity=".9"/>
+  <rect class="sw-out2" x="8" y="35" width="13" height="8" rx="4" fill="#EF9F27" opacity=".65"/>
+  <rect class="sw-in2"  x="8" y="35" width="22" height="8" rx="4" fill="white"   opacity=".75"/>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+  <defs><style>
+    .idle{animation:breathe 2.8s ease-in-out infinite;}
+    @keyframes breathe{0%,100%{opacity:.65}50%{opacity:1}}
+  </style></defs>
+  <rect width="56" height="56" rx="14" fill="#0D2010"/>
+  <g class="idle">
+    <circle cx="28" cy="28" r="18" fill="none" stroke="#5CB176" stroke-width="3" opacity=".7"/>
+    <path d="M17 28 l8 8 l14 -16" fill="none" stroke="#5CB176" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

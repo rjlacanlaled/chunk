@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+  <defs><style>
+    .d1{animation:dot 1.4s ease-in-out infinite 0s;transform-origin:50% 50%;transform-box:fill-box;}
+    .d2{animation:dot 1.4s ease-in-out infinite .22s;transform-origin:50% 50%;transform-box:fill-box;}
+    .d3{animation:dot 1.4s ease-in-out infinite .44s;transform-origin:50% 50%;transform-box:fill-box;}
+    @keyframes dot{0%,100%{opacity:.2;transform:scale(.6) translateY(0)}50%{opacity:1;transform:scale(1.15) translateY(-4px)}}
+  </style></defs>
+  <rect width="56" height="56" rx="14" fill="#0C1530"/>
+  <circle class="d1" cx="16" cy="29" r="5.5" fill="#4945FF"/>
+  <circle class="d2" cx="28" cy="29" r="5.5" fill="#4945FF"/>
+  <circle class="d3" cx="40" cy="29" r="5.5" fill="#4945FF"/>
+</svg>

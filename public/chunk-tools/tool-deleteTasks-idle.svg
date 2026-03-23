@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+  <defs><style>
+    .idle{animation:breathe 2.8s ease-in-out infinite;}
+    @keyframes breathe{0%,100%{opacity:.65}50%{opacity:1}}
+  </style></defs>
+  <rect width="56" height="56" rx="14" fill="#1F0808"/>
+  <g class="idle">
+    <rect x="11" y="22" width="34" height="28" rx="5" fill="none" stroke="#E24B4A" stroke-width="2.2" opacity=".8"/>
+    <rect x="18" y="27" width="4" height="16" rx="2" fill="#E24B4A" opacity=".8"/>
+    <rect x="26" y="27" width="4" height="16" rx="2" fill="#E24B4A" opacity=".8"/>
+    <rect x="34" y="27" width="4" height="16" rx="2" fill="#E24B4A" opacity=".8"/>
+    <rect x="8" y="15" width="40" height="7" rx="3.5" fill="#E24B4A" opacity=".8"/>
+    <rect x="18" y="8" width="20" height="7" rx="3.5" fill="#E24B4A" opacity=".55"/>
+  </g>
+</svg>

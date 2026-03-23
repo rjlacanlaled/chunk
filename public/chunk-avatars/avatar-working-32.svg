@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 60 60" style="overflow:visible;">
+  <defs><style>
+    .wb{animation:w-lean 2s ease-in-out infinite;transform-origin:50% 70%;transform-box:fill-box;}
+    .ws{animation:w-squint 2s ease-in-out infinite;transform-origin:50% 50%;transform-box:fill-box;}
+    .ws2{animation:w-squint 2s ease-in-out infinite .05s;transform-origin:50% 50%;transform-box:fill-box;}
+    .wa{animation:w-ant 1.4s linear infinite;transform-origin:30px 4px;transform-box:fill-box;}
+    .wsp1{animation:w-spark 1.4s ease-in-out infinite 0s;transform-origin:50% 50%;transform-box:fill-box;}
+    .wsp2{animation:w-spark 1.4s ease-in-out infinite .35s;transform-origin:50% 50%;transform-box:fill-box;}
+    .wsp3{animation:w-spark 1.4s ease-in-out infinite .7s;transform-origin:50% 50%;transform-box:fill-box;}
+    @keyframes w-lean{0%,100%{transform:translateY(0) rotate(0deg)}40%,60%{transform:translateY(-2px) rotate(-2deg)}}
+    @keyframes w-squint{0%,100%{transform:scaleY(1)}40%,60%{transform:scaleY(.52)}}
+    @keyframes w-ant{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes w-spark{0%,80%,100%{opacity:0;transform:scale(.3)}85%,95%{opacity:1;transform:scale(1)}}
+  </style></defs>
+  <g class="wb">
+    <line x1="30" y1="12" x2="30" y2="4" stroke="#271FE0" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="wa">
+      <rect x="23" y="0" width="14" height="10" rx="3" fill="#F5CF0D"/>
+      <rect x="24.5" y="1.5" width="6" height="4" rx="1.2" fill="white" opacity=".5"/>
+    </g>
+    <rect x="10" y="12" width="40" height="38" rx="14" fill="#4945FF"/>
+    <g class="ws" style="transform-origin:22px 27px;">
+      <ellipse cx="22" cy="27" rx="9" ry="8" fill="white"/>
+      <circle cx="23" cy="28" r="5.5" fill="#32324D"/>
+      <circle cx="20" cy="25" r="3" fill="white"/>
+    </g>
+    <g class="ws2" style="transform-origin:38px 27px;">
+      <ellipse cx="38" cy="27" rx="9" ry="8" fill="white"/>
+      <circle cx="37" cy="28" r="5.5" fill="#32324D"/>
+      <circle cx="34.5" cy="25" r="3" fill="white"/>
+    </g>
+    <path d="M13 19 Q22 16 26 18" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity=".6"/>
+    <path d="M34 18 Q38 16 47 19" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" opacity=".6"/>
+    <path d="M23 42 Q30 47 37 42" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <ellipse cx="13" cy="37" rx="6" ry="3.5" fill="#FF9EC4" opacity=".5"/>
+    <ellipse cx="47" cy="37" rx="6" ry="3.5" fill="#FF9EC4" opacity=".5"/>
+  </g>
+  <g class="wsp1"><circle cx="44" cy="2" r="2.5" fill="#F5CF0D"/></g>
+  <g class="wsp2"><circle cx="49" cy="8" r="2" fill="#F5CF0D" opacity=".8"/></g>
+  <g class="wsp3"><circle cx="51" cy="1" r="1.5" fill="#9736E8" opacity=".7"/></g>
+</svg>
