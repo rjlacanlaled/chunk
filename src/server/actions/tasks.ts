@@ -70,11 +70,25 @@ export const resolveTask = async (
 
   // ILIKE search on title
   const pattern = `%${trimmed}%`;
-  const matches = await db
+  let matches = await db
     .select()
     .from(tasks)
     .where(and(ow, ilike(tasks.title, pattern), isNull(tasks.deletedAt)))
     .limit(10);
+
+  // Fallback: Postgres full-text search with stemming (running → run, advertising → advertis)
+  if (matches.length === 0) {
+    const tsQuery = trimmed.split(/\s+/).map((w) => `${w}:*`).join(' & ');
+    matches = await db
+      .select()
+      .from(tasks)
+      .where(and(
+        ow,
+        sql`to_tsvector('english', ${tasks.title}) @@ to_tsquery('english', ${tsQuery})`,
+        isNull(tasks.deletedAt),
+      ))
+      .limit(10);
+  }
 
   if (matches.length === 0) return { error: `No task matching "${trimmed}"` };
   if (matches.length === 1) return { match: matches[0] as Task };
@@ -397,11 +411,25 @@ export const searchTasks = async (
 
   // ILIKE search
   const pattern = `%${trimmed}%`;
-  const result = await db
+  let result = await db
     .select()
     .from(tasks)
     .where(and(ow, ilike(tasks.title, pattern), isNull(tasks.deletedAt)))
     .limit(20);
+
+  // Fallback: full-text search with stemming
+  if (result.length === 0) {
+    const tsQuery = trimmed.split(/\s+/).map((w) => `${w}:*`).join(' & ');
+    result = await db
+      .select()
+      .from(tasks)
+      .where(and(
+        ow,
+        sql`to_tsvector('english', ${tasks.title}) @@ to_tsquery('english', ${tsQuery})`,
+        isNull(tasks.deletedAt),
+      ))
+      .limit(20);
+  }
 
   return result as Task[];
 };
