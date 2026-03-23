@@ -50,6 +50,11 @@ export const metadata: Metadata = {
     icon: '/chunk-logos/chunk-ai-icon.svg',
     apple: '/chunk-logos/chunk-icon-80.svg',
   },
+  manifest: '/manifest.json',
+  other: {
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'black-translucent',
+  },
 };
 
 export const viewport: Viewport = {
@@ -57,6 +62,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   viewportFit: 'cover',
+  themeColor: '#060D1F',
 };
 
 export default function RootLayout({
