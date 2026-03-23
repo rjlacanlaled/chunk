@@ -70,8 +70,8 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
 
   // Pick avatar based on state
   const avatar = isStreaming
-    ? '/chunk-avatars/avatar-working-32.svg'
-    : '/chunk-avatars/avatar-idle-32.svg';
+    ? '/chunk-tools/chunky-avatar-working.svg'
+    : '/chunk-tools/chunky-avatar-idle.svg';
 
   // For assistant messages, render parts in chronological order
   return (
