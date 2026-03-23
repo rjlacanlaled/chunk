@@ -152,7 +152,7 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
             );
           }
 
-          if (isToolUIPart(part)) {
+          if (isToolUIPart(part) || (part.type as string).startsWith('tool-')) {
             return (
               <ToolChip
                 key={(part as any).toolCallId} // eslint-disable-line @typescript-eslint/no-explicit-any

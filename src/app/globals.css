@@ -122,8 +122,7 @@
   100% { background-position: -200% 0; }
 }
 
-.animate-shimmer,
-.chat-thinking .chat-bubble-assistant {
+.animate-shimmer {
   background: linear-gradient(
     90deg,
     transparent 25%,
