@@ -48,9 +48,9 @@ export default function ToolChip({ tool, state, input }: ToolChipProps) {
 
   return (
     <span
-      className="inline-flex w-full items-center gap-2 rounded-lg text-[13px] font-semibold"
+      className="inline-flex w-full items-center gap-1.5 md:gap-2 rounded-lg text-[11px] md:text-[13px] font-semibold"
       style={{
-        padding: '6px 14px 6px 4px',
+        padding: '4px 10px 4px 3px',
         background: colors.bg,
         border: `1px solid ${colors.border}`,
         color: colors.text,
@@ -60,7 +60,7 @@ export default function ToolChip({ tool, state, input }: ToolChipProps) {
       <img
         src={isComplete ? config.icon.replace('.svg', '-idle.svg') : config.icon}
         alt=""
-        className="size-7 shrink-0"
+        className="size-5 md:size-7 shrink-0"
       />
       <span className={isComplete ? '' : 'animate-shimmer-text'}>
         {label}{detail}

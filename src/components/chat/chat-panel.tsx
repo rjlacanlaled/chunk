@@ -210,9 +210,9 @@ function ChatPanelInner({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <ScrollArea className="flex-1 min-h-0 px-4">
+      <ScrollArea className="flex-1 min-h-0 px-2 md:px-4">
         <div
-          className={`mx-auto flex flex-col gap-4 py-6 ${
+          className={`mx-auto flex flex-col gap-3 md:gap-4 py-4 md:py-6 ${
             compact ? 'max-w-full' : 'max-w-[700px]'
           }`}
         >
@@ -233,7 +233,7 @@ function ChatPanelInner({
         </div>
       </ScrollArea>
       <div
-        className={`shrink-0 border-t border-border/40 p-4 ${
+        className={`shrink-0 border-t border-border/40 p-2 md:p-4 ${
           compact ? '' : 'mx-auto w-full max-w-[700px]'
         }`}
       >
