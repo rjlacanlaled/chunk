@@ -23,6 +23,7 @@ function MiniTask({ task }: { task: TaskItem }) {
       <button
         type="button"
         onClick={() => num && sendAction(`complete task ${num}`)}
+        aria-label={`Complete task ${num}`}
         className={`flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors ${
           isDone
             ? 'border-emerald-500/50 bg-emerald-500/20 text-emerald-400'
@@ -40,7 +41,8 @@ function MiniTask({ task }: { task: TaskItem }) {
         <button
           type="button"
           onClick={() => num && sendAction(`delete task ${num}`)}
-          className="text-muted-foreground/40 hover:text-red-400 transition-colors"
+          aria-label={`Delete task ${num}`}
+          className="text-muted-foreground/50 hover:text-red-400 transition-colors"
         >
           <Trash2 className="size-3" />
         </button>

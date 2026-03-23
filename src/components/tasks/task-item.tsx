@@ -220,7 +220,7 @@ export function TaskItem({
           checkSize === 'size-5' ? 'size-6' : checkSize === 'size-4' ? 'size-5' : 'size-4',
           isDone
             ? cn('bg-primary/20', getScoreColor(task.score ?? 5).replace('text-', 'text-'))
-            : 'bg-muted/30 text-muted-foreground/40 hover:bg-muted/50',
+            : 'bg-muted/30 text-muted-foreground/60 hover:bg-muted/50',
           recentlyCompleted && 'animate-bounce',
         )}
       >
@@ -232,7 +232,7 @@ export function TaskItem({
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
           {task.taskNumber && (
-            <span className="text-xs md:text-[10px] font-mono text-muted-foreground/40 shrink-0">
+            <span className="text-xs md:text-[10px] font-mono text-muted-foreground/60 shrink-0">
               #
               {task.taskNumber}
             </span>
@@ -261,6 +261,7 @@ export function TaskItem({
             variant="ghost"
             size="sm"
             onClick={(e) => { e.stopPropagation(); setChunking(true); onBreakDown(task.title); }}
+            aria-label="Break down task"
             className="text-xs md:text-[11px] bg-primary/10 text-primary hover:bg-primary/20 h-8 md:h-6 px-2 cursor-pointer"
           >
             <Zap className="mr-0.5 size-2.5" />
@@ -280,7 +281,7 @@ export function TaskItem({
             type="button"
             onClick={(e) => { e.stopPropagation(); onDelete(task); }}
             aria-label="Delete task"
-            className="shrink-0 cursor-pointer rounded-md p-1 text-muted-foreground/30 opacity-0 transition-all hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
+            className="shrink-0 cursor-pointer rounded-md p-1 text-muted-foreground/50 opacity-0 transition-all hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
           >
             <Trash2 className="size-3" />
           </button>

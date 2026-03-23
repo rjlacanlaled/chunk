@@ -276,6 +276,7 @@ export default function Home() {
         <div className="flex lg:hidden shrink-0 border-t border-border/40 pb-[env(safe-area-inset-bottom)]">
           <button
             type="button"
+            aria-label="View tasks"
             className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-medium ${
               mobileView === 'tasks' ? 'text-primary bg-primary/10' : 'text-muted-foreground'
             }`}
@@ -286,6 +287,7 @@ export default function Home() {
           </button>
           <button
             type="button"
+            aria-label="View chat"
             className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-medium ${
               mobileView === 'chat' ? 'text-primary bg-primary/10' : 'text-muted-foreground'
             }`}

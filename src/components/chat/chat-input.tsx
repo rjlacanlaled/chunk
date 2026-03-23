@@ -93,7 +93,7 @@ export function ChatInput({
           flex items-end gap-2 rounded-2xl border border-border/60
           bg-card/80 backdrop-blur-sm shadow-lg
           transition-all duration-200
-          focus-within:border-primary/40 focus-within:ring-2 focus-within:ring-primary/20
+          focus-within:border-primary/30
           ${isHero ? 'px-3 py-3 md:px-5 md:py-4' : 'px-3 py-2.5 md:px-4 md:py-3'}
         `}
       >
@@ -107,7 +107,7 @@ export function ChatInput({
           autoFocus // eslint-disable-line jsx-a11y/no-autofocus
           rows={1}
           className={`
-            flex-1 resize-none bg-transparent outline-none
+            flex-1 resize-none bg-transparent outline-none focus-visible:outline-none
             placeholder:text-muted-foreground/60
             disabled:opacity-50
             ${isHero ? 'text-base' : 'text-sm'}
@@ -117,6 +117,7 @@ export function ChatInput({
           type="submit"
           size={isHero ? 'icon' : 'icon-sm'}
           disabled={isLoading || !input.trim()}
+          aria-label="Send message"
           className={`
             shrink-0 rounded-xl transition-all duration-200
             ${input.trim()

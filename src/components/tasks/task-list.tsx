@@ -161,6 +161,8 @@ function SectionHeader({
   return (
     <button
       type="button"
+      aria-label={`Toggle ${style.label} section`}
+      aria-expanded={collapsed !== undefined ? !collapsed : undefined}
       className={cn(
         'flex w-full items-center gap-2 rounded-md border px-3 py-2 overflow-hidden',
         style.bg,
