@@ -138,6 +138,16 @@ function ChatPanelInner({
     sendMessage({ text });
   }, [sendMessage]);
 
+  // Listen for chat actions from interactive components (e.g. task list buttons)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const msg = (e as CustomEvent<string>).detail;
+      if (msg) handleSend(msg);
+    };
+    window.addEventListener('chunk-action', handler);
+    return () => window.removeEventListener('chunk-action', handler);
+  }, [handleSend]);
+
   useEffect(() => {
     if (sendRef) {
       sendRef.current = handleSend;

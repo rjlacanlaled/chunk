@@ -5,6 +5,7 @@ import type { Components } from 'react-markdown';
 import ReactMarkdown from 'react-markdown';
 import { User } from 'lucide-react';
 import ToolChip from '@/components/chat/tool-chip';
+import { ToolTaskList } from '@/components/chat/tool-task-list';
 
 const mdComponents: Components = {
   p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
@@ -95,13 +96,18 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
 
           if (typeof part.type === 'string' && part.type.startsWith('tool-')) {
             const toolName = part.type.replace('tool-', '');
+            const tp = part as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+            const showTaskList = (toolName === 'listTasks' || toolName === 'searchTasks')
+              && tp.state === 'output-available' && tp.output;
             return (
-              <ToolChip
-                key={(part as any).toolCallId} // eslint-disable-line @typescript-eslint/no-explicit-any
-                tool={toolName}
-                state={(part as any).state}
-                input={(part as any).input}
-              />
+              <div key={tp.toolCallId} className="flex flex-col gap-2">
+                <ToolChip
+                  tool={toolName}
+                  state={tp.state}
+                  input={tp.input}
+                />
+                {showTaskList && <ToolTaskList output={tp.output} />}
+              </div>
             );
           }
 
