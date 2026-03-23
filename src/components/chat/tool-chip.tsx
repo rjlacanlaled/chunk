@@ -58,9 +58,9 @@ export default function ToolChip({ tool, state, input }: ToolChipProps) {
       }}
     >
       <img
-        src={isComplete ? CHIP_CONFIG.completeTasks.icon : config.icon}
+        src={config.icon}
         alt=""
-        className={`size-7 shrink-0 rounded-full ${isComplete ? 'tool-chip-done' : ''}`}
+        className="size-7 shrink-0 rounded-full"
       />
       <span className={isComplete ? '' : 'animate-shimmer-text'}>
         {label}{detail}
