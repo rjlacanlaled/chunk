@@ -4,7 +4,7 @@ import type { UIMessage } from 'ai';
 import { isToolUIPart } from 'ai';
 import type { Components } from 'react-markdown';
 import ReactMarkdown from 'react-markdown';
-import { User, CheckCircle2, Loader2 } from 'lucide-react';
+import { User } from 'lucide-react';
 import { ChunkIcon } from './chunk-icon';
 import { cn } from '@/lib/utils';
 
@@ -16,6 +16,17 @@ const TOOL_LABELS: Record<string, string> = {
   listTasks: 'Checking your tasks',
   searchTasks: 'Searching tasks',
 };
+
+const TOOL_ICONS: Record<string, { active: string; done: string }> = {
+  createTasks: { active: '/chunk-icons-expressions 2/icon-big-goals.svg', done: '/chunk-icons-expressions 2/chunky-celebrating.svg' },
+  completeTasks: { active: '/chunk-icons-expressions 2/icon-earns-xp.svg', done: '/chunk-icons-expressions 2/chunky-celebrating.svg' },
+  updateTasks: { active: '/chunk-icons-expressions 2/chunky-thinking.svg', done: '/chunk-icons-expressions 2/chunky-happy.svg' },
+  deleteTasks: { active: '/chunk-icons-expressions 2/icon-zero-friction.svg', done: '/chunk-icons-expressions 2/chunky-happy.svg' },
+  searchTasks: { active: '/chunk-icons-expressions 2/chunky-thinking.svg', done: '/chunk-icons-expressions 2/chunky-happy.svg' },
+  listTasks: { active: '/chunk-icons-expressions 2/chunky-thinking.svg', done: '/chunk-icons-expressions 2/chunky-happy.svg' },
+};
+
+const DEFAULT_TOOL_ICON = { active: '/chunk-icons-expressions 2/chunky-thinking.svg', done: '/chunk-icons-expressions 2/chunky-celebrating.svg' };
 
 const mdComponents: Components = {
   p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
@@ -73,11 +84,11 @@ function ToolChip({ part }: { part: any }) {
           : 'border-primary/30 bg-primary/10 text-primary',
       )}
     >
-      {isComplete ? (
-        <CheckCircle2 className="size-3.5 shrink-0" />
-      ) : (
-        <img src="/chunk-logos/chunky-thinking.svg" alt="" className="size-4 shrink-0 animate-pulse" />
-      )}
+      {(() => {
+        const icons = TOOL_ICONS[toolName] || DEFAULT_TOOL_ICON;
+        const src = isComplete ? icons.done : icons.active;
+        return <img src={src} alt="" className={`size-5 shrink-0 ${isComplete ? '' : 'animate-pulse'}`} />;
+      })()}
       <span className="font-medium">
         {label}
         {detail}
