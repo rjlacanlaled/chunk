@@ -1,0 +1,21 @@
+{
+  "name": "Chunk — AI Productivity Agent",
+  "short_name": "Chunk",
+  "description": "Chat-first AI productivity app",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#060D1F",
+  "theme_color": "#4945FF",
+  "icons": [
+    {
+      "src": "/chunk-logos/chunk-icon-40.svg",
+      "sizes": "40x40",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/chunk-logos/chunk-icon-80.svg",
+      "sizes": "80x80",
+      "type": "image/svg+xml"
+    }
+  ]
+}

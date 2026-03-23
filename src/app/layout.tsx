@@ -22,8 +22,27 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Chunk',
-  description: 'Chat-first AI productivity app',
+  metadataBase: new URL('https://chunk-production.up.railway.app'),
+  title: {
+    default: 'Chunk — AI Productivity Agent',
+    template: '%s | Chunk',
+  },
+  description: 'Chat-first AI productivity app that breaks big goals into manageable tasks. Talk to Chunky, your AI productivity agent.',
+  openGraph: {
+    title: 'Chunk — AI Productivity Agent',
+    description: 'Chat-first AI productivity app that breaks big goals into manageable tasks.',
+    siteName: 'Chunk',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Chunk — AI Productivity Agent',
+    description: 'Chat-first AI productivity app that breaks big goals into manageable tasks.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: '/chunk-logos/chunk-ai-icon.svg',
     apple: '/chunk-logos/chunk-icon-80.svg',
