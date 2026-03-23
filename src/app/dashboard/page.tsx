@@ -186,7 +186,7 @@ export default function Home() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex h-12 shrink-0 items-center justify-between border-b border-border/40 px-3 md:px-4">
+      <header className="flex h-12 shrink-0 items-center justify-between border-b border-border/40 px-3 lg:px-4">
         <img
           src="/chunk-logos/chunk-logo-horizontal-dark.svg"
           alt="Chunk"
@@ -194,14 +194,14 @@ export default function Home() {
         />
         <div className="flex items-center gap-3">
           {hasTasks && (
-            <div className="hidden md:flex">
+            <div className="hidden lg:flex">
               <XpBar xp={xp} level={level} />
             </div>
           )}
           {hasTasks && <StreakBadge streak={streak} />}
           {isGuest && <SignUpCta />}
           {hasTasks && (
-            <div className="hidden md:flex items-center rounded-lg border border-border/40">
+            <div className="hidden lg:flex items-center rounded-lg border border-border/40">
               <Button
                 variant={view === 'list' ? 'default' : 'ghost'}
                 size="icon-xs"
@@ -227,8 +227,8 @@ export default function Home() {
       <main className="flex flex-1 overflow-hidden">
         <div
           className={`overflow-hidden transition-all duration-500 ease-in-out ${
-            hasTasks ? 'w-full md:w-[70%]' : 'w-0'
-          } ${hasTasks && mobileView !== 'tasks' ? 'hidden md:block' : ''}`}
+            hasTasks ? 'w-full lg:w-[70%]' : 'w-0'
+          } ${hasTasks && mobileView !== 'tasks' ? 'hidden lg:block' : ''}`}
         >
           {hasTasks && view === 'list' && (
             <div className="flex h-full flex-col">
@@ -257,8 +257,8 @@ export default function Home() {
 
         <div
           className={`overflow-hidden transition-all duration-500 ease-in-out ${
-            hasTasks ? 'w-full md:w-[30%] md:border-l md:border-border/40' : 'w-full'
-          } ${hasTasks && mobileView !== 'chat' ? 'hidden md:block' : ''}`}
+            hasTasks ? 'w-full lg:w-[30%] lg:border-l lg:border-border/40' : 'w-full'
+          } ${hasTasks && mobileView !== 'chat' ? 'hidden lg:block' : ''}`}
         >
           <ChatPanel
             owner={owner}
@@ -273,7 +273,7 @@ export default function Home() {
       </main>
 
       {hasTasks && (
-        <div className="flex md:hidden shrink-0 border-t border-border/40">
+        <div className="flex lg:hidden shrink-0 border-t border-border/40">
           <button
             type="button"
             className={`flex-1 py-3 text-xs font-medium ${
