@@ -16,7 +16,7 @@
 
 Chunk is a productivity app where you manage tasks by chatting with an AI assistant called Chunky. Instead of clicking through forms and dropdowns, you just say what you need to do. The AI creates tasks, assigns difficulty scores, breaks big goals into subtasks, and tracks your progress with XP and levels.
 
-Built as Assessment 2 for the Web Development course at [OPIT University](https://www.opit.com).
+Built as a personal project to explore modern full-stack web development with AI integration.
 
 ## Features
 
@@ -179,6 +179,6 @@ Make sure `BETTER_AUTH_URL` points to your Railway domain (e.g., `https://your-a
 | [Design Journey](docs/PROTOTYPE.md) | How we got here — prototype spec, design decisions, what changed |
 | This README | Setup, structure, how it works |
 
-## Built for OPIT
+## Try It
 
-This is a course project for Web Development at [OPIT University](https://www.opit.com). It's a real, working app — not a prototype. You can try it at **https://chunk-production.up.railway.app**.
+Chunk is live at **https://chunk-production.up.railway.app** — no sign-up required, just start chatting.

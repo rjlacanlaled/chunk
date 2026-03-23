@@ -4,7 +4,7 @@
 
 Chunk is a chat-first AI productivity app. Instead of clicking buttons and filling out forms to create tasks, you just talk to an AI assistant in a chat interface. It figures out what you need, creates the tasks, assigns difficulty scores, breaks big projects into subtasks, and tracks your progress with a gamification system. Think of it as a to-do app that you interact with through conversation.
 
-I built Chunk as my Assessment 2 project for the Web Development course at OPIT University. The goal was to build a complete, deployed web application that demonstrates real-world development skills — not just a toy demo. I wanted to pick something that would be genuinely useful and let me explore a bunch of modern web technologies at the same time.
+I built Chunk to explore what a modern AI-powered productivity tool could look like. The goal was to build a complete, deployed web application — not just a toy demo. I wanted to pick something that would be genuinely useful and let me work with a bunch of modern web technologies at the same time.
 
 The name "Chunk" comes from the idea of breaking big, overwhelming tasks into smaller, manageable chunks. That's the core philosophy of the app.
 
@@ -24,7 +24,7 @@ Primarily students and young professionals who:
 - Want something faster and more natural than traditional task managers
 - Like gamification — XP, levels, and streaks keep things motivating
 
-For the scope of this course project, I'm targeting a single-user experience. There's no team collaboration or shared workspaces (yet).
+For the current scope, I'm targeting a single-user experience. There's no team collaboration or shared workspaces (yet).
 
 ## Core Features
 
@@ -243,7 +243,7 @@ When a task is broken into subtasks, the subtask scores are proportionally distr
 
 XP is only awarded for completing leaf tasks — tasks with no children. This prevents double-counting (you don't get XP for a parent AND its subtasks). The XP amount is based on the task's score, mapped to one of 6 tiers.
 
-XP is stored in localStorage for now. It persists across sessions but doesn't sync across devices. For a course project, this is fine.
+XP is stored in localStorage for now. It persists across sessions but doesn't sync across devices. For v1, this is fine.
 
 Levels are just XP thresholds. Each level has a name and a custom medal SVG. The XP bar in the header shows your progress toward the next level.
 
@@ -279,7 +279,7 @@ Components come from shadcn/ui with the base-nova preset, customized to match th
 
 ### Responsive Behavior
 
-The main dashboard is designed for desktop-first (the 70/30 split makes less sense on mobile). The landing page is fully responsive. For a course project scope, desktop is the primary target.
+The dashboard uses a responsive layout — 70/30 split on desktop, tab-based switching on mobile and tablets (below 1024px). The landing page is fully responsive with mobile-first media queries.
 
 ## Testing Strategy
 
@@ -317,7 +317,7 @@ Every push to main triggers a production deploy automatically.
 
 ## Future Improvements
 
-If I were to keep building this beyond the course, here's what I'd add:
+If I were to keep building this, here's what I'd add:
 
 - **Kanban board** — the board view toggle exists but shows a "coming soon" placeholder. Drag-and-drop columns for todo/in-progress/done would be the natural next step.
 - **Workspaces** — multiple task lists for different areas of life (work, personal, school).

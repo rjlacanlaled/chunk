@@ -4,7 +4,7 @@
 
 This document tells the story of how Chunk went from a vague idea to a working app. It covers the original prototype thinking, the key decisions we made along the way, and what the final product looks like compared to where we started.
 
-If you're reviewing this for Assessment 2, this is the "design process" document — it shows that we didn't just jump into code. We thought about what we were building, why, and how.
+It shows that we didn't just jump into code. We thought about what we were building, why, and how.
 
 ## The original idea
 
