@@ -9,7 +9,7 @@ export function ChatThinking({ label }: { label?: string }) {
       {label ? (
         <span className="text-sm font-medium animate-shimmer-text">{label}</span>
       ) : (
-        <ToolChip tool="thinking" />
+        <div className="flex-1"><ToolChip tool="thinking" /></div>
       )}
     </div>
   );
