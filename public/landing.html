@@ -194,6 +194,58 @@ footer{background:#04080F;padding:40px 64px;display:flex;align-items:center;just
 .ant-cube{animation:cubob 2.1s ease-in-out infinite 2s;transform-box:fill-box;}
 .chunky-blush{animation:blush 3.2s ease-in-out infinite;}
 .conf-anim{animation:conf-fall 1.6s ease-in infinite;}
+
+@media (max-width: 768px) {
+  /* Nav */
+  nav { padding: 14px 20px; }
+  .nlinks { display: none; }
+
+  /* Sections */
+  section { padding: 56px 20px; }
+
+  /* Hero */
+  #hero { padding: 20px 20px 56px; flex-direction: column; min-height: auto; gap: 40px; }
+  .hero-left { max-width: 100%; }
+  .hero-right { width: 100%; height: 400px; }
+  .ctas { flex-direction: column; width: 100%; }
+  .btn-p, .btn-s { width: 100%; text-align: center; }
+  .cbub { display: none; }
+  .tcards { display: none; }
+
+  /* Problem stats */
+  .stat-row { flex-direction: column; gap: 32px; margin-top: 40px; }
+  .stat-num { font-size: 40px; }
+
+  /* How it works steps */
+  .steps { flex-direction: column; align-items: center; }
+  .step { max-width: 100%; }
+  .connector { display: none; }
+
+  /* App mockup */
+  .mock-body { grid-template-columns: 1fr; }
+  .mock-tasks { border-right: none; border-bottom: 1px solid rgba(255,255,255,.06); }
+
+  /* Features grid */
+  .feat-grid { grid-template-columns: 1fr; }
+
+  /* Medals */
+  .medals-row { flex-wrap: wrap; gap: 12px; margin: 32px 0; }
+
+  /* Gamification columns */
+  .gamify-cols { grid-template-columns: 1fr; gap: 24px; }
+
+  /* Chat demo */
+  .msg-user { max-width: 90%; font-size: 14px; }
+  .msg-ai-wrap { max-width: 90%; }
+  .msg-ai { font-size: 14px; }
+
+  /* CTA */
+  .btn-cta { width: 100%; padding: 15px 24px; font-size: 15px; }
+
+  /* Footer */
+  footer { flex-direction: column; gap: 20px; padding: 32px 20px; text-align: center; }
+  .footer-copy { text-align: center; }
+}
 </style>
 </head>
 <body>
