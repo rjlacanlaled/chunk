@@ -55,8 +55,8 @@ export const resolveTask = async (
   const ow = ownerWhere(owner);
   const trimmed = nameOrNumber.trim();
 
-  // Try task number first
-  const numMatch = trimmed.replace('#', '');
+  // Try task number first — strip common prefixes like "task", "#", "task #"
+  const numMatch = trimmed.replace(/^(task\s*#?\s*|#)/i, '').trim();
   if (/^\d+$/.test(numMatch)) {
     const [found] = await db
       .select()
@@ -398,8 +398,8 @@ export const searchTasks = async (
   const ow = ownerWhere(owner);
   const trimmed = query.trim();
 
-  // Match by task number
-  const numMatch = trimmed.replace('#', '');
+  // Match by task number — strip common prefixes
+  const numMatch = trimmed.replace(/^(task\s*#?\s*|#)/i, '').trim();
   if (/^\d+$/.test(numMatch)) {
     const result = await db
       .select()
