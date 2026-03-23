@@ -173,7 +173,7 @@ export const makeTaskTools = (owner: Owner) => ({
           } else {
             const count = await completeWithDescendants(resolved.match.id);
             result.completed.push(
-              `${resolved.match.title} (${count} task${count !== 1 ? 's' : ''} completed)`,
+              `#${resolved.match.taskNumber} "${resolved.match.title}" (${count} task${count !== 1 ? 's' : ''} completed)`,
             );
           }
         }
