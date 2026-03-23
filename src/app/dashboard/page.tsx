@@ -176,11 +176,22 @@ export default function Home() {
   // Single loading gate — wait for auth + tasks before showing anything
   if (!owner || !tasksFetched) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
-        <img src="/chunk-logos/chunky-thinking.svg" alt="Loading" className="size-24" />
-        <p className="animate-shimmer-text text-sm font-medium">
-          {sessionPending ? 'Checking your account...' : 'Getting things ready...'}
-        </p>
+      <div className="flex h-screen flex-col bg-background">
+        <header className="flex h-12 shrink-0 items-center justify-between border-b border-border/40 px-3 lg:px-4">
+          <div className="h-4 w-24 animate-pulse rounded bg-muted/30" />
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-16 animate-pulse rounded bg-muted/30" />
+            <div className="size-8 animate-pulse rounded-full bg-muted/30" />
+          </div>
+        </header>
+        <main className="flex flex-1 items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <img src="/chunk-tools/chunky-avatar-thinking.svg" alt="Loading" className="size-16" />
+            <p className="animate-shimmer-text text-sm font-medium">
+              {sessionPending ? 'Checking your account...' : 'Getting things ready...'}
+            </p>
+          </div>
+        </main>
       </div>
     );
   }

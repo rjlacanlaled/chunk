@@ -348,7 +348,7 @@ export function TaskList({
     ));
 
   return (
-    <ScrollArea className="h-full">
+    <ScrollArea className="h-full scroll-smooth">
       <div className="flex flex-col gap-4 p-4">
         {/* -- Quick stats --------------------------------------- */}
         <QuickStats
