@@ -61,6 +61,8 @@ export default function ToolChip({ tool, state, input }: ToolChipProps) {
         src={isComplete ? config.icon.replace('.svg', '-idle.svg') : config.icon}
         alt=""
         className="size-5 md:size-7 shrink-0"
+        width={28}
+        height={28}
       />
       <span className={isComplete ? '' : 'animate-shimmer-text'}>
         {label}{detail}

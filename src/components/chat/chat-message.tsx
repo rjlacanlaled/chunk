@@ -77,7 +77,7 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
   // For assistant messages, render parts in chronological order
   return (
     <div className="flex w-full gap-2 justify-start">
-      <img src={avatar} alt="Chunky" className="size-6 lg:size-8 shrink-0" />
+      <img src={avatar} alt="Chunky" className="size-6 lg:size-8 shrink-0" width={32} height={32} />
       <div className="flex max-w-[85%] lg:max-w-[75%] flex-col gap-1.5 lg:gap-2">
         {message.parts.map((part, i) => {
           if (part.type === 'text' && part.text.length > 0) {

@@ -168,28 +168,6 @@
   -webkit-text-fill-color: transparent;
 }
 
-.tool-chip-done *,
-.tool-chip-done {
-  animation-play-state: paused !important;
-}
-
-/* Tool chip animations */
-@keyframes th-spin  { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-@keyframes th-d     { 0%,100%{opacity:.2;transform:scale(.65)} 50%{opacity:1;transform:scale(1.15)} }
-@keyframes ct-bar   { 0%,15%{opacity:.15;transform:scaleX(.4)} 45%,90%{opacity:1;transform:scaleX(1)} 100%{opacity:.15;transform:scaleX(.4)} }
-@keyframes ct-plus  { 0%,100%{transform:scale(1) rotate(0deg)} 50%{transform:scale(1.3) rotate(90deg)} }
-@keyframes ck-ring  { 0%,20%{stroke-dashoffset:88;opacity:.25} 70%,100%{stroke-dashoffset:0;opacity:1} }
-@keyframes ck-draw  { 0%,20%{stroke-dashoffset:28} 70%,100%{stroke-dashoffset:0} }
-@keyframes up-spin  { 0%{transform:rotate(0deg)} 70%{transform:rotate(310deg)} 100%{transform:rotate(310deg)} }
-@keyframes up-bar   { 0%,30%{transform:scaleX(1)} 50%{transform:scaleX(.45)} 70%,100%{transform:scaleX(1)} }
-@keyframes del-body { 0%,100%{transform:rotate(0deg)} 20%{transform:rotate(-8deg)} 40%{transform:rotate(8deg)} 60%{transform:rotate(-5deg)} 80%{transform:rotate(5deg)} }
-@keyframes del-lid  { 0%,40%,100%{transform:rotate(0deg)} 20%{transform:rotate(-22deg)} }
-@keyframes del-bar  { 0%,60%,100%{opacity:1;transform:scaleY(1)} 75%{opacity:0;transform:scaleY(0)} }
-@keyframes sc-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
-@keyframes sc-scan  { 0%{transform:translateY(-5px);opacity:0} 20%,80%{opacity:.7} 100%{transform:translateY(5px);opacity:0} }
-@keyframes sc-handle{ 0%,100%{transform:rotate(0deg)} 55%,80%{transform:rotate(-18deg)} }
-@keyframes lt-row   { 0%,8%{opacity:0;transform:translateX(-4px)} 30%,92%{opacity:1;transform:translateX(0)} 100%{opacity:0;transform:translateX(-4px)} }
-
 @keyframes float-up {
   0% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-20px); }

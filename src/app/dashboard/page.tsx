@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import confetti from 'canvas-confetti';
 import { List, LayoutGrid, MessageCircle } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
 import { useGuestId } from '@/hooks/use-guest';
@@ -78,11 +77,13 @@ export default function Home() {
 
     // Confetti for any high-score task completion
     if (marking && (task.score ?? 0) >= 20) {
-      confetti({
-        particleCount: Math.min(200, 80 + (task.score ?? 0)),
-        spread: 70,
-        origin: { y: 0.7 },
-        colors: ['#4945FF', '#9593FF', '#5CB176', '#F5CF0D'],
+      import('canvas-confetti').then(({ default: confetti }) => {
+        confetti({
+          particleCount: Math.min(200, 80 + (task.score ?? 0)),
+          spread: 70,
+          origin: { y: 0.7 },
+          colors: ['#4945FF', '#9593FF', '#5CB176', '#F5CF0D'],
+        });
       });
     }
 
