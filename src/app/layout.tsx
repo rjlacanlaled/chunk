@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Chunk — AI Productivity Agent',
     description: 'Chat-first AI productivity app that breaks big goals into manageable tasks.',
   },
