@@ -147,7 +147,7 @@ export default function ToolChip({ tool, state, input }: ToolChipProps) {
         letterSpacing: '-0.1px',
       }}
     >
-      <span className={isComplete ? 'opacity-60' : ''}>
+      <span className={isComplete ? 'tool-chip-done' : ''}>
         <ToolIcon tool={tool} size={18} />
       </span>
       <span className={isComplete ? 'opacity-60' : 'animate-shimmer-text'}>

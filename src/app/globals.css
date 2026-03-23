@@ -168,6 +168,11 @@
   -webkit-text-fill-color: transparent;
 }
 
+.tool-chip-done *,
+.tool-chip-done {
+  animation-play-state: paused !important;
+}
+
 /* Tool chip animations */
 @keyframes th-spin  { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 @keyframes th-d     { 0%,100%{opacity:.2;transform:scale(.65)} 50%{opacity:1;transform:scale(1.15)} }
