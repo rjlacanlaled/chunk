@@ -4,7 +4,7 @@ import type { UIMessage } from 'ai';
 import { isToolUIPart } from 'ai';
 import type { Components } from 'react-markdown';
 import ReactMarkdown from 'react-markdown';
-import { User, CheckCircle2 } from 'lucide-react';
+import { User, CheckCircle2, Loader2 } from 'lucide-react';
 import { ChunkIcon } from './chunk-icon';
 import { cn } from '@/lib/utils';
 
@@ -76,7 +76,7 @@ function ToolChip({ part }: { part: any }) {
       {isComplete ? (
         <CheckCircle2 className="size-3.5 shrink-0" />
       ) : (
-        <ChunkIcon variant="animated" className="size-3.5 shrink-0" />
+        <img src="/chunk-logos/chunky-thinking.svg" alt="" className="size-4 shrink-0 animate-pulse" />
       )}
       <span className="font-medium">
         {label}
