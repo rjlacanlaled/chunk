@@ -180,7 +180,7 @@ export const makeTaskTools = (owner: Owner) => ({
 
         return result;
       } catch (err) {
-        console.error('[completeTasks error]', err);
+        // error returned to AI via tool result
         return { error: `Complete failed: ${err instanceof Error ? err.message : String(err)}` };
       }
     },
@@ -304,7 +304,7 @@ export const makeTaskTools = (owner: Owner) => ({
         const result = await deleteByIds(ids);
         return { ...result, errors: errors.length > 0 ? errors : undefined };
       } catch (err) {
-        console.error('[deleteTasks error]', err);
+        // error returned to AI via tool result
         return { error: `Delete failed: ${err instanceof Error ? err.message : String(err)}` };
       }
     },

@@ -181,7 +181,7 @@ function ChatPanelInner({
                 key={suggestion}
                 type="button"
                 onClick={() => handleSend(suggestion)}
-                className="rounded-full border border-border/60 bg-card/50 px-4 py-2
+                className="cursor-pointer rounded-full border border-border/60 bg-card/50 px-4 py-2
                   text-sm text-muted-foreground
                   transition-all duration-200
                   hover:border-primary/30 hover:bg-primary/10 hover:text-foreground"
