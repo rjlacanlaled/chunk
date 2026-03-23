@@ -5,7 +5,7 @@ import { isToolUIPart } from 'ai';
 import type { Components } from 'react-markdown';
 import ReactMarkdown from 'react-markdown';
 import { User } from 'lucide-react';
-import { ChunkIcon } from './chunk-icon';
+
 import { cn } from '@/lib/utils';
 
 const TOOL_LABELS: Record<string, string> = {
@@ -104,7 +104,6 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
   const isUser = message.role === 'user';
-  const iconVariant = !isUser && isStreaming ? 'animated' : 'static';
 
   // For user messages, just render plain text
   if (isUser) {
@@ -130,9 +129,13 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
   // For assistant messages, render parts in chronological order
   return (
     <div className="flex w-full gap-3 justify-start">
-      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/15">
-        <ChunkIcon className="size-4" variant={iconVariant} />
-      </div>
+      <img
+        src={isStreaming
+          ? '/chunk-icons-expressions 2/chunky-thinking.svg'
+          : '/chunk-icons-expressions 2/chunky-happy.svg'}
+        alt="Chunky"
+        className="size-7 shrink-0"
+      />
       <div className="flex max-w-[75%] flex-col gap-2">
         {message.parts.map((part, i) => {
           if (part.type === 'text' && part.text.length > 0) {
