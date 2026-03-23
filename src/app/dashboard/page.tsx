@@ -28,6 +28,7 @@ export default function Home() {
   const { data: session, isPending: sessionPending } = useSession();
   const guestId = useGuestId();
   const [view, setView] = useState<ViewMode>('list');
+  const [mobileView, setMobileView] = useState<'tasks' | 'chat'>('chat');
   const sendChatRef = useRef<(text: string) => void>(null);
 
   useAuthWithMigration();
@@ -185,18 +186,22 @@ export default function Home() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex h-12 shrink-0 items-center justify-between border-b border-border/40 px-4">
+      <header className="flex h-12 shrink-0 items-center justify-between border-b border-border/40 px-3 md:px-4">
         <img
           src="/chunk-logos/chunk-logo-horizontal-dark.svg"
           alt="Chunk"
           className="h-6"
         />
         <div className="flex items-center gap-3">
-          {hasTasks && <XpBar xp={xp} level={level} />}
+          {hasTasks && (
+            <div className="hidden md:flex">
+              <XpBar xp={xp} level={level} />
+            </div>
+          )}
           {hasTasks && <StreakBadge streak={streak} />}
           {isGuest && <SignUpCta />}
           {hasTasks && (
-            <div className="flex items-center rounded-lg border border-border/40">
+            <div className="hidden md:flex items-center rounded-lg border border-border/40">
               <Button
                 variant={view === 'list' ? 'default' : 'ghost'}
                 size="icon-xs"
@@ -221,8 +226,9 @@ export default function Home() {
 
       <main className="flex flex-1 overflow-hidden">
         <div
-          className="overflow-hidden transition-all duration-500 ease-in-out"
-          style={{ width: hasTasks ? '70%' : '0%' }}
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${
+            hasTasks ? 'w-full md:w-[70%]' : 'w-0'
+          } ${hasTasks && mobileView !== 'tasks' ? 'hidden md:block' : ''}`}
         >
           {hasTasks && view === 'list' && (
             <div className="flex h-full flex-col">
@@ -250,11 +256,9 @@ export default function Home() {
         </div>
 
         <div
-          className="overflow-hidden transition-all duration-500 ease-in-out"
-          style={{
-            width: hasTasks ? '30%' : '100%',
-            borderLeft: hasTasks ? '1px solid oklch(1 0 0 / 8%)' : 'none',
-          }}
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${
+            hasTasks ? 'w-full md:w-[30%] md:border-l md:border-border/40' : 'w-full'
+          } ${hasTasks && mobileView !== 'chat' ? 'hidden md:block' : ''}`}
         >
           <ChatPanel
             owner={owner}
@@ -267,6 +271,29 @@ export default function Home() {
           />
         </div>
       </main>
+
+      {hasTasks && (
+        <div className="flex md:hidden shrink-0 border-t border-border/40">
+          <button
+            type="button"
+            className={`flex-1 py-3 text-xs font-medium ${
+              mobileView === 'tasks' ? 'text-primary bg-primary/10' : 'text-muted-foreground'
+            }`}
+            onClick={() => setMobileView('tasks')}
+          >
+            Tasks
+          </button>
+          <button
+            type="button"
+            className={`flex-1 py-3 text-xs font-medium ${
+              mobileView === 'chat' ? 'text-primary bg-primary/10' : 'text-muted-foreground'
+            }`}
+            onClick={() => setMobileView('chat')}
+          >
+            Chat
+          </button>
+        </div>
+      )}
     </div>
   );
 }

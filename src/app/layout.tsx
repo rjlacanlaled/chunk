@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Poppins, Syne, DM_Sans } from 'next/font/google';
 import { Providers } from '@/components/providers';
 import './globals.css';
@@ -28,6 +28,13 @@ export const metadata: Metadata = {
     icon: '/chunk-logos/chunk-ai-icon.svg',
     apple: '/chunk-logos/chunk-icon-80.svg',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
