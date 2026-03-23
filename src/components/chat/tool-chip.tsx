@@ -58,7 +58,7 @@ export default function ToolChip({ tool, state, input }: ToolChipProps) {
       }}
     >
       <img
-        src={config.icon}
+        src={isComplete ? config.icon.replace('.svg', '-idle.svg') : config.icon}
         alt=""
         className="size-7 shrink-0 rounded-full"
       />
