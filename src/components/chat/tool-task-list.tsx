@@ -7,7 +7,6 @@ interface TaskItem {
   title: string;
   status: string;
   score?: number | null;
-  dueDate?: string | null;
   parentTaskId?: string | null;
 }
 
@@ -20,9 +19,7 @@ function MiniTask({ task }: { task: TaskItem }) {
   const num = task.taskNumber;
 
   return (
-    <div className={`flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs ${
-      isDone ? 'opacity-50' : ''
-    } ${task.parentTaskId ? 'ml-4' : ''}`}>
+    <div className="flex items-center gap-2 px-2.5 py-1.5 text-xs">
       <button
         type="button"
         onClick={() => num && sendAction(`complete task ${num}`)}
@@ -39,9 +36,6 @@ function MiniTask({ task }: { task: TaskItem }) {
         {num && <span className="text-muted-foreground mr-1">#{num}</span>}
         {task.title}
       </span>
-      {task.score && !task.parentTaskId && (
-        <span className="text-[10px] text-muted-foreground">{task.score}pts</span>
-      )}
       {!isDone && (
         <button
           type="button"
@@ -58,7 +52,6 @@ function MiniTask({ task }: { task: TaskItem }) {
 export function ToolTaskList({ output }: { output: unknown }) {
   if (!output) return null;
 
-  // Handle paginated result from listTasks
   let tasks: TaskItem[] = [];
   if (Array.isArray(output)) {
     tasks = output;
@@ -68,32 +61,21 @@ export function ToolTaskList({ output }: { output: unknown }) {
 
   if (tasks.length === 0) return null;
 
-  // Separate root tasks and subtasks
+  // Only show root tasks (no subtasks) for a clean list
   const roots = tasks.filter((t) => !t.parentTaskId);
-  const children = tasks.filter((t) => t.parentTaskId);
-
-  // Show max 10 tasks in mini list
-  const display = roots.slice(0, 10);
+  const display = roots.slice(0, 8);
   const remaining = roots.length - display.length;
 
   return (
     <div className="rounded-lg border border-border/30 bg-card/50 overflow-hidden">
       <div className="divide-y divide-border/20">
         {display.map((task, i) => (
-          <div key={task.taskNumber ?? i}>
-            <MiniTask task={task} />
-            {children
-              .filter((c) => roots.some((r) => c.parentTaskId && task.taskNumber === roots.find((rt) => rt.title === task.title)?.taskNumber))
-              .slice(0, 3)
-              .map((child, j) => (
-                <MiniTask key={child.taskNumber ?? j} task={child} />
-              ))}
-          </div>
+          <MiniTask key={task.taskNumber ?? i} task={task} />
         ))}
       </div>
       {remaining > 0 && (
         <div className="px-3 py-1.5 text-[10px] text-muted-foreground text-center border-t border-border/20">
-          +{remaining} more tasks
+          +{remaining} more
         </div>
       )}
     </div>

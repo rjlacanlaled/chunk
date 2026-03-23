@@ -97,22 +97,32 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
           if (typeof part.type === 'string' && part.type.startsWith('tool-')) {
             const toolName = part.type.replace('tool-', '');
             const tp = part as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-            const showTaskList = (toolName === 'listTasks' || toolName === 'searchTasks')
-              && tp.state === 'output-available' && tp.output;
             return (
-              <div key={tp.toolCallId} className="flex flex-col gap-2">
-                <ToolChip
-                  tool={toolName}
-                  state={tp.state}
-                  input={tp.input}
-                />
-                {showTaskList && <ToolTaskList output={tp.output} />}
-              </div>
+              <ToolChip
+                key={tp.toolCallId}
+                tool={toolName}
+                state={tp.state}
+                input={tp.input}
+              />
             );
           }
 
           return null;
         })}
+
+        {/* Render interactive task lists at the end, after AI text */}
+        {message.parts
+          .filter((p) => {
+            if (typeof p.type !== 'string' || !p.type.startsWith('tool-')) return false;
+            const tp = p as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+            const name = p.type.replace('tool-', '');
+            return (name === 'listTasks' || name === 'searchTasks')
+              && tp.state === 'output-available' && tp.output;
+          })
+          .map((p) => {
+            const tp = p as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+            return <ToolTaskList key={`list-${tp.toolCallId}`} output={tp.output} />;
+          })}
 
         {/* Shimmer while tools are running with no text yet */}
         {isStreaming && !message.parts.some((p) => p.type === 'text' && p.text.length > 0) && (
