@@ -48,7 +48,7 @@ export default function ToolChip({ tool, state, input }: ToolChipProps) {
 
   return (
     <span
-      className="inline-flex w-fit items-center gap-2 rounded-full text-[13px] font-semibold"
+      className="inline-flex w-fit items-center gap-2 rounded-lg text-[13px] font-semibold"
       style={{
         padding: '6px 14px 6px 4px',
         background: colors.bg,
