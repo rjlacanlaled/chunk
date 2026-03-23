@@ -1,7 +1,6 @@
 'use client';
 
 import type { UIMessage } from 'ai';
-import { isToolUIPart } from 'ai';
 import type { Components } from 'react-markdown';
 import ReactMarkdown from 'react-markdown';
 import { User } from 'lucide-react';
@@ -152,7 +151,7 @@ export function ChatMessage({ message, isStreaming }: ChatMessageProps) {
             );
           }
 
-          if (isToolUIPart(part) || (part.type as string).startsWith('tool-')) {
+          if (typeof part.type === 'string' && part.type.startsWith('tool-')) {
             return (
               <ToolChip
                 key={(part as any).toolCallId} // eslint-disable-line @typescript-eslint/no-explicit-any
