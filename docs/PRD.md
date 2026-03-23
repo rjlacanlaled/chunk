@@ -38,13 +38,12 @@ Messages persist across sessions. When you come back, your chat history is still
 
 This is the backbone of the app. The AI doesn't just respond with text — it uses tool calling to actually perform actions. Here's what it can do:
 
-- **createTasks** — Create one or more tasks in a single call. Works for batch operations.
-- **completeTasks** — Mark tasks done by name (partial matching). If a task has subtasks, it completes all of them recursively.
+- **createTasks** — Create one or more tasks in a single call. Supports inline subtasks and breaking down existing tasks by passing a parent ID.
+- **completeTasks** — Mark tasks done by name, number, or bulk keyword query. If a task has subtasks, it completes all of them recursively via a Postgres recursive CTE.
 - **updateTasks** — Change title, priority, status, due date, or score for one or more tasks.
-- **deleteTasks** — Remove tasks by name.
-- **searchTasks** — Find tasks by keyword. If there's ambiguity (e.g. "boxing" matches multiple tasks), it asks the user to clarify.
-- **listTasks** — Get all current tasks.
-- **breakDownTask** — Split a complex task into subtasks with proportional scoring.
+- **deleteTasks** — Delete tasks by name/number, or bulk-delete by filter (overdue, done, all). Uses recursive CTEs to cascade to subtasks.
+- **searchTasks** — Find tasks by keyword with ILIKE and full-text search (Postgres stemming). If there's ambiguity, it asks the user to clarify.
+- **listTasks** — List tasks with optional filters (overdue, today, todo, done) and cursor-based pagination.
 
 The AI is configured to be autonomous. It doesn't ask "what priority should this be?" or "how many subtasks do you want?" — it makes decisions based on context. If you say "plan a wedding," it knows that's a big task (score ~60), creates it, and immediately breaks it down into subtasks without asking.
 
@@ -121,7 +120,7 @@ I chose **Next.js 16** with the App Router because it gives me both frontend and
 
 **TanStack Query** manages all server state. Every database read goes through a query hook, and every write goes through a mutation with optimistic updates. This means the UI updates instantly when you check off a task — the database write happens in the background, and if it fails, the UI rolls back.
 
-**Vercel AI SDK** with **OpenRouter** handles the AI integration. OpenRouter lets me route to different models without changing code. Right now I'm using Gemini 2.0 Flash for speed and cost, but I could switch to GPT-4 or Claude with a one-line config change.
+**Vercel AI SDK** with **OpenRouter** handles the AI integration. OpenRouter lets me route to different models without changing code. I'm using Gemini 2.5 Flash for its strong tool-calling accuracy and low cost, but I could switch to GPT-4 or Claude with a one-line config change.
 
 ### Data Flow
 
@@ -197,7 +196,7 @@ The AI runs on the server through a single API route (`/api/chat`). Here's the f
 
 1. The frontend sends the full message history to the server
 2. The server converts messages to model format and calls `streamText()`
-3. The AI has access to 7 tools (listed above under AI Task Engine)
+3. The AI has access to 6 tools (listed above under AI Task Engine)
 4. It can call multiple tools in sequence — up to 20 steps per request
 5. The response streams back to the frontend in real-time
 
@@ -216,7 +215,7 @@ The prompt also contains detailed scoring guidelines so the AI knows that "do la
 Tools are defined using Zod schemas for input validation. Each tool maps to a server action. The AI decides which tools to call based on the conversation context. For example:
 
 - User says "buy milk" → AI calls `createTasks` with one task, score 2
-- User says "plan my move to Berlin" → AI calls `createTasks` for the parent, then `breakDownTask` to add subtasks
+- User says "plan my move to Berlin" → AI calls `createTasks` with inline subtasks for the parent and its breakdown
 - User says "done with grocery shopping" → AI calls `completeTasks` by name
 - User says "what's on my list?" → AI calls `listTasks`
 
@@ -224,7 +223,7 @@ The tool-first approach means the AI never just describes what it would do. It a
 
 ### Model
 
-Currently using Google Gemini 2.0 Flash via OpenRouter. It's fast (low latency for streaming), cheap, and good enough at tool calling for this use case. The model is configured in one place, so switching is trivial.
+Currently using Google Gemini 2.5 Flash via OpenRouter. We upgraded from 2.0 Flash because 2.5 has significantly better tool-calling accuracy — it follows structured schemas more reliably and rarely hallucinates tool results. The model is configured in one place, so switching is trivial.
 
 ## Gamification System
 
@@ -238,7 +237,7 @@ Every task gets a difficulty score assigned by the AI. The score is a number wit
 - 100-500: epic (change careers, write a book)
 - 500+: legendary
 
-When a task is broken into subtasks, the subtask scores are proportionally distributed so they add up to the parent's score. This is enforced both in the system prompt and in the `breakDownTask` tool logic (with rounding correction).
+When a task is broken into subtasks, the subtask scores are proportionally distributed so they add up to the parent's score. This is enforced both in the system prompt and in the `createTasks` tool logic (with rounding correction).
 
 ### XP and Levels
 
@@ -305,16 +304,16 @@ Tests run with `bun run test` (watch mode) or `bun run test:run` (single run).
 
 ## Deployment
 
-The app is deployed on Vercel. The setup is straightforward:
+The app is deployed on Railway. The setup is straightforward:
 
-1. Connect the GitHub repo to Vercel
-2. Set framework to Next.js (auto-detected)
-3. Add all environment variables
+1. Connect the GitHub repo to Railway
+2. Railway auto-detects Next.js and Bun
+3. Add all environment variables in the Railway dashboard
 4. Deploy
 
-Vercel handles the Bun runtime, builds the Next.js app, and serves it. The Supabase database is external but accessible from Vercel's servers by default.
+Railway handles the build and serves the app. The Supabase database is external (hosted in EU) but accessible from Railway's servers. The live URL is https://chunk-production.up.railway.app.
 
-There's no CI/CD pipeline beyond Vercel's built-in preview deployments. Every push to main triggers a production deploy. PRs get preview URLs automatically.
+Every push to main triggers a production deploy automatically.
 
 ## Future Improvements
 

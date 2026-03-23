@@ -1,50 +1,63 @@
-# Chunk
+<p align="center">
+  <img src="public/chunk-logos/chunk-logo-stacked.svg" alt="Chunk" width="120" />
+</p>
 
-**Your chaos, made manageable.**
+<h3 align="center">Your chaos, made manageable.</h3>
 
-Chunk is a chat-first productivity app. You talk to an AI, it manages your to-do list. No clicking through menus, no drag-and-drop nonsense — just tell it what you need to do and it handles the rest. I built this for my web development course at OPIT University.
+<p align="center">
+  Chat-first AI productivity app that breaks big goals into manageable tasks.
+  <br />
+  <a href="https://chunk-production.up.railway.app"><strong>Live Demo</strong></a> · <a href="docs/PRD.md">PRD</a> · <a href="docs/PROTOTYPE.md">Design Journey</a>
+</p>
 
-<!-- TODO: Add screenshot here -->
+---
+
+## What is Chunk?
+
+Chunk is a productivity app where you manage tasks by chatting with an AI assistant called Chunky. Instead of clicking through forms and dropdowns, you just say what you need to do. The AI creates tasks, assigns difficulty scores, breaks big goals into subtasks, and tracks your progress with XP and levels.
+
+Built as Assessment 2 for the Web Development course at [OPIT University](https://www.opit.com).
 
 ## Features
 
-- **Chat to manage tasks** — tell the AI what you need to do, it creates, updates, and completes tasks for you
-- **Smart task breakdown** — big tasks get automatically split into smaller subtasks
-- **Gamification** — earn XP, level up, collect medals, and maintain daily streaks
-- **Difficulty scoring** — the AI assigns scores to tasks based on effort, and subtask scores always add up to the parent
-- **Guest mode** — start using it right away without signing up
-- **Account migration** — sign up later with Google or GitHub and your guest data carries over
-- **Task hierarchy** — tasks can have subtasks, which can have subtasks, recursively
-- **Live updates** — optimistic UI so everything feels instant
-- **Dark mode by default** — because obviously
+| Feature | How it works |
+|---------|-------------|
+| **Chat-first** | Talk to Chunky in natural language. No buttons, no forms. |
+| **Smart breakdown** | Tasks scoring 20+ are automatically split into subtasks. Scores always add up. |
+| **Gamification** | Earn XP, level up through 6 ranks (Starter → Legend), and maintain daily streaks. |
+| **Guest mode** | Start immediately — no sign-up required. Data persists in your browser. |
+| **Account migration** | Sign up with Google or GitHub later. Your guest data carries over. |
+| **Recursive tasks** | Tasks can have subtasks, which can have subtasks. Completing a parent completes everything below it. |
+| **Full-text search** | Find tasks by keyword with Postgres stemming — "running" matches "Run social media advertising." |
+| **Interactive results** | When the AI lists tasks, they render as clickable cards with complete/delete buttons right in the chat. |
+| **Mobile responsive** | Tab-based layout on phones and tablets, side-by-side on desktop. |
+| **Dark mode** | Default and only theme. Because obviously. |
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js 16 (App Router, React 19) |
-| Language | TypeScript (strict mode) |
-| Runtime | Bun |
-| Styling | Tailwind CSS v4 + shadcn/ui |
-| Database | PostgreSQL via Supabase |
-| ORM | Drizzle ORM |
-| Auth | Better-Auth (Google + GitHub OAuth) |
-| AI | Vercel AI SDK + OpenRouter |
-| State | TanStack Query |
-| Testing | Vitest + React Testing Library + MSW |
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Framework | Next.js (App Router) | 16.2.1 |
+| Language | TypeScript (strict mode) | 5.x |
+| Runtime | Bun | 1.x |
+| UI | Tailwind CSS + shadcn/ui | v4 |
+| Database | PostgreSQL (Supabase) | — |
+| ORM | Drizzle ORM | 0.45.x |
+| Auth | Better-Auth (Google + GitHub) | 1.5.x |
+| AI | Vercel AI SDK + OpenRouter (Gemini 2.5 Flash) | 6.x |
+| State | TanStack Query | 5.x |
+| Testing | Vitest + React Testing Library | 4.x |
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) (v1.0+) — if you don't have it, go to bun.sh
+- [Bun](https://bun.sh) (v1.0+)
 - A [Supabase](https://supabase.com) project (free tier works)
 - An [OpenRouter](https://openrouter.ai) API key
 - Google and/or GitHub OAuth credentials
 
 ### Setup
-
-1. Clone and install:
 
 ```bash
 git clone https://github.com/rjlacanlaled/chunk.git
@@ -52,46 +65,90 @@ cd chunk
 bun install
 ```
 
-2. Set up environment variables:
+Create a `.env` file in the root:
 
-```bash
-cp .env.example .env
+```env
+DATABASE_URL=postgresql://...your-supabase-connection-string
+BETTER_AUTH_SECRET=any-random-32-character-string
+BETTER_AUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+OPENROUTER_API_KEY=your-openrouter-key
 ```
 
-Fill in the values (see table below).
-
-3. Push the database schema:
+Push the database schema and start the dev server:
 
 ```bash
-bun drizzle-kit push
-```
-
-4. Run the dev server:
-
-```bash
+bunx drizzle-kit push
 bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) and start chatting.
 
-## Environment Variables
+## Project Structure
 
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | Supabase PostgreSQL connection string |
-| `BETTER_AUTH_SECRET` | Random 32+ character string for session encryption |
-| `BETTER_AUTH_URL` | Base URL for auth callbacks (e.g. `http://localhost:3000`) |
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID ([console.cloud.google.com](https://console.cloud.google.com)) |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
-| `GITHUB_CLIENT_ID` | GitHub OAuth client ID ([github.com/settings/developers](https://github.com/settings/developers)) |
-| `GITHUB_CLIENT_SECRET` | GitHub OAuth client secret |
-| `OPENROUTER_API_KEY` | OpenRouter API key ([openrouter.ai/keys](https://openrouter.ai/keys)) |
+```
+chunk/
+├── __tests__/                # Tests (mirrors src/ structure)
+├── docs/
+│   ├── PRD.md                # Product requirements
+│   └── PROTOTYPE.md          # Design journey & prototype spec
+├── public/
+│   ├── chunk-avatars/        # Chunky expression avatars
+│   ├── chunk-logos/           # Brand logos and icons
+│   └── chunk-tools/          # Animated tool chip SVGs
+├── src/
+│   ├── app/
+│   │   ├── api/chat/         # AI chat streaming endpoint
+│   │   ├── api/messages/     # Chat history endpoint
+│   │   ├── dashboard/        # Main app page
+│   │   ├── error.tsx         # Error boundary
+│   │   ├── not-found.tsx     # 404 page
+│   │   ├── opengraph-image.tsx  # Dynamic OG image
+│   │   └── sitemap.ts        # Auto-generated sitemap
+│   ├── components/
+│   │   ├── chat/             # Chat panel, messages, tool chips, input
+│   │   ├── tasks/            # Task list, task items
+│   │   ├── gamification/     # XP bar, streaks, medals, daily missions
+│   │   ├── auth/             # OAuth buttons, sign-up prompt
+│   │   └── ui/               # shadcn/ui primitives
+│   ├── hooks/                # React hooks (tasks, gamification, guest, auth)
+│   ├── lib/                  # Auth config, AI tools + prompt, gamification
+│   ├── server/
+│   │   ├── actions/          # Server actions (tasks, messages, migration)
+│   │   └── db/               # Drizzle schema + connection
+│   └── types/                # Shared TypeScript types
+└── package.json
+```
 
-See `.env.example` for the full list with comments.
+## How It Works
 
-## Running Tests
+The architecture is straightforward:
 
-Tests use Vitest with React Testing Library. Test files live in `__tests__/` and mirror the `src/` structure.
+1. **You type a message** in the chat
+2. **The chat API** sends it to Gemini 2.5 Flash via OpenRouter with a system prompt and 6 tools
+3. **The AI decides** what to do — create tasks, complete them, search, update, delete, or list
+4. **Tools call server actions** which run SQL against Supabase PostgreSQL (using recursive CTEs for hierarchical operations)
+5. **Results stream back** to the chat UI, and the task list refreshes
+
+The AI has 6 tools:
+
+| Tool | What it does |
+|------|-------------|
+| `createTasks` | Creates tasks with optional inline subtasks |
+| `completeTasks` | Marks tasks done (cascades to all subtasks) |
+| `updateTasks` | Changes any field — title, priority, due date, status |
+| `deleteTasks` | Deletes by name or bulk-deletes by filter (overdue/done/all) |
+| `searchTasks` | Finds tasks by keyword with full-text search |
+| `listTasks` | Lists tasks with filters and cursor-based pagination |
+
+All database operations use batch queries and recursive CTEs. Completing a parent with 20 subtasks is one SQL query, not 21.
+
+## Testing
+
+Tests live in `__tests__/` and mirror the `src/` structure. We use Vitest with React Testing Library.
 
 ```bash
 # Watch mode
@@ -101,49 +158,27 @@ bun run test
 bun run test:run
 ```
 
-## Project Structure
-
-```
-chunk/
-├── __tests__/              # Tests (mirrors src/)
-│   ├── app/                # Page tests
-│   ├── components/         # Component tests
-│   ├── hooks/              # Hook tests
-│   ├── lib/                # Utility + AI tool tests
-│   └── server/             # Server action tests
-├── src/
-│   ├── app/                # Next.js pages + API routes
-│   │   ├── api/chat/       # AI chat streaming endpoint
-│   │   └── dashboard/      # Main app page
-│   ├── components/
-│   │   ├── ui/             # shadcn/ui primitives
-│   │   ├── chat/           # Chat panel, messages, input
-│   │   ├── tasks/          # Task list, items, board placeholder
-│   │   ├── gamification/   # XP bar, streaks, medals, score summary
-│   │   └── auth/           # OAuth buttons, sign-up CTA
-│   ├── hooks/              # React hooks (tasks, auth, guest, gamification)
-│   ├── lib/                # Auth config, AI tools + prompt, gamification logic
-│   ├── server/
-│   │   ├── actions/        # Server actions (tasks, messages, migration)
-│   │   └── db/             # Drizzle schema + connection
-│   └── types/              # Shared TypeScript types
-├── public/                 # Static assets, logos, medals
-├── vitest.config.ts
-└── package.json
-```
-
 ## Deployment
 
-Built for [Vercel](https://vercel.com):
+Chunk is deployed on [Railway](https://railway.app) with the database on [Supabase](https://supabase.com).
 
-1. Push to GitHub
-2. Import the project in Vercel
-3. Set framework to Next.js
-4. Add all the environment variables
-5. Deploy
+To deploy your own:
 
-Vercel picks up the Bun runtime automatically. Make sure your Supabase database allows external connections (it does by default).
+1. Push the repo to GitHub
+2. Create a Railway project and link the repo
+3. Set all environment variables in Railway's dashboard
+4. Railway auto-detects Next.js and deploys on every push
+
+Make sure `BETTER_AUTH_URL` points to your Railway domain (e.g., `https://your-app.up.railway.app`).
+
+## Documentation
+
+| Document | What it covers |
+|----------|---------------|
+| [PRD](docs/PRD.md) | Full product requirements — features, architecture, AI system, gamification |
+| [Design Journey](docs/PROTOTYPE.md) | How we got here — prototype spec, design decisions, what changed |
+| This README | Setup, structure, how it works |
 
 ## Built for OPIT
 
-This is a course project for Web Development at [OPIT University](https://www.opit.com). It's a real, working app — not just a prototype.
+This is a course project for Web Development at [OPIT University](https://www.opit.com). It's a real, working app — not a prototype. You can try it at **https://chunk-production.up.railway.app**.
