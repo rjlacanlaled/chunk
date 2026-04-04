@@ -84,7 +84,7 @@ export const POST = async (req: Request) => {
   const modelMessages = await convertToModelMessages(cleaned);
 
   const result = streamText({
-    model: openrouter('anthropic/claude-haiku-4-5'),
+    model: openrouter('anthropic/claude-sonnet-4'),
     system: getSystemPrompt(clientTime, clientTimezone),
     messages: modelMessages,
     tools,
