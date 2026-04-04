@@ -13,37 +13,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { ChunkIcon } from '@/components/chat/chunk-icon';
 import { cn } from '@/lib/utils';
+import { getScoreColor, getScoreDotColor, getScoreBorderColor } from '@/lib/score-colors';
 import type { Task } from '@/types/task';
-
-/* -- Score colors ------------------------------------------------- */
-
-const getScoreColor = (score: number): string => {
-  if (score <= 5) return 'text-emerald-400';
-  if (score <= 15) return 'text-amber-400';
-  if (score <= 30) return 'text-orange-400';
-  if (score <= 100) return 'text-red-400';
-  if (score <= 500) return 'text-purple-400';
-  return 'text-pink-400';
-};
-
-const getScoreDotColor = (score: number): string => {
-  if (score <= 5) return 'bg-emerald-400';
-  if (score <= 15) return 'bg-amber-400';
-  if (score <= 30) return 'bg-orange-400';
-  if (score <= 100) return 'bg-red-400';
-  if (score <= 500) return 'bg-purple-400';
-  return 'bg-pink-400';
-};
-
-const getScoreBorderColor = (score: number | null): string => {
-  if (!score) return 'border-l-border/40';
-  if (score <= 5) return 'border-l-emerald-400/50';
-  if (score <= 15) return 'border-l-amber-400/50';
-  if (score <= 30) return 'border-l-orange-400/50';
-  if (score <= 100) return 'border-l-red-400/50';
-  if (score <= 500) return 'border-l-purple-400/50';
-  return 'border-l-pink-400/50';
-};
 
 /* -- Small components --------------------------------------------- */
 

@@ -13,6 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { getXpForTask } from '@/lib/gamification';
+import { getScoreColor, getScoreDotColor } from '@/lib/score-colors';
 import type { Task } from '@/types/task';
 import { TaskItem } from './task-item';
 
@@ -214,26 +215,6 @@ function InlineActivityFeed({ tasks }: { tasks: Task[] }) {
 
   if (recentDone.length === 0) return null;
 
-  const getColor = (score: number | null) => {
-    const s = score ?? 5;
-    if (s <= 5) return 'text-emerald-400';
-    if (s <= 15) return 'text-amber-400';
-    if (s <= 30) return 'text-orange-400';
-    if (s <= 100) return 'text-red-400';
-    if (s <= 500) return 'text-purple-400';
-    return 'text-pink-400';
-  };
-
-  const getDotBg = (score: number | null) => {
-    const s = score ?? 5;
-    if (s <= 5) return 'bg-emerald-400';
-    if (s <= 15) return 'bg-amber-400';
-    if (s <= 30) return 'bg-orange-400';
-    if (s <= 100) return 'bg-red-400';
-    if (s <= 500) return 'bg-purple-400';
-    return 'bg-pink-400';
-  };
-
   return (
     <div className="flex flex-col gap-1">
       {recentDone.map((task) => {
@@ -247,8 +228,8 @@ function InlineActivityFeed({ tasks }: { tasks: Task[] }) {
               isEpic && 'bg-muted/10 border border-border/30',
             )}
           >
-            <span className={cn('size-2 shrink-0 rounded-full', getDotBg(task.score))} />
-            <CheckCircle2 className={cn('size-3.5 shrink-0', getColor(task.score))} />
+            <span className={cn('size-2 shrink-0 rounded-full', getScoreDotColor(task.score ?? 5))} />
+            <CheckCircle2 className={cn('size-3.5 shrink-0', getScoreColor(task.score ?? 5))} />
             <span className={cn(
               'truncate',
               isEpic ? 'font-semibold text-foreground' : 'text-foreground/80',
@@ -256,7 +237,7 @@ function InlineActivityFeed({ tasks }: { tasks: Task[] }) {
               {task.title}
             </span>
             {task.score && (
-              <span className={cn('shrink-0 text-xs md:text-[10px] font-bold tabular-nums', getColor(task.score))}>
+              <span className={cn('shrink-0 text-xs md:text-[10px] font-bold tabular-nums', getScoreColor(task.score ?? 5))}>
                 {task.score}
               </span>
             )}
@@ -295,16 +276,6 @@ export function TaskList({
 }: TaskListProps) {
   const [doneCollapsed, setDoneCollapsed] = useState(true);
   const [activityCollapsed, setActivityCollapsed] = useState(true);
-
-  const hasDoneItems = useMemo(
-    () => tasks.some((t) => t.status === 'done'),
-    [tasks],
-  );
-
-  const doneCount = useMemo(
-    () => tasks.filter((t) => t.status === 'done').length,
-    [tasks],
-  );
 
   const { todo, inProgress, done, totalRoots, completedRoots, completedToday } =
     useMemo(() => {
@@ -358,11 +329,11 @@ export function TaskList({
         />
 
         {/* -- Recent Activity (collapsed by default) ------------ */}
-        {hasDoneItems && (
+        {done.length > 0 && (
           <div className="flex flex-col gap-2">
             <SectionHeader
               section="recent"
-              count={Math.min(doneCount, ACTIVITY_LIMIT)}
+              count={Math.min(done.length, ACTIVITY_LIMIT)}
               collapsible
               collapsed={activityCollapsed}
               onToggle={() => setActivityCollapsed(!activityCollapsed)}
@@ -372,7 +343,7 @@ export function TaskList({
         )}
 
         {/* -- Divider after activity ---------------------------- */}
-        {hasDoneItems && (inProgress.length > 0 || todo.length > 0) && (
+        {done.length > 0 && (inProgress.length > 0 || todo.length > 0) && (
           <div className="h-px bg-border/30" />
         )}
 

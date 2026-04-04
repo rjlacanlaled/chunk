@@ -30,13 +30,13 @@ export const getLevel = (xp: number) => {
   return { current, next, xp };
 };
 
+export const toDateStr = (d: Date): string => {
+  const dt = new Date(d);
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+};
+
 export const getStreak = (completedDates: Date[]): number => {
   if (completedDates.length === 0) return 0;
-
-  const toDateStr = (d: Date) => {
-    const dt = new Date(d);
-    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
-  };
 
   const uniqueDays = [...new Set(completedDates.map(toDateStr))].sort().reverse();
   const today = toDateStr(new Date());

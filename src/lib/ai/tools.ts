@@ -11,9 +11,7 @@ import {
   listTasks,
   searchTasks,
 } from '@/server/actions/tasks';
-import type { CompletionResult } from '@/types/task';
-
-type Owner = { userId?: string; guestId?: string };
+import type { CompletionResult, Owner } from '@/types/task';
 
 // Normalize subtask scores so they sum exactly to the parent score.
 // Proportionally scales each score, then corrects rounding error

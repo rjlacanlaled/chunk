@@ -1,16 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { GUEST_ID_KEY } from '@/lib/storage-keys';
 
 export function useGuestId() {
-  // Start null on server AND client first render (matches SSR)
   const [guestId, setGuestId] = useState<string | null>(null);
 
   useEffect(() => {
-    let id = localStorage.getItem('chunk-guest-id');
+    let id = localStorage.getItem(GUEST_ID_KEY);
     if (!id) {
       id = crypto.randomUUID();
-      localStorage.setItem('chunk-guest-id', id);
+      localStorage.setItem(GUEST_ID_KEY, id);
     }
     setGuestId(id);
   }, []);

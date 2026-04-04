@@ -4,13 +4,12 @@ import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSession } from '@/lib/auth-client';
 import { migrateGuestData } from '@/server/actions/migrate-guest';
+import { GUEST_ID_KEY, XP_STORAGE_KEY } from '@/lib/storage-keys';
 
-const GUEST_ID_KEY = 'chunk-guest-id';
 const MIGRATED_KEY = 'chunk-migrated';
-const XP_STORAGE_KEY = 'chunk-xp';
 
 export function useAuthWithMigration() {
-  const { data: session } = useSession();
+  const { data: session, isPending: sessionPending } = useSession();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -35,5 +34,5 @@ export function useAuthWithMigration() {
     });
   }, [session?.user?.id, queryClient]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return session;
+  return { session, sessionPending };
 }

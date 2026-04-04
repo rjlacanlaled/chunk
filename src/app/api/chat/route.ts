@@ -33,7 +33,6 @@ export const POST = async (req: Request) => {
   const resolvedOwner = owner ?? { guestId: 'anonymous' };
   const tools = makeTaskTools(resolvedOwner);
 
-  // Save the latest user message to DB
   const lastMsg = messages[messages.length - 1];
   if (lastMsg?.role === 'user') {
     const text = extractText(lastMsg as Record<string, unknown>);

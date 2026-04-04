@@ -3,6 +3,7 @@
 import { eq, or, desc } from 'drizzle-orm';
 import { db } from '@/server/db';
 import { chatMessages } from '@/server/db/schema';
+import type { Owner } from '@/types/task';
 
 interface SaveMessageInput {
   role: string;
@@ -25,7 +26,7 @@ export const saveMessage = async (input: SaveMessageInput) => {
 };
 
 export const getRecentMessages = async (
-  owner: { userId?: string; guestId?: string },
+  owner: Owner,
   limit = 20,
 ) => {
   if (!owner.userId && !owner.guestId) return [];

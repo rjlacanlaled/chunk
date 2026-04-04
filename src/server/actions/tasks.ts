@@ -10,11 +10,9 @@ import type {
   ResolveResult,
   PaginatedTasks,
   DeletionResult,
+  Owner,
 } from '@/types/task';
 
-type Owner = { userId?: string; guestId?: string };
-
-// Build owner WHERE condition for Drizzle queries
 const ownerWhere = (owner: Owner) => {
   const conditions = [];
   if (owner.userId) conditions.push(eq(tasks.userId, owner.userId));
@@ -23,7 +21,6 @@ const ownerWhere = (owner: Owner) => {
   return conditions.length > 1 ? or(...conditions)! : conditions[0]!;
 };
 
-// Build owner condition as raw SQL fragment for use in sql`` templates
 const ownerWhereSql = (owner: Owner) => {
   if (owner.userId && owner.guestId) {
     return sql`(${tasks.userId} = ${owner.userId} OR ${tasks.guestId} = ${owner.guestId})`;
@@ -33,7 +30,6 @@ const ownerWhereSql = (owner: Owner) => {
   return sql`false`;
 };
 
-// Get max task number using SQL MAX()
 const getNextTaskNumber = async (owner: Owner): Promise<number> => {
   const ow = ownerWhere(owner);
 
@@ -192,7 +188,6 @@ export const completeByQuery = async (
   const ownerCond = ownerWhereSql(owner);
   const pattern = `%${query.trim()}%`;
 
-  // Get titles of matching tasks
   const matching = await db.execute(sql`
     SELECT title FROM tasks
     WHERE ${ownerCond} AND deleted_at IS NULL AND status != 'done'
@@ -200,7 +195,6 @@ export const completeByQuery = async (
   `);
   const titles = ([...matching] as { title: string }[]).map((r) => r.title);
 
-  // Complete all matching tasks + their descendants via recursive CTE
   const result = await db.execute(sql`
     WITH RECURSIVE
       roots AS (
@@ -253,7 +247,6 @@ export const uncompleteWithDescendants = async (id: string): Promise<number> => 
 export const deleteByIds = async (ids: string[]): Promise<DeletionResult> => {
   if (ids.length === 0) return { deleted: 0, titles: [] };
 
-  // Get titles of the root tasks being deleted (for AI reporting)
   const roots = await db
     .select({ title: tasks.title })
     .from(tasks)
@@ -261,7 +254,6 @@ export const deleteByIds = async (ids: string[]): Promise<DeletionResult> => {
 
   const titles = roots.map((r) => r.title);
 
-  // Recursive CTE soft-delete: root IDs + all their descendants
   const idList = sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `);
   const result = await db.execute(sql`
     WITH RECURSIVE descendants AS (
@@ -299,7 +291,6 @@ export const deleteByFilter = async (
     filterCond = sql`true`;
   }
 
-  // Get titles of matching root tasks first
   const matchingTasks = await db.execute(sql`
     SELECT title FROM tasks
     WHERE ${ownerCond}
@@ -309,7 +300,6 @@ export const deleteByFilter = async (
 
   const titles = ([...matchingTasks] as { title: string }[]).map((r) => r.title);
 
-  // Recursive CTE: find matching tasks + all their descendants, soft-delete all
   const result = await db.execute(sql`
     WITH RECURSIVE
       roots AS (

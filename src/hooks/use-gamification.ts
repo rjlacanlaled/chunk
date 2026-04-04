@@ -4,8 +4,7 @@ import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { getXpForTask, getLevel, getStreak } from '@/lib/gamification';
 import { getXp, updateXp } from '@/server/actions/gamification';
 import type { Task } from '@/types/task';
-
-const XP_STORAGE_KEY = 'chunk-xp';
+import { XP_STORAGE_KEY } from '@/lib/storage-keys';
 
 const loadLocalXp = (): number => {
   if (typeof window === 'undefined') return 0;
@@ -23,7 +22,6 @@ export const useGamification = (tasks: Task[], userId?: string) => {
   const [lastXpGain, setLastXpGain] = useState<number | null>(null);
   const dbLoaded = useRef(false);
 
-  // Load XP on mount — from DB for signed-in users, localStorage for guests
   useEffect(() => {
     if (userId) {
       getXp(userId).then((dbXp) => {

@@ -3,7 +3,6 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { List, LayoutGrid, MessageCircle } from 'lucide-react';
-import { useSession } from '@/lib/auth-client';
 import { useGuestId } from '@/hooks/use-guest';
 import { useAuthWithMigration } from '@/hooks/use-auth-with-migration';
 import { useTasksQuery, useTaskMutations } from '@/hooks/use-tasks';
@@ -24,13 +23,11 @@ import type { Task } from '@/types/task';
 type ViewMode = 'list' | 'board';
 
 export default function Home() {
-  const { data: session, isPending: sessionPending } = useSession();
+  const { session, sessionPending } = useAuthWithMigration();
   const guestId = useGuestId();
   const [view, setView] = useState<ViewMode>('list');
   const [mobileView, setMobileView] = useState<'tasks' | 'chat'>('chat');
   const sendChatRef = useRef<(text: string) => void>(null);
-
-  useAuthWithMigration();
 
   // Determine owner — keep previous owner while session re-validates on tab switch
   const prevOwner = useRef<{ userId?: string; guestId?: string } | null>(null);
@@ -96,7 +93,6 @@ export default function Home() {
       }
     }
 
-    // Update this task
     updateMutation.mutate({ id: task.id, status: newStatus });
 
     // Also update all descendants

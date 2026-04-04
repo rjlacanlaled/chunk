@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState, type MutableRefObject } from 'react';
+import { useEffect, useRef, useCallback, useState, useMemo, type MutableRefObject } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, isToolUIPart } from 'ai';
 import type { UIMessage } from 'ai';
@@ -72,14 +72,13 @@ function ChatPanelInner({
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const transport = new DefaultChatTransport({
+  const transport = useMemo(() => new DefaultChatTransport({
     api: '/api/chat',
     body: { owner, clientTimezone: timezone },
-  });
+  }), [owner, timezone]);
 
   const { messages, sendMessage, setMessages, status } = useChat({
     transport,
-    onFinish: () => onTasksChanged?.(),
   });
 
   // Load initial messages from DB on first mount

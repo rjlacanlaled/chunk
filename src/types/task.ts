@@ -1,6 +1,8 @@
 export type Priority = 'low' | 'medium' | 'high' | 'urgent';
 export type Status = 'todo' | 'in_progress' | 'done';
 
+export type Owner = { userId?: string; guestId?: string };
+
 export interface Task {
   id: string;
   userId: string | null;

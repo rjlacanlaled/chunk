@@ -2,13 +2,10 @@
 
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import { toDateStr } from '@/lib/gamification';
 import type { Task } from '@/types/task';
 
 const DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
-function toDateStr(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
 
 interface StreakStripProps {
   tasks: Task[];

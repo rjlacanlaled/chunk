@@ -7,9 +7,7 @@ import {
   deleteTask,
   listTasks,
 } from '@/server/actions/tasks';
-import type { Task, CreateTaskInput, UpdateTaskInput } from '@/types/task';
-
-type Owner = { userId?: string; guestId?: string };
+import type { Task, CreateTaskInput, UpdateTaskInput, Owner } from '@/types/task';
 
 const getTaskKey = (owner: Owner) => ['tasks', owner.userId || owner.guestId || ''] as const;
 
