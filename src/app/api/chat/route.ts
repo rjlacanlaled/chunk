@@ -85,7 +85,7 @@ export const POST = async (req: Request) => {
   const modelMessages = await convertToModelMessages(cleaned);
 
   const result = streamText({
-    model: openrouter('google/gemini-2.5-flash'),
+    model: openrouter('anthropic/claude-haiku-4-5'),
     system: getSystemPrompt(clientTime, clientTimezone),
     messages: modelMessages,
     tools,
