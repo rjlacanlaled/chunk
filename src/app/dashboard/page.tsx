@@ -2,14 +2,13 @@
 
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { List, LayoutGrid, MessageCircle } from 'lucide-react';
+import { List, MessageCircle } from 'lucide-react';
 import { useGuestId } from '@/hooks/use-guest';
 import { useAuthWithMigration } from '@/hooks/use-auth-with-migration';
 import { useTasksQuery, useTaskMutations } from '@/hooks/use-tasks';
 import { useGamification } from '@/hooks/use-gamification';
 import { ChatPanel } from '@/components/chat/chat-panel';
 import { TaskList } from '@/components/tasks/task-list';
-import { BoardPlaceholder } from '@/components/tasks/board-placeholder';
 import { StreakBadge } from '@/components/gamification/streak-badge';
 import { XpBar } from '@/components/gamification/xp-bar';
 import { ScoreSummary } from '@/components/gamification/score-summary';
@@ -17,15 +16,11 @@ import { DailyMission } from '@/components/gamification/daily-mission';
 import { StreakStrip } from '@/components/gamification/streak-strip';
 import { SignUpCta } from '@/components/auth/sign-up-cta';
 import { AuthButtons } from '@/components/auth/auth-buttons';
-import { Button } from '@/components/ui/button';
 import type { Task } from '@/types/task';
-
-type ViewMode = 'list' | 'board';
 
 export default function Home() {
   const { session, sessionPending } = useAuthWithMigration();
   const guestId = useGuestId();
-  const [view, setView] = useState<ViewMode>('list');
   const [mobileView, setMobileView] = useState<'tasks' | 'chat'>('chat');
   const sendChatRef = useRef<(text: string) => void>(null);
 
@@ -208,26 +203,6 @@ export default function Home() {
           )}
           {hasTasks && <StreakBadge streak={streak} />}
           {isGuest && <SignUpCta />}
-          {hasTasks && (
-            <div className="hidden lg:flex items-center rounded-lg border border-border/40">
-              <Button
-                variant={view === 'list' ? 'default' : 'ghost'}
-                size="icon-xs"
-                onClick={() => setView('list')}
-                aria-label="List view"
-              >
-                <List className="size-4" />
-              </Button>
-              <Button
-                variant={view === 'board' ? 'default' : 'ghost'}
-                size="icon-xs"
-                onClick={() => setView('board')}
-                aria-label="Board view"
-              >
-                <LayoutGrid className="size-4" />
-              </Button>
-            </div>
-          )}
           <AuthButtons />
         </div>
       </header>
@@ -238,7 +213,7 @@ export default function Home() {
             hasTasks ? 'w-full lg:w-[70%]' : 'w-0'
           } ${hasTasks && mobileView !== 'tasks' ? 'hidden lg:block' : ''}`}
         >
-          {hasTasks && view === 'list' && (
+          {hasTasks && (
             <div className="flex h-full flex-col">
               <div className="shrink-0 space-y-3 px-4 pt-3">
                 <DailyMission tasks={tasks} />
@@ -257,9 +232,6 @@ export default function Home() {
                 />
               </div>
             </div>
-          )}
-          {hasTasks && view === 'board' && (
-            <BoardPlaceholder />
           )}
         </div>
 
