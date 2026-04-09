@@ -334,7 +334,7 @@ export const listTasks = async (
   if (!owner.userId && !owner.guestId) return { tasks: [], nextCursor: null };
 
   const ow = ownerWhere(owner);
-  const pageSize = options?.limit ?? 200;
+  const pageSize = options?.limit === 0 ? null : (options?.limit ?? 200);
   const conditions = [ow, isNull(tasks.deletedAt)];
 
   // Cursor-based pagination: fetch items created before the cursor timestamp
@@ -363,17 +363,19 @@ export const listTasks = async (
     conditions.push(ilike(tasks.title, `%${options.query}%`));
   }
 
-  // Fetch one extra row to determine if there's a next page
-  const rows = await db
+  const query = db
     .select()
     .from(tasks)
     .where(and(...conditions))
-    .orderBy(desc(tasks.createdAt))
-    .limit(pageSize + 1);
+    .orderBy(desc(tasks.createdAt));
 
-  const hasMore = rows.length > pageSize;
-  const page = hasMore ? rows.slice(0, pageSize) : rows;
-  const nextCursor = hasMore ? page[page.length - 1].createdAt.toISOString() : null;
+  const rows = pageSize
+    ? await query.limit(pageSize + 1)
+    : await query;
+
+  const hasMore = pageSize ? rows.length > pageSize : false;
+  const page = hasMore ? rows.slice(0, pageSize!) : rows;
+  const nextCursor = hasMore && pageSize ? page[page.length - 1].createdAt.toISOString() : null;
 
   return { tasks: page as Task[], nextCursor };
 };

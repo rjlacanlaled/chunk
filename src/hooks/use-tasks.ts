@@ -14,7 +14,7 @@ const getTaskKey = (owner: Owner) => ['tasks', owner.userId || owner.guestId || 
 export const useTasksQuery = (owner: Owner) => useQuery({
   queryKey: getTaskKey(owner),
   queryFn: async () => {
-    const result = await listTasks(owner, { limit: 1000 });
+    const result = await listTasks(owner, { limit: 0 });
     return result.tasks;
   },
   enabled: !!(owner.userId || owner.guestId),
