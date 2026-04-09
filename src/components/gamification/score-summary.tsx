@@ -36,16 +36,18 @@ export function ScoreSummary({ tasks }: ScoreSummaryProps) {
   return (
     <div className="flex items-center gap-4 rounded-lg border border-border/40 bg-card/50 px-4 py-2">
       <div className="flex flex-wrap items-center gap-4 text-xs">
-        <div className="flex items-center gap-1.5">
-          <Target className="size-3 text-emerald-400" />
-          <span className={cn('font-semibold tabular-nums', today > 0 ? 'text-emerald-400' : 'text-foreground')}>
-            Today: 
-            {' '}
-            {today}
-            {' '}
-            pts
-          </span>
-        </div>
+        {today > 0 && (
+          <div className="flex items-center gap-1.5">
+            <Target className="size-3 text-emerald-400" />
+            <span className="font-semibold tabular-nums text-emerald-400">
+              Today:
+              {' '}
+              {today}
+              {' '}
+              pts
+            </span>
+          </div>
+        )}
         <div className="flex items-center gap-1.5">
           <TrendingUp className="size-3 text-amber-400" />
           <span className="font-semibold tabular-nums text-foreground">

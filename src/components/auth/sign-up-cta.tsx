@@ -11,8 +11,8 @@ export function SignUpCta() {
 
   return (
     <div className="flex items-center justify-center gap-2 py-1.5 text-xs text-muted-foreground">
-      <span className="opacity-60">Guest session</span>
-      <span className="opacity-30">·</span>
+      <span className="hidden md:inline opacity-60">Guest session</span>
+      <span className="hidden md:inline opacity-30">·</span>
       <button
         type="button"
         onClick={() => signIn.social({ provider: 'google', callbackURL: '/dashboard' })}
