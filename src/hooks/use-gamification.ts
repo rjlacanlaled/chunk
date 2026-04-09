@@ -37,28 +37,28 @@ export const useGamification = (tasks: Task[], userId?: string) => {
   const addXp = useCallback((amount: number) => {
     setXp((prev) => {
       const next = prev + amount;
-      if (userId) {
-        updateXp(userId, next);
-      } else {
-        saveLocalXp(next);
-      }
       return next;
     });
     setLastXpGain(amount);
     setTimeout(() => setLastXpGain(null), 1500);
-  }, [userId]);
+  }, []);
 
   const removeXp = useCallback((amount: number) => {
     setXp((prev) => {
       const next = Math.max(0, prev - amount);
-      if (userId) {
-        updateXp(userId, next);
-      } else {
-        saveLocalXp(next);
-      }
       return next;
     });
-  }, [userId]);
+  }, []);
+
+  // Persist XP changes outside of setState updater
+  useEffect(() => {
+    if (!dbLoaded.current) return;
+    if (userId) {
+      updateXp(userId, xp);
+    } else {
+      saveLocalXp(xp);
+    }
+  }, [xp, userId]);
 
   const level = useMemo(() => getLevel(xp), [xp]);
 
