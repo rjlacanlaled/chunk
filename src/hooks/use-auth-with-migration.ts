@@ -9,7 +9,7 @@ import { GUEST_ID_KEY, XP_STORAGE_KEY } from '@/lib/storage-keys';
 const MIGRATED_KEY = 'chunk-migrated';
 
 export function useAuthWithMigration() {
-  const { data: session, isPending: sessionPending } = useSession();
+  const { data: session } = useSession();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -34,5 +34,5 @@ export function useAuthWithMigration() {
     });
   }, [session?.user?.id, queryClient]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return { session, sessionPending };
+  return session;
 }

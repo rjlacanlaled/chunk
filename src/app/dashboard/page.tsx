@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { List, MessageCircle } from 'lucide-react';
+import { useSession } from '@/lib/auth-client';
 import { useGuestId } from '@/hooks/use-guest';
 import { useAuthWithMigration } from '@/hooks/use-auth-with-migration';
 import { useTasksQuery, useTaskMutations } from '@/hooks/use-tasks';
@@ -19,7 +20,8 @@ import { AuthButtons } from '@/components/auth/auth-buttons';
 import type { Task } from '@/types/task';
 
 export default function Home() {
-  const { session, sessionPending } = useAuthWithMigration();
+  const { data: session, isPending: sessionPending } = useSession();
+  useAuthWithMigration();
   const guestId = useGuestId();
   const [mobileView, setMobileView] = useState<'tasks' | 'chat'>('chat');
   const sendChatRef = useRef<(text: string) => void>(null);
