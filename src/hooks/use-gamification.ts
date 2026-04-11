@@ -41,22 +41,24 @@ export const useGamification = (tasks: Task[], userId?: string) => {
   const addXp = useCallback((amount: number) => {
     setXp((prev) => {
       if (prev === null) return prev;
-      const next = prev + amount;
-      persist(next);
-      return next;
+      return prev + amount;
     });
     setLastXpGain(amount);
     setTimeout(() => setLastXpGain(null), 1500);
-  }, [persist]);
+  }, []);
 
   const removeXp = useCallback((amount: number) => {
     setXp((prev) => {
       if (prev === null) return prev;
-      const next = Math.max(0, prev - amount);
-      persist(next);
-      return next;
+      return Math.max(0, prev - amount);
     });
-  }, [persist]);
+  }, []);
+
+  // Persist XP changes after render
+  useEffect(() => {
+    if (xp === null) return;
+    persist(xp);
+  }, [xp, persist]);
 
   const displayXp = xp ?? 0;
   const level = useMemo(() => getLevel(displayXp), [displayXp]);
