@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { getXpForTask, getLevel, getStreak } from '@/lib/gamification';
 import { getXp, updateXp } from '@/server/actions/gamification';
 import type { Task } from '@/types/task';
@@ -18,49 +18,48 @@ const saveLocalXp = (xp: number) => {
 };
 
 export const useGamification = (tasks: Task[], userId?: string) => {
-  const [xp, setXp] = useState(0);
+  const [xp, setXp] = useState<number | null>(null);
   const [lastXpGain, setLastXpGain] = useState<number | null>(null);
-  const dbLoaded = useRef(false);
 
   useEffect(() => {
+    setXp(null);
     if (userId) {
-      getXp(userId).then((dbXp) => {
-        setXp(dbXp);
-        dbLoaded.current = true;
-      });
+      getXp(userId).then(setXp);
     } else {
       setXp(loadLocalXp());
-      dbLoaded.current = true;
+    }
+  }, [userId]);
+
+  const persist = useCallback((nextXp: number) => {
+    if (userId) {
+      updateXp(userId, nextXp);
+    } else {
+      saveLocalXp(nextXp);
     }
   }, [userId]);
 
   const addXp = useCallback((amount: number) => {
     setXp((prev) => {
+      if (prev === null) return prev;
       const next = prev + amount;
+      persist(next);
       return next;
     });
     setLastXpGain(amount);
     setTimeout(() => setLastXpGain(null), 1500);
-  }, []);
+  }, [persist]);
 
   const removeXp = useCallback((amount: number) => {
     setXp((prev) => {
+      if (prev === null) return prev;
       const next = Math.max(0, prev - amount);
+      persist(next);
       return next;
     });
-  }, []);
+  }, [persist]);
 
-  // Persist XP changes outside of setState updater
-  useEffect(() => {
-    if (!dbLoaded.current) return;
-    if (userId) {
-      updateXp(userId, xp);
-    } else {
-      saveLocalXp(xp);
-    }
-  }, [xp, userId]);
-
-  const level = useMemo(() => getLevel(xp), [xp]);
+  const displayXp = xp ?? 0;
+  const level = useMemo(() => getLevel(displayXp), [displayXp]);
 
   const completedDates = useMemo(
     () => tasks
@@ -83,7 +82,7 @@ export const useGamification = (tasks: Task[], userId?: string) => {
   }, [removeXp]);
 
   return {
-    xp,
+    xp: displayXp,
     level,
     streak,
     lastXpGain,
