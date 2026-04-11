@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { getXpForTask, getLevel, getStreak } from '@/lib/gamification';
 import { getXp, updateXp } from '@/server/actions/gamification';
 import type { Task } from '@/types/task';
@@ -20,9 +20,11 @@ const saveLocalXp = (xp: number) => {
 export const useGamification = (tasks: Task[], userId?: string) => {
   const [xp, setXp] = useState<number | null>(null);
   const [lastXpGain, setLastXpGain] = useState<number | null>(null);
+  const pendingPersist = useRef<number | null>(null);
 
   useEffect(() => {
     setXp(null);
+    pendingPersist.current = null;
     if (userId) {
       getXp(userId).then(setXp);
     } else {
@@ -30,18 +32,12 @@ export const useGamification = (tasks: Task[], userId?: string) => {
     }
   }, [userId]);
 
-  const persist = useCallback((nextXp: number) => {
-    if (userId) {
-      updateXp(userId, nextXp);
-    } else {
-      saveLocalXp(nextXp);
-    }
-  }, [userId]);
-
   const addXp = useCallback((amount: number) => {
     setXp((prev) => {
       if (prev === null) return prev;
-      return prev + amount;
+      const next = prev + amount;
+      pendingPersist.current = next;
+      return next;
     });
     setLastXpGain(amount);
     setTimeout(() => setLastXpGain(null), 1500);
@@ -50,15 +46,26 @@ export const useGamification = (tasks: Task[], userId?: string) => {
   const removeXp = useCallback((amount: number) => {
     setXp((prev) => {
       if (prev === null) return prev;
-      return Math.max(0, prev - amount);
+      const next = Math.max(0, prev - amount);
+      pendingPersist.current = next;
+      return next;
     });
   }, []);
 
-  // Persist XP changes after render
+  // Debounced persist — only writes the latest value after rapid changes settle
   useEffect(() => {
-    if (xp === null) return;
-    persist(xp);
-  }, [xp, persist]);
+    if (pendingPersist.current === null) return;
+    const value = pendingPersist.current;
+    const timer = setTimeout(() => {
+      pendingPersist.current = null;
+      if (userId) {
+        updateXp(userId, value);
+      } else {
+        saveLocalXp(value);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [xp, userId]);
 
   const displayXp = xp ?? 0;
   const level = useMemo(() => getLevel(displayXp), [displayXp]);
