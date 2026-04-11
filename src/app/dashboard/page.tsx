@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useMemo, useRef, useCallback } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { useQueryClient, useIsMutating } from '@tanstack/react-query';
 import { List, MessageCircle } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
 import { useGuestId } from '@/hooks/use-guest';
@@ -46,6 +46,17 @@ export default function Home() {
   const { data: tasks = [], isFetched: tasksFetched } = useTasksQuery(owner ?? { guestId: '' });
   const { updateMutation, deleteMutation } = useTaskMutations(owner ?? { guestId: '' });
   const { xp, level, streak, lastXpGain, completeTask, uncompleteTask } = useGamification(tasks, session?.user?.id);
+  const pendingMutations = useIsMutating();
+
+  // Warn before unload if task mutations are still in-flight (rapid clicks)
+  useEffect(() => {
+    if (pendingMutations === 0) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [pendingMutations]);
 
   const getDescendants = useCallback((parentId: string): Task[] => {
     const children = tasks.filter((t) => t.parentTaskId === parentId);
@@ -198,6 +209,11 @@ export default function Home() {
           className="h-6"
         />
         <div className="flex items-center gap-2 lg:gap-3">
+          {pendingMutations > 0 && (
+            <span className="text-xs text-muted-foreground animate-pulse">
+              Saving...
+            </span>
+          )}
           {hasTasks && (
             <div className="hidden lg:flex">
               <XpBar xp={xp} level={level} />
