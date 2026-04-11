@@ -6,6 +6,8 @@ import {
   updateTask,
   deleteTask,
   listTasks,
+  completeWithDescendants,
+  uncompleteWithDescendants,
 } from '@/server/actions/tasks';
 import type { Task, CreateTaskInput, UpdateTaskInput, Owner } from '@/types/task';
 
@@ -84,9 +86,55 @@ export const useTaskMutations = (owner: Owner) => {
         queryClient.setQueryData(key, context.previous);
       }
     },
-    onSuccess: () => {
-      // Delay refetch to ensure DB write is committed
-      setTimeout(() => queryClient.invalidateQueries({ queryKey: key }), 1000);
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: key });
+    },
+  });
+
+  const toggleWithDescendantsMutation = useMutation({
+    mutationFn: async ({ id, marking }: { id: string; marking: boolean }) => {
+      if (marking) {
+        await completeWithDescendants(id);
+      } else {
+        await uncompleteWithDescendants(id);
+      }
+    },
+    onMutate: async ({ id, marking }) => {
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<Task[]>(key);
+      const newStatus = marking ? 'done' : 'todo';
+
+      // Collect all descendant IDs for optimistic update
+      const collectDescendants = (parentId: string, all: Task[]): Set<string> => {
+        const ids = new Set<string>([parentId]);
+        const walk = (pId: string) => {
+          all.filter((t) => t.parentTaskId === pId).forEach((child) => {
+            ids.add(child.id);
+            walk(child.id);
+          });
+        };
+        walk(parentId);
+        return ids;
+      };
+
+      queryClient.setQueryData<Task[]>(key, (old = []) => {
+        const toUpdate = collectDescendants(id, old);
+        return old.map((task) => (
+          toUpdate.has(task.id)
+            ? { ...task, status: newStatus, updatedAt: new Date() }
+            : task
+        ));
+      });
+
+      return { previous };
+    },
+    onError: (_err, _input, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(key, context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: key });
     },
   });
 
@@ -107,10 +155,10 @@ export const useTaskMutations = (owner: Owner) => {
         queryClient.setQueryData(key, context.previous);
       }
     },
-    onSuccess: () => {
-      setTimeout(() => queryClient.invalidateQueries({ queryKey: key }), 1000);
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: key });
     },
   });
 
-  return { createMutation, updateMutation, deleteMutation };
+  return { createMutation, updateMutation, deleteMutation, toggleWithDescendantsMutation };
 };

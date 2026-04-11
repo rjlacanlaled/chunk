@@ -44,7 +44,7 @@ export default function Home() {
   const isGuest = !session?.user;
   const queryClient = useQueryClient();
   const { data: tasks = [], isFetched: tasksFetched } = useTasksQuery(owner ?? { guestId: '' });
-  const { updateMutation, deleteMutation } = useTaskMutations(owner ?? { guestId: '' });
+  const { updateMutation, deleteMutation, toggleWithDescendantsMutation } = useTaskMutations(owner ?? { guestId: '' });
   const { xp, level, streak, lastXpGain, completeTask, uncompleteTask } = useGamification(tasks, session?.user?.id);
   const pendingMutations = useIsMutating();
 
@@ -101,9 +101,7 @@ export default function Home() {
       }
     }
 
-    updateMutation.mutate({ id: task.id, status: newStatus });
-
-    // Also update all descendants
+    // Award XP for descendant leaf tasks (client-side only, before server call)
     const descendants = getDescendants(task.id);
     for (const child of descendants) {
       if (child.status !== newStatus) {
@@ -112,9 +110,11 @@ export default function Home() {
           if (marking) completeTask(child);
           else uncompleteTask(child);
         }
-        updateMutation.mutate({ id: child.id, status: newStatus });
       }
     }
+
+    // Single DB call that updates task + all descendants via recursive CTE
+    toggleWithDescendantsMutation.mutate({ id: task.id, marking });
 
     // Auto-complete ancestors: recursively check up the tree
     if (marking) {
